@@ -1,5 +1,7 @@
 import Cocoa
 
+// Source https://github.com/lwouis/alt-tab-macos/blob/master/src/api-wrappers/private-apis/SkyLight.framework.swift
+
 /*
  SkyLight is the private framework in charge of interacting with the Window Server
  If we link to SkyLight.framework, we can use these private functions
