@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1EE4472E1AEB21007FD28F /* SkyLight.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		2C1EE2A62E1ABB30007FD28F /* Option1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Option1.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C1EE4472E1AEB21007FD28F /* SkyLight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SkyLight.framework; path = ../../../../System/Library/PrivateFrameworks/SkyLight.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +39,7 @@
 			isa = PBXGroup;
 			children = (
 				2C1EE2A82E1ABB30007FD28F /* Option1 */,
+				2C1EE4442E1AEA6A007FD28F /* Frameworks */,
 				2C1EE2A72E1ABB30007FD28F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +50,14 @@
 				2C1EE2A62E1ABB30007FD28F /* Option1.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2C1EE4442E1AEA6A007FD28F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2C1EE4472E1AEB21007FD28F /* SkyLight.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,6 +286,10 @@
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Debug;
 		};
@@ -300,6 +319,10 @@
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Release;
 		};
