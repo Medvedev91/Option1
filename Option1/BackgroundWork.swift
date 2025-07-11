@@ -64,7 +64,7 @@ class BackgroundWork {
         }
 
         override func main() {
-            Logger.debug(name)
+            print("BackgroundWork.BackgroundThreadWithRunLoop.main() \(name ?? "")")
             // the RunLoop is lazy; calling this initialize it
             runLoop = CFRunLoopGetCurrent()
             addDummySourceToPreventRunLoopTermination()
