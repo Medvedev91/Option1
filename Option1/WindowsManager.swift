@@ -4,6 +4,13 @@ private var myWindowId = CGWindowID(0)
 
 struct WindowsManager {
     
+    static func getWindowsForActiveApplicationOrNil() throws -> [AXUIElement]? {
+        guard let app = getActiveApplication() else { return nil }
+        let pid = app.processIdentifier
+        let axuiElement = AXUIElementCreateApplication(pid)
+        return try axuiElement.allWindows(pid)
+    }
+    
     static func getFocusedWindowOrNil() throws -> AXUIElement? {
         guard let app = getActiveApplication() else { return nil }
         return try AXUIElementCreateApplication(app.processIdentifier).focusedWindow()
