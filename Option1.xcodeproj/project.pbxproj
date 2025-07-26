@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1EE4472E1AEB21007FD28F /* SkyLight.framework */; };
+		2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 2C338CFC2E351B4500A692E3 /* HotKey */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */,
 				2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -80,6 +82,7 @@
 			);
 			name = Option1;
 			packageProductDependencies = (
+				2C338CFC2E351B4500A692E3 /* HotKey */,
 			);
 			productName = Option1;
 			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1.app */;
@@ -109,6 +112,9 @@
 			);
 			mainGroup = 2C1EE29D2E1ABB30007FD28F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C1EE2A72E1ABB30007FD28F /* Products */;
 			projectDirPath = "";
@@ -348,6 +354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/soffes/HotKey";
+			requirement = {
+				kind = exactVersion;
+				version = 0.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2C338CFC2E351B4500A692E3 /* HotKey */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */;
+			productName = HotKey;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C1EE29E2E1ABB30007FD28F /* Project object */;
 }
