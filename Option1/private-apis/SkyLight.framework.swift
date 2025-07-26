@@ -8,6 +8,8 @@ import Cocoa
  Location: Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/PrivateFrameworks/SkyLight.framework
  */
 
+typealias ScreenUuid = CFString
+
 let CGS_CONNECTION = CGSMainConnectionID()
 
 typealias CGSConnectionID = UInt32
