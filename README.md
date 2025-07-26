@@ -1,1 +1,3 @@
-Thanks https://github.com/lwouis/alt-tab-macos!
+# Thanks
+
+https://github.com/lwouis/alt-tab-macos
