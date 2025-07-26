@@ -1,5 +1,7 @@
 import Cocoa
 
+private var myWindowId = CGWindowID(0)
+
 struct WindowsManager {
     
     static func getFocusedWindowOrNil() throws -> AXUIElement? {
@@ -21,4 +23,17 @@ struct WindowsManager {
 
 private func getActiveApplication() -> NSRunningApplication? {
     NSWorkspace.shared.runningApplications.first(where: { $0.isActive })
+}
+
+// Source https://github.com/lwouis/alt-tab-macos/blob/b325cc75c02ea6685e9adef93e49a8a1700062fb/src/logic/Window.swift#L198
+private func makeKeyWindow(_ psn: inout ProcessSerialNumber) -> Void {
+    var bytes = [UInt8](repeating: 0, count: 0xf8)
+    bytes[0x04] = 0xf8
+    bytes[0x3a] = 0x10
+    memcpy(&bytes[0x3c], &myWindowId, MemoryLayout<UInt32>.size)
+    memset(&bytes[0x20], 0xff, 0x10)
+    bytes[0x08] = 0x01
+    SLPSPostEventRecordTo(&psn, &bytes)
+    bytes[0x08] = 0x02
+    SLPSPostEventRecordTo(&psn, &bytes)
 }
