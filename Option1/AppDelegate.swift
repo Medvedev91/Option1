@@ -34,6 +34,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         if let axui = numberKeys[key], let axui = axui {
                             do {
                                 try WindowsManager.focusWindow(axuiElement: axui)
+                                // Fix Corner Case:
+                                // - bind Telegram app (option + shift + 1),
+                                // - press cmd + w to close the window,
+                                // - press option + 1 to open.
+                                // Telegram's window won't open.
+                                if try WindowsManager.getFocusedWindowOrNil() == nil {
+                                    WindowsManager.focusActiveApplication()
+                                }
                             } catch {
                                 reportApi("focusWindow() error:\(error)")
                             }

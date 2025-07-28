@@ -26,6 +26,17 @@ struct WindowsManager {
         makeKeyWindow(&psn)
         axuiElement.focusWindow()
     }
+    
+    static func focusActiveApplication() {
+        // Based on https://stackoverflow.com/a/58241536
+        guard let app = getActiveApplication(),
+              let identifier: String = app.bundleIdentifier,
+              let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier)
+        else { return }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.arguments = ["/bin"]
+        NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: nil)
+    }
 }
 
 private func getActiveApplication() -> NSRunningApplication? {
