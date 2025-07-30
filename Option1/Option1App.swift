@@ -32,7 +32,7 @@ struct Option1App: App {
         WindowGroup {
             VStack {
                 ContentView()
-                Button("startUpdater() old") {
+                Button("startUpdater() v8") {
                     updaterController.startUpdater()
                 }
                 CheckForUpdatesView(updater: updaterController.updater)
