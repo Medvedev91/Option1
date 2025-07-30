@@ -9,7 +9,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             
-            Button("Get") {
+            Button("Debug App in 3 Seconds") {
                 Task {
                     try await Task.sleep(nanoseconds: 3_000_000_000)
                     let axuiElements = try! WindowsManager.getWindowsForActiveApplicationOrNil() ?? []
@@ -29,6 +29,8 @@ struct ContentView: View {
                     try! WindowsManager.focusWindow(axuiElement: axuiElement)
                 }
             }
+            
+            SparkleButtonView()
         }
         .padding()
     }

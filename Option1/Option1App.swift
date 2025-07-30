@@ -16,32 +16,20 @@
 import SwiftUI
 import Sparkle
 
+var sparkleController: SPUStandardUpdaterController!
+
 @main
 struct Option1App: App {
     
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    // todo one line
-    private let updaterController: SPUStandardUpdaterController
-    
     init() {
-        updaterController = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil)
+        sparkleController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
     }
     
     var body: some Scene {
         WindowGroup {
-            VStack {
-                ContentView()
-                Button("startUpdater() v8") {
-                    updaterController.startUpdater()
-                }
-                CheckForUpdatesView(updater: updaterController.updater)
-            }
-        }
-        .commands {
-            CommandGroup(after: .appInfo) {
-                CheckForUpdatesView(updater: updaterController.updater)
-            }
+            ContentView()
         }
     }
 }
