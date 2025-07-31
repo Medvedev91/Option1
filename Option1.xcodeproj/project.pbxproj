@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1EE4472E1AEB21007FD28F /* SkyLight.framework */; };
 		2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 2C338CFC2E351B4500A692E3 /* HotKey */; };
+		2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 2C409ED92E38D762009E96D6 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */,
 				2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */,
 				2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */,
 			);
@@ -96,6 +98,7 @@
 			name = Option1;
 			packageProductDependencies = (
 				2C338CFC2E351B4500A692E3 /* HotKey */,
+				2C409ED92E38D762009E96D6 /* Sparkle */,
 			);
 			productName = Option1;
 			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1.app */;
@@ -127,6 +130,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */,
+				2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C1EE2A72E1ABB30007FD28F /* Products */;
@@ -287,7 +291,7 @@
 				CODE_SIGN_ENTITLEMENTS = Option1/Option1.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = R3A4Z5YL2T;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -302,7 +306,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2025.07.28;
+				MARKETING_VERSION = 2025.07.31;
 				PRODUCT_BUNDLE_IDENTIFIER = io.option1.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -323,7 +327,7 @@
 				CODE_SIGN_ENTITLEMENTS = Option1/Option1.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = R3A4Z5YL2T;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -338,7 +342,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2025.07.28;
+				MARKETING_VERSION = 2025.07.31;
 				PRODUCT_BUNDLE_IDENTIFIER = io.option1.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -383,6 +387,14 @@
 				version = 0.2.1;
 			};
 		};
+		2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -390,6 +402,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */;
 			productName = HotKey;
+		};
+		2C409ED92E38D762009E96D6 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
