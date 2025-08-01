@@ -1,3 +1,9 @@
+# MacOS Window Manager
+
+Bind Window - `Option + Shift + 1`
+
+Focus Window - `Option + 1`
+
 ## Download
 
 https://option1.io/Option1.dmg
