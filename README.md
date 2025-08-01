@@ -1,3 +1,7 @@
+## Download
+
+https://option1.io/Option1.dmg
+
 ## Thanks
 
 https://github.com/lwouis/alt-tab-macos
