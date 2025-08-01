@@ -1,7 +1,7 @@
 import SwiftUI
 import Cocoa
 
-struct ContentView: View {
+struct MainScreen: View {
     
     @State private var axuiElements: [AXUIElement] = []
     @State private var focusedWindow: AXUIElement? = nil
@@ -33,5 +33,14 @@ struct ContentView: View {
             SparkleButtonView()
         }
         .padding()
+        .onAppear {
+            print("\(promptForAccessibilityRequirements())")
+        }
     }
+}
+
+private func promptForAccessibilityRequirements() -> Bool {
+    let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString
+    let options = [checkOptPrompt: false]
+    return AXIsProcessTrustedWithOptions(options as CFDictionary?)
 }
