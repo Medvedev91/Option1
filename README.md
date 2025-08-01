@@ -1,8 +1,8 @@
 # MacOS Window Manager
 
-Bind Window - `Option + Shift + 1`
+Bind Window - `Option + Shift + 1` .. `9`
 
-Focus Window - `Option + 1`
+Focus Window - `Option + 1` .. `9`
 
 ## Download
 
