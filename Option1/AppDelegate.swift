@@ -18,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     key: key,
                     modifiers: [.option, .shift],
                     keyDownHandler: {
+                        _ = isAccessibilityGranted(showDialog: true)
                         do {
                             numberKeys[key] = try WindowsManager.getFocusedWindowOrNil()
                         } catch {
@@ -31,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     key: key,
                     modifiers: [.option],
                     keyDownHandler: {
+                        _ = isAccessibilityGranted(showDialog: true)
                         if let axui = numberKeys[key], let axui = axui {
                             do {
                                 try WindowsManager.focusWindow(axuiElement: axui)
