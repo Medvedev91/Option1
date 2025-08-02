@@ -6,8 +6,6 @@
     {
       "layers" : [
         {
-          "glass" : true,
-          "hidden" : false,
           "image-name" : "composer_1.svg",
           "name" : "composer_1"
         }
