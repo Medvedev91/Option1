@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="256" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon512.png">
+</p>
+
 # MacOS Window Manager
 
 Bind Window - `Option + Shift + 1` .. `9`
