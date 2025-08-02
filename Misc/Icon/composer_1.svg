@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g id="V2" transform="matrix(3.79472,0,0,3.79472,-1572.82,-1431.4)">
+    <g id="V2" transform="matrix(3.79472,0,0,3.79472,-1572.82,-1430.4)">
         <g transform="matrix(1.56806,0,0,1.56806,497.563,567.367)">
             <g id="Semibold-L">
                 <path d="M78.356,-6.656C80.196,-6.656 81.66,-7.207 82.748,-8.31C83.837,-9.413 84.381,-11.021 84.381,-13.134L84.381,-57.465C84.381,-59.471 83.78,-61.055 82.577,-62.218C81.374,-63.382 79.763,-63.963 77.742,-63.963C75.321,-63.963 72.778,-63.066 70.112,-61.27L59.083,-53.902C57.451,-52.806 56.634,-51.4 56.634,-49.683C56.634,-48.521 57.022,-47.509 57.796,-46.647C58.571,-45.784 59.547,-45.353 60.724,-45.353C61.268,-45.353 61.769,-45.423 62.23,-45.562C62.69,-45.701 63.28,-46.018 63.998,-46.513L71.893,-51.702L72.393,-51.702L72.393,-13.134C72.393,-11.021 72.927,-9.413 73.995,-8.31C75.063,-7.207 76.517,-6.656 78.356,-6.656Z" style="fill:white;fill-rule:nonzero;"/>
