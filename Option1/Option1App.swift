@@ -9,7 +9,7 @@ struct Option1App: App {
     var body: some Scene {
         WindowGroup {
             MainScreen()
-                .frame(minWidth: 350, minHeight: 350)
+                .frame(width: 350, height: 400)
         }
         .modelContainer(dbContainer)
         .windowResizability(.contentSize)
