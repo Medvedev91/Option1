@@ -2,6 +2,9 @@ import AppKit
 import SwiftUI
 import SwiftData
 
+// todo example
+// https://medium.com/@clyapp/customizing-swiftui-settings-window-on-macos-4c47d0060ee4
+
 struct SettingsScreen: View {
     
     @Environment(\.dismissWindow) private var dismissWindow
