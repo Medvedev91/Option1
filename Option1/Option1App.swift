@@ -11,5 +11,9 @@ struct Option1App: App {
                 .frame(minWidth: 350, minHeight: 350)
         }
         .windowResizability(.contentSize)
+        .commands {
+            // Disable creating new window by Command + N
+            CommandGroup(replacing: .newItem) {}
+        }
     }
 }
