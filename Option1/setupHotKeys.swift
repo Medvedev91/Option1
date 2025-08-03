@@ -1,9 +1,9 @@
 import AppKit
 import HotKey
 
-private var numberKeys: [Key: AXUIElement?] = [
-    .one: nil, .two: nil, .three: nil, .four: nil, .five: nil,
-    .six: nil, .seven: nil, .eight: nil, .nine: nil, .zero: nil,
+private var numberKeys: [Key: [UUID? /* Workspace id or shared */: AXUIElement?]] = [
+    .one: [:], .two: [:], .three: [:], .four: [:], .five: [:],
+    .six: [:], .seven: [:], .eight: [:], .nine: [:], .zero: [:],
 ]
 
 private var keepKeys: [Any] = []
@@ -18,7 +18,8 @@ func setupHotKeys() {
                 keyDownHandler: {
                     _ = isAccessibilityGranted(showDialog: true)
                     do {
-                        numberKeys[key] = try WindowsManager.getFocusedWindowOrNil()
+                        let workspaceDb = MenuManager.workspaceDb
+                        numberKeys[key]![workspaceDb?.id] = try WindowsManager.getFocusedWindowOrNil()
                     } catch {
                         reportApi("getFocusedWindowOrNil() error:\(error)")
                     }
@@ -32,7 +33,9 @@ func setupHotKeys() {
                 modifiers: [.option],
                 keyDownHandler: {
                     _ = isAccessibilityGranted(showDialog: true)
-                    if let axui = numberKeys[key], let axui = axui {
+                    let workspaceAxui: AXUIElement? = numberKeys[key]![MenuManager.workspaceDb?.id] ?? nil
+                    let sharedAxui: AXUIElement? = numberKeys[key]![nil] ?? nil
+                    if let axui = (workspaceAxui ?? sharedAxui) {
                         do {
                             try WindowsManager.focusWindow(axuiElement: axui)
                             // Fix Corner Case:
