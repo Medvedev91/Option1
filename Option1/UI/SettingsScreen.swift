@@ -15,6 +15,9 @@ struct SettingsScreen: View {
     @State private var axuiElements: [AXUIElement] = []
     @State private var focusedWindow: AXUIElement? = nil
     
+    @State private var isFormNewVisible = false
+    @State private var formNewName = ""
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -39,12 +42,43 @@ struct SettingsScreen: View {
                         .onTapGesture {
                             modelContext.delete(workspaceDb)
                         }
+                        .padding(.top, 4)
                 }
                 
-                Button("New") {
-                    modelContext.insert(WorkspaceDb(id: UUID(), name: "New Workspace", date: Date.now, sort: 1))
+                if isFormNewVisible {
+                    HStack {
+                        
+                        TextField("Workspace Name", text: $formNewName)
+                            .autocorrectionDisabled()
+                        
+                        Button("Create") {
+                            let nameValidated = formNewName.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if nameValidated.isEmpty { return }
+                            isFormNewVisible = false
+                            formNewName = ""
+                            modelContext.insert(
+                                WorkspaceDb(
+                                    id: UUID(),
+                                    name: nameValidated,
+                                    date: Date.now,
+                                    sort: 1,
+                                )
+                            )
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                        Button("Cancel") {
+                            isFormNewVisible = false
+                            formNewName = ""
+                        }
+                    }
+                    .padding(.top, 8)
+                } else {
+                    Button("New") {
+                        isFormNewVisible = true
+                    }
+                    .padding(.top, 8)
                 }
-                .padding(.top, 8)
                 
                 Divider()
                     .padding(.vertical)
