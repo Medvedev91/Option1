@@ -8,6 +8,8 @@ struct Option1App: App {
     var body: some Scene {
         WindowGroup {
             MainScreen()
+                .frame(minWidth: 350, minHeight: 350)
         }
+        .windowResizability(.contentSize)
     }
 }
