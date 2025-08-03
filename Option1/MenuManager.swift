@@ -44,7 +44,6 @@ class MenuManager {
 private extension AppDelegate {
     
     @objc func openSettings() {
-        // todo
-        print("openSettings")
+        WindowsManager.openApplicationByBundleIdentifier(Bundle.main.bundleIdentifier!)
     }
 }
