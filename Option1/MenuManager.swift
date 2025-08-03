@@ -17,14 +17,18 @@ private let statusMenu = NSMenu(title: "Option 1")
 class MenuManager {
     
     static func setup() {
+        // todo title
         statusItem.button?.title = "Shared"
         statusItem.menu = statusMenu
         
+        // todo
         let i1 = statusMenu.addItem(
             withTitle: "Shared",
+            // todo
             action: #selector(AppDelegate.openSettings),
             keyEquivalent: ""
         )
+        // todo
         i1.state = .on
         
         statusMenu.addItem(NSMenuItem.separator())
@@ -40,6 +44,7 @@ class MenuManager {
 private extension AppDelegate {
     
     @objc func openSettings() {
+        // todo
         print("openSettings")
     }
 }
