@@ -5,14 +5,14 @@ private var myWindowId = CGWindowID(0)
 struct WindowsManager {
     
     static func getWindowsForActiveApplicationOrNil() throws -> [AXUIElement]? {
-        guard let app = getActiveApplication() else { return nil }
+        guard let app = getActiveApplicationOrNil() else { return nil }
         let pid = app.processIdentifier
         let axuiElement = AXUIElementCreateApplication(pid)
         return try axuiElement.allWindows(pid)
     }
     
     static func getFocusedWindowOrNil() throws -> AXUIElement? {
-        guard let app = getActiveApplication() else { return nil }
+        guard let app = getActiveApplicationOrNil() else { return nil }
         return try AXUIElementCreateApplication(app.processIdentifier).focusedWindow()
     }
     
@@ -29,17 +29,21 @@ struct WindowsManager {
     
     static func focusActiveApplication() {
         // Based on https://stackoverflow.com/a/58241536
-        guard let app = getActiveApplication(),
-              let identifier: String = app.bundleIdentifier,
-              let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier)
+        guard let app: NSRunningApplication = getActiveApplicationOrNil(),
+              let bundle: String = app.bundleIdentifier
         else { return }
+        openApplicationByBundleIdentifier(bundle)
+    }
+    
+    static func openApplicationByBundleIdentifier(_ bundle: String) {
+        guard let url: URL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else { return }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.arguments = ["/bin"]
         NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: nil)
     }
 }
 
-private func getActiveApplication() -> NSRunningApplication? {
+private func getActiveApplicationOrNil() -> NSRunningApplication? {
     NSWorkspace.shared.runningApplications.first(where: { $0.isActive })
 }
 
