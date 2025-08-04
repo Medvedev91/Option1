@@ -41,6 +41,7 @@ struct SettingsScreen: View {
                     Text(workspaceDb.name)
                         .onTapGesture {
                             modelContext.delete(workspaceDb)
+                            try! modelContext.save()
                         }
                         .padding(.top, 4)
                 }
@@ -64,6 +65,7 @@ struct SettingsScreen: View {
                                     sort: 1,
                                 )
                             )
+                            try! modelContext.save()
                         }
                         .buttonStyle(.borderedProminent)
                         
