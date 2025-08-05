@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import Cocoa
 
-struct MainScreen: View {
+struct AppScreen: View {
     
     @Environment(\.modelContext) private var modelContext
     
