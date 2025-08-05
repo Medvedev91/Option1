@@ -16,7 +16,7 @@ struct AppScreen: View {
             if !isPermissionGranted {
                 PermissionView()
             } else {
-                SettingsScreen()
+                NavigationScreen()
             }
         }
         .onReceive(timer1s) { _ in
