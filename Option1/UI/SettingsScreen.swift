@@ -19,9 +19,6 @@ struct SettingsScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 
-                Text("Workspaces")
-                    .font(.system(size: 18, weight: .bold))
-                
                 Text("Shared (default)")
                     .padding(.top, 4)
                 
@@ -105,5 +102,6 @@ struct SettingsScreen: View {
             }
             .padding()
         }
+        .navigationTitle("Settings")
     }
 }
