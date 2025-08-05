@@ -4,71 +4,12 @@ import SwiftData
 
 struct SettingsTabView: View {
     
-    @Environment(\.dismissWindow) private var dismissWindow
-    @Environment(\.modelContext) private var modelContext
-    
-    @Query private var workspacesDb: [WorkspaceDb] = []
-    
     @State private var axuiElements: [AXUIElement] = []
     @State private var focusedWindow: AXUIElement? = nil
-    
-    @State private var isFormNewVisible = false
-    @State private var formNewName = ""
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                
-                Text("Shared (default)")
-                    .padding(.top, 4)
-                
-                ForEach(workspacesDb) { workspaceDb in
-                    Text(workspaceDb.name)
-                        .onTapGesture {
-                            modelContext.delete(workspaceDb)
-                            try! modelContext.save()
-                        }
-                        .padding(.top, 4)
-                }
-                
-                if isFormNewVisible {
-                    HStack {
-                        
-                        TextField("Workspace Name", text: $formNewName)
-                            .autocorrectionDisabled()
-                        
-                        Button("Create") {
-                            let nameValidated = formNewName.trimmingCharacters(in: .whitespacesAndNewlines)
-                            if nameValidated.isEmpty { return }
-                            isFormNewVisible = false
-                            formNewName = ""
-                            modelContext.insert(
-                                WorkspaceDb(
-                                    id: UUID(),
-                                    name: nameValidated,
-                                    date: Date.now,
-                                    sort: 1,
-                                )
-                            )
-                            try! modelContext.save()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        
-                        Button("Cancel") {
-                            isFormNewVisible = false
-                            formNewName = ""
-                        }
-                    }
-                    .padding(.top, 8)
-                } else {
-                    Button("New") {
-                        isFormNewVisible = true
-                    }
-                    .padding(.top, 8)
-                }
-                
-                Divider()
-                    .padding(.vertical)
                 
                 Button("Debug") {
                     Task {
@@ -94,11 +35,9 @@ struct SettingsTabView: View {
                 SparkleButtonView()
                     .padding(.top, 10)
                 
-                Button("Close Window") {
-                    dismissWindow()
-                }
-                .padding(.top, 10)
-                
+                Spacer()
+                    .frame(height: 1)
+                    .fillMaxWidth()
             }
             .padding()
         }
