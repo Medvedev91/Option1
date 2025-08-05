@@ -1,5 +1,9 @@
 import SwiftUI
 
+// todo
+// 3. Disabling Sidebar Width Resizing
+// https://medium.com/@clyapp/customizing-swiftui-settings-window-on-macos-4c47d0060ee4
+
 struct NavigationScreen: View {
     
     @State private var tab: Tab = .main
