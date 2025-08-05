@@ -10,19 +10,7 @@ struct WorkspacesTabView: View {
     var body: some View {
         List {
             ForEach(workspacesDb) { workspaceDb in
-                Text(workspaceDb.name)
-                    .contextMenu {
-                        Button(
-                            action: {
-                                modelContext.delete(workspaceDb)
-                            },
-                            label: {
-                                Text("Delete")
-                                    .foregroundColor(.red)
-                            }
-                        )
-                    }
-                    .padding(.vertical, 4)
+                WorkspaceItemView(workspaceDb: workspaceDb)
             }
             .onMove { from, to in
                 moveWorkspace(from: from, to: to)
@@ -69,5 +57,38 @@ struct WorkspacesTabView: View {
             workspaceDb.sort = idx
         }
         try! modelContext.save()
+    }
+}
+
+private struct WorkspaceItemView: View {
+    
+    @Bindable var workspaceDb: WorkspaceDb
+
+    ///
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        TextField("Workspace Name", text: $workspaceDb.name)
+            .listRowInsets(.init())
+            .autocorrectionDisabled()
+            .focused($focused, equals: true)
+            .padding(.vertical, 8)
+            .onTapGesture {
+                focused = true
+            }
+            .contextMenu {
+                Button(
+                    action: {
+                        modelContext.delete(workspaceDb)
+                    },
+                    label: {
+                        Text("Delete")
+                            .foregroundColor(.red)
+                    },
+                )
+            }
     }
 }
