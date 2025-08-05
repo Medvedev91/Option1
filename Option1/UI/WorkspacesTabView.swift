@@ -9,26 +9,25 @@ struct WorkspacesTabView: View {
     
     var body: some View {
         List {
-            Section {
-                ForEach(workspacesDb) { workspaceDb in
-                    Text(workspaceDb.name)
-                        .contextMenu {
-                            Button(
-                                action: {
-                                    modelContext.delete(workspaceDb)
-                                },
-                                label: {
-                                    Text("Delete")
-                                        .foregroundColor(.red)
-                                }
-                            )
-                        }
-                        .padding(.vertical, 4)
-                }
-                .onMove { from, to in
-                }
+            ForEach(workspacesDb) { workspaceDb in
+                Text(workspaceDb.name)
+                    .contextMenu {
+                        Button(
+                            action: {
+                                modelContext.delete(workspaceDb)
+                            },
+                            label: {
+                                Text("Delete")
+                                    .foregroundColor(.red)
+                            }
+                        )
+                    }
+                    .padding(.vertical, 4)
+            }
+            .onMove { from, to in
             }
         }
+        .listStyle(.plain)
         .navigationTitle("Workspaces")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
