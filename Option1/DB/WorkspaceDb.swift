@@ -9,6 +9,10 @@ class WorkspaceDb {
     var date: Date
     var sort: Int
     
+    var uniqString: String {
+        "\(id)-\(name)-\(date)-\(sort)"
+    }
+    
     init(id: UUID, name: String, date: Date, sort: Int) {
         self.id = id
         self.name = name

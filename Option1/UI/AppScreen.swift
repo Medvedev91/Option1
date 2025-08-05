@@ -7,6 +7,10 @@ struct AppScreen: View {
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb] = []
+    // onChange(workspacesDb) ignores fields changes
+    private var workspacesObserver: String {
+        workspacesDb.map { $0.uniqString }.joined(separator: "|")
+    }
     
     private let timer1s = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var isPermissionGranted = isAccessibilityGranted(showDialog: false)
@@ -22,7 +26,7 @@ struct AppScreen: View {
         .onReceive(timer1s) { _ in
             isPermissionGranted = isAccessibilityGranted(showDialog: false)
         }
-        .onChange(of: workspacesDb, initial: true) { _, workspacesDb in
+        .onChange(of: workspacesObserver, initial: true) {
             MenuManager.setWorkspacesDb(workspacesDb)
         }
     }
