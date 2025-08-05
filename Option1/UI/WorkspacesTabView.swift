@@ -25,6 +25,7 @@ struct WorkspacesTabView: View {
                     .padding(.vertical, 4)
             }
             .onMove { from, to in
+                moveWorkspace(from: from, to: to)
             }
         }
         .listStyle(.plain)
@@ -50,5 +51,23 @@ struct WorkspacesTabView: View {
                 sort: nextSort,
             )
         )
+    }
+    
+    private func moveWorkspace(from: IndexSet, to: Int) {
+        var sortedWorkspacesDb = workspacesDb
+        from.forEach { fromIdx in
+            // Fix crash if single item
+            // and ignore same position
+            if fromIdx == to {
+                return
+            }
+            let newFromIdx = fromIdx
+            let newToIdx = (fromIdx > to ? to : (to - 1))
+            sortedWorkspacesDb.swapAt(newFromIdx, newToIdx)
+        }
+        sortedWorkspacesDb.enumerated().forEach { idx, workspaceDb in
+            workspaceDb.sort = idx
+        }
+        try! modelContext.save()
     }
 }
