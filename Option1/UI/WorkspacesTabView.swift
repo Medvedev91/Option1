@@ -5,7 +5,7 @@ struct WorkspacesTabView: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @Query private var workspacesDb: [WorkspaceDb] = []
+    @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb] = []
     
     var body: some View {
         List {
@@ -33,9 +33,23 @@ struct WorkspacesTabView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("New Workspace") {
+                    newWorkspace()
                 }
                 .buttonStyle(.link)
             }
         }
+    }
+    
+    private func newWorkspace() {
+        let maxSort: Int = workspacesDb.max { $0.sort < $1.sort }?.sort ?? 0
+        let nextSort: Int = maxSort + 1
+        modelContext.insert(
+            WorkspaceDb(
+                id: UUID(),
+                name: "Workspace #\(nextSort)",
+                date: Date.now,
+                sort: nextSort,
+            )
+        )
     }
 }
