@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 import SwiftData
 
-struct SettingsScreen: View {
+struct SettingsTabView: View {
     
     @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.modelContext) private var modelContext

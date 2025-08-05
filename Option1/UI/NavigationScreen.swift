@@ -27,7 +27,7 @@ struct NavigationScreen: View {
                 case .workspaces:
                     WorkspacesTabView()
                 case .settings:
-                    SettingsScreen()
+                    SettingsTabView()
                 }
             }
         )
