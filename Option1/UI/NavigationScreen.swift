@@ -25,7 +25,7 @@ struct NavigationScreen: View {
                 case .main:
                     MainTabView()
                 case .workspaces:
-                    Text("todo")
+                    WorkspacesTabView()
                 case .settings:
                     SettingsScreen()
                 }
