@@ -2,9 +2,6 @@ import AppKit
 import SwiftUI
 import SwiftData
 
-// todo example
-// https://medium.com/@clyapp/customizing-swiftui-settings-window-on-macos-4c47d0060ee4
-
 struct SettingsScreen: View {
     
     @Environment(\.dismissWindow) private var dismissWindow
@@ -21,15 +18,6 @@ struct SettingsScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                
-                Text("Bind Window - Option + Shift + 1 .. 9")
-                    .padding(.top, 4)
-                
-                Text("Focus Window - Option + 1 .. 9")
-                    .padding(.top, 4)
-                
-                Divider()
-                    .padding(.vertical)
                 
                 Text("Workspaces")
                     .font(.system(size: 18, weight: .bold))
