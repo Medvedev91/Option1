@@ -11,7 +11,7 @@ struct Option1App: App {
             MainScreen()
                 .frame(width: 350, height: 400)
         }
-        .modelContainer(dbContainer)
+        .modelContainer(for: [KvDb.self, WorkspaceDb.self])
         .windowResizability(.contentSize)
         .commands {
             // Disable creating new window by Command + N
