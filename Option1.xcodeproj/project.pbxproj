@@ -13,7 +13,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2C1EE2A62E1ABB30007FD28F /* Option1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Option1.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C1EE2A62E1ABB30007FD28F /* Option1 DEBUG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Option1 DEBUG.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C1EE4472E1AEB21007FD28F /* SkyLight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SkyLight.framework; path = ../../../../System/Library/PrivateFrameworks/SkyLight.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -64,7 +64,7 @@
 		2C1EE2A72E1ABB30007FD28F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2C1EE2A62E1ABB30007FD28F /* Option1.app */,
+				2C1EE2A62E1ABB30007FD28F /* Option1 DEBUG.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,7 +101,7 @@
 				2C409ED92E38D762009E96D6 /* Sparkle */,
 			);
 			productName = Option1;
-			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1.app */;
+			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1 DEBUG.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -307,8 +307,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 2025.08.05;
-				PRODUCT_BUNDLE_IDENTIFIER = io.option1.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = debug.io.option1.app;
+				PRODUCT_NAME = "$(TARGET_NAME) DEBUG";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
