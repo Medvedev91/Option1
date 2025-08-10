@@ -41,10 +41,10 @@ struct WindowsManager {
         configuration.arguments = ["/bin"]
         NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: nil)
     }
-}
-
-private func getActiveApplicationOrNil() -> NSRunningApplication? {
-    NSWorkspace.shared.runningApplications.first(where: { $0.isActive })
+    
+    static func getActiveApplicationOrNil() -> NSRunningApplication? {
+        NSWorkspace.shared.runningApplications.first { $0.isActive }
+    }
 }
 
 // Source https://github.com/lwouis/alt-tab-macos/blob/b325cc75c02ea6685e9adef93e49a8a1700062fb/src/logic/Window.swift#L198
