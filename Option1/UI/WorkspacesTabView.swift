@@ -39,6 +39,7 @@ struct WorkspacesTabView: View {
                 sort: nextSort,
             )
         )
+        try! modelContext.save()
     }
     
     private func moveWorkspace(from: IndexSet, to: Int) {
@@ -83,6 +84,7 @@ private struct WorkspaceItemView: View {
                 Button(
                     action: {
                         modelContext.delete(workspaceDb)
+                        try! modelContext.save()
                     },
                     label: {
                         Text("Delete")
