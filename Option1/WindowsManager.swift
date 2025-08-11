@@ -32,10 +32,10 @@ struct WindowsManager {
         guard let app: NSRunningApplication = getActiveApplicationOrNil(),
               let bundle: String = app.bundleIdentifier
         else { return }
-        openApplicationByBundleIdentifier(bundle)
+        openApplicationByBundle(bundle)
     }
     
-    static func openApplicationByBundleIdentifier(_ bundle: String) {
+    static func openApplicationByBundle(_ bundle: String) {
         guard let url: URL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else { return }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.arguments = ["/bin"]

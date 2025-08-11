@@ -2,24 +2,29 @@ import AppKit
 import SwiftUI
 import SwiftData
 import HotKey
-
-var globalBinds: [PersistentBind] = []
+import Cocoa
 
 private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
 
 struct SettingsTabView: View {
     
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var axuiElements: [AXUIElement] = []
     @State private var focusedWindow: AXUIElement? = nil
-    @State private var focusedApplicationBundle: String? = nil
     
-    @State private var localBinds: [PersistentBind] = globalBinds
+    @Query private var bindsDb: [BindDb] = []
+    @State private var bindsUi: [BindUi] = []
+    
+    private let nsApps: [NSRunningApplication] = NSWorkspace.shared.runningApplications.filter {
+        $0.activationPolicy == .regular
+    }
     
     @Query private var workspacesDb: [WorkspaceDb] = []
     
     @State private var formKey: Key = .one
     @State private var formWorkspaceDb: WorkspaceDb? = nil
-    @State private var formBundle: String = ""
+    @State private var formNsApp: NSRunningApplication?
     @State private var formSubstring: String = ""
     
     var body: some View {
@@ -32,13 +37,6 @@ struct SettingsTabView: View {
                         let axuiElements = try! WindowsManager.getWindowsForActiveApplicationOrNil() ?? []
                         self.axuiElements = axuiElements
                         self.focusedWindow = try! WindowsManager.getFocusedWindowOrNil()
-                        self.focusedApplicationBundle = WindowsManager.getActiveApplicationOrNil()?.bundleIdentifier
-                    }
-                }
-                
-                if let focusedApplicationBundle = focusedApplicationBundle {
-                    Text(focusedApplicationBundle).onTapGesture {
-                        formBundle = focusedApplicationBundle
                     }
                 }
                 
@@ -60,42 +58,49 @@ struct SettingsTabView: View {
                 Divider()
                     .padding(.vertical)
                 
-                ForEach(localBinds, id: \.self) { bind in
-                    Text("\(bind.key.description) - \(bind.workspaceDb.name) - \(bind.bundle) - \(bind.substring)")
+                ForEach(bindsUi, id: \.self) { bindUi in
+                    let bindDb = bindUi.bindDb
+                    Text("\(bindDb.key) - \(bindUi.workspaceDb?.name ?? "Shared") - \(bindDb.bundle) - \(bindDb.substring)")
                         .onTapGesture {
-                            localBinds.remove(at: localBinds.firstIndex(of: bind)!)
+                            bindDb.delete()
                         }
                 }
                 
                 HStack {
+                    
                     Picker("", selection: $formKey) {
                         ForEach(keys, id: \.self) { key in
                             Text(key.description).tag(key)
                         }
                     }
                     .frame(width: 60)
+                    
                     Picker("", selection: $formWorkspaceDb) {
-                        if formWorkspaceDb == nil {
-                            Text("").tag(nil as WorkspaceDb?)
-                        }
+                        Text("Shared").tag(nil as WorkspaceDb?)
                         ForEach(workspacesDb) { workspaceDb in
                             Text(workspaceDb.name).tag(workspaceDb as WorkspaceDb?)
                         }
                     }
                     .frame(width: 150)
-                    TextField("Bundle Identifier", text: $formBundle)
-                        .autocorrectionDisabled()
+                    
+                    Picker("", selection: $formNsApp) {
+                        if formNsApp == nil {
+                            Text("").tag(nil as NSRunningApplication?)
+                        }
+                        ForEach(nsApps, id: \.self) { nsApp in
+                            Text(nsApp.bundleIdentifier ?? "-").tag(nsApp as NSRunningApplication?)
+                        }
+                    }
+                    
                     TextField("Title Substring", text: $formSubstring)
                         .autocorrectionDisabled()
                     Button("Add") {
-                        if let formWorkspaceDb = formWorkspaceDb {
-                            localBinds.append(
-                                PersistentBind(
-                                    key: formKey,
-                                    workspaceDb: formWorkspaceDb,
-                                    bundle: formBundle.lowercased(),
-                                    substring: formSubstring.lowercased(),
-                                )
+                        if let formNsApp = formNsApp {
+                            BindDb.insert(
+                                key: formKey.description,
+                                workspaceDb: formWorkspaceDb,
+                                bundle: formNsApp.bundleIdentifier!,
+                                substring: formSubstring,
                             )
                         }
                     }
@@ -108,15 +113,27 @@ struct SettingsTabView: View {
             .padding()
         }
         .navigationTitle("Settings")
-        .onChange(of: localBinds) { _, newLocalBinds in
-            globalBinds = newLocalBinds
+        .onChange(of: formNsApp) { _, newValue in
+            if let newValue = newValue {
+                let pid = newValue.processIdentifier
+                let axuiElement = AXUIElementCreateApplication(pid)
+                let windows = try! axuiElement.allWindows(pid)
+                self.axuiElements = windows
+            }
+        }
+        .onChange(of: bindsDb, initial: true) { _, newBindsDb in
+            let workspacesDb = WorkspaceDb.getAll()
+            bindsUi = newBindsDb.map { bindDb in
+                BindUi(
+                    bindDb: bindDb,
+                    workspaceDb: workspacesDb.first { $0.id == bindDb.workspaceId },
+                )
+            }
         }
     }
 }
 
-struct PersistentBind: Hashable {
-    let key: Key
-    let workspaceDb: WorkspaceDb
-    let bundle: String
-    let substring: String
+private struct BindUi: Hashable {
+    let bindDb: BindDb
+    let workspaceDb: WorkspaceDb?
 }

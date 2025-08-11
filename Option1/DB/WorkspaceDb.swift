@@ -19,4 +19,14 @@ class WorkspaceDb {
         self.date = date
         self.sort = sort
     }
+    
+    // todo func delete with deps
+    // todo func insert
+    
+    ///
+    
+    @MainActor
+    static func getAll() -> [WorkspaceDb] {
+        try! DB.modelContainer.mainContext.fetch(FetchDescriptor<WorkspaceDb>())
+    }
 }
