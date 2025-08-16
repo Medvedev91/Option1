@@ -122,7 +122,7 @@ struct SettingsTabView: View {
             }
         }
         .onChange(of: bindsDb, initial: true) { _, newBindsDb in
-            let workspacesDb = WorkspaceDb.getAll()
+            let workspacesDb = WorkspaceDb.selectAll()
             bindsUi = newBindsDb.map { bindDb in
                 BindUi(
                     bindDb: bindDb,

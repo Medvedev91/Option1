@@ -29,17 +29,7 @@ struct WorkspacesTabView: View {
     }
     
     private func newWorkspace() {
-        let maxSort: Int = workspacesDb.max { $0.sort < $1.sort }?.sort ?? 0
-        let nextSort: Int = maxSort + 1
-        modelContext.insert(
-            WorkspaceDb(
-                id: UUID(),
-                name: "Workspace #\(nextSort)",
-                date: Date.now,
-                sort: nextSort,
-            )
-        )
-        try! modelContext.save()
+        WorkspaceDb.insert()
     }
     
     private func moveWorkspace(from: IndexSet, to: Int) {
