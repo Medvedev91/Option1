@@ -34,15 +34,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            let wOrNil = try! WindowsManager.getFocusedWindowOrNil()
         }
         
-        
-        NotificationCenter.default.addObserver(
-            forName: NSApplication.didChangeScreenParametersNotification,
-            object: nil,
-            queue: OperationQueue.main
-        ) { (notification: Notification) in
-            //            print("NotificationCenter")
-        }
-        
         appObserver.start()
     }
 }
