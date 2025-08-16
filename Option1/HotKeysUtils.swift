@@ -1,8 +1,6 @@
 import AppKit
 import HotKey
 
-// todo rename to HotKeysUtils
-
 private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
 
 private var keepHotKeyHandlers: [Any] = []
