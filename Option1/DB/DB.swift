@@ -5,10 +5,14 @@ import SwiftData
 
 struct DB {
     
+    // https://gist.github.com/Medvedev91/6d797561326c56e7467ed060b9f6e1ba
     static let modelContainer: ModelContainer = {
-        // https://gist.github.com/pdarcey/981b99bcc436a64df222cd8e3dd92871
-        let bundle: String = Bundle.main.bundleIdentifier!
-        let fileURL = URL.applicationSupportDirectory.appending(path: "\(bundle)/SwiftData.store")
+        #if DEBUG
+            let folder = "Option1Debug"
+        #else
+            let folder = "Option1"
+        #endif
+        let fileURL = URL.applicationSupportDirectory.appending(path: "\(folder)/SwiftData.store")
         let schema = Schema([KvDb.self, WorkspaceDb.self, BindDb.self])
         let configuration = ModelConfiguration(
             "SwiftData",
