@@ -6,10 +6,10 @@ struct AppScreen: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb] = []
-    // onChange(workspacesDb) ignores fields changes
-    private var workspacesObserver: String {
-        workspacesDb.map { $0.uniqString }.joined(separator: "|")
+    @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
+    private var workspacesObserver: Int {
+        MenuManager.setWorkspacesDb(workspacesDb)
+        return 1
     }
     
     private let timer1s = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -26,8 +26,9 @@ struct AppScreen: View {
         .onReceive(timer1s) { _ in
             isPermissionGranted = isAccessibilityGranted(showDialog: false)
         }
-        .onChange(of: workspacesObserver, initial: true) {
-            MenuManager.setWorkspacesDb(workspacesDb)
+        .onChange(of: workspacesObserver) {
+            // Not body needed. Just force workspacesObserver execution.
+            // Just onChange(workspacesDb) ignores fields changes.
         }
     }
 }

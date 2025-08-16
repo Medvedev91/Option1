@@ -90,7 +90,7 @@ class MenuManager {
 private extension AppDelegate {
     
     @objc func openSettings() {
-        WindowsManager.openApplicationByBundleIdentifier(Bundle.main.bundleIdentifier!)
+        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
     }
     
     @objc func setWorkspace(_ menuItem: NSMenuItem) {
