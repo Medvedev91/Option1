@@ -32,6 +32,11 @@ class WorkspaceDb {
     ///
     
     @MainActor
+    static func selectAll() -> [WorkspaceDb] {
+        try! DB.modelContainer.mainContext.fetch(FetchDescriptor<WorkspaceDb>())
+    }
+    
+    @MainActor
     static func insert() {
         let lastSort: Int = selectAll().max { $0.sort < $1.sort }?.sort ?? 0
         let nextSort: Int = lastSort + 1
@@ -44,10 +49,5 @@ class WorkspaceDb {
             )
         )
         DB.save()
-    }
-    
-    @MainActor
-    static func selectAll() -> [WorkspaceDb] {
-        try! DB.modelContainer.mainContext.fetch(FetchDescriptor<WorkspaceDb>())
     }
 }
