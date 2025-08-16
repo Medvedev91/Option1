@@ -7,19 +7,22 @@ private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eigh
 
 private var keepHotKeyHandlers: [Any] = []
 
-func setupHotKeys() {
-    keys.forEach { key in
-        keepHotKeyHandlers.append(
-            HotKey(
-                key: key,
-                modifiers: [.option],
-                keyDownHandler: {
-                    Task { @MainActor in
-                        handleRun(key: key)
-                    }
-                },
+class HotKeysUtils {
+    
+    static func setup() {
+        keys.forEach { key in
+            keepHotKeyHandlers.append(
+                HotKey(
+                    key: key,
+                    modifiers: [.option],
+                    keyDownHandler: {
+                        Task { @MainActor in
+                            handleRun(key: key)
+                        }
+                    },
+                )
             )
-        )
+        }
     }
 }
 

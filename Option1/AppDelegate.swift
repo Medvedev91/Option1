@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        setupHotKeys()
+        HotKeysUtils.setup() 
         MenuManager.setup()
         
         NSWorkspace.shared.notificationCenter.addObserver(
