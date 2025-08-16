@@ -45,9 +45,8 @@ struct WorkspacesTabView: View {
             sortedWorkspacesDb.swapAt(newFromIdx, newToIdx)
         }
         sortedWorkspacesDb.enumerated().forEach { idx, workspaceDb in
-            workspaceDb.sort = idx
+            workspaceDb.updateSort(idx)
         }
-        try! modelContext.save()
     }
 }
 

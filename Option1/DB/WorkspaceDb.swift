@@ -23,6 +23,12 @@ class WorkspaceDb {
         DB.save()
     }
     
+    @MainActor
+    func updateSort(_ newSort: Int) {
+        sort = newSort
+        DB.save()
+    }
+    
     ///
     
     @MainActor
