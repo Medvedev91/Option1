@@ -27,7 +27,7 @@ class BindDb {
     ///
     
     @MainActor
-    static func getAll() -> [BindDb] {
+    static func selectAll() -> [BindDb] {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<BindDb>())
     }
     

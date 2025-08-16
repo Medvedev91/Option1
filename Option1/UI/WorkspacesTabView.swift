@@ -83,9 +83,7 @@ private struct WorkspaceItemView: View {
             .contextMenu {
                 Button(
                     action: {
-                        // todo delete with deps
-//                        modelContext.delete(workspaceDb)
-//                        try! modelContext.save()
+                        workspaceDb.deleteWithDependencies()
                     },
                     label: {
                         Text("Delete")

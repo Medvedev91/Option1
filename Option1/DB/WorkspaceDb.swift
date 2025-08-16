@@ -9,10 +9,6 @@ class WorkspaceDb {
     var date: Date
     var sort: Int
     
-    var uniqString: String {
-        "\(id)-\(name)-\(date)-\(sort)"
-    }
-    
     init(id: UUID, name: String, date: Date, sort: Int) {
         self.id = id
         self.name = name
@@ -20,8 +16,12 @@ class WorkspaceDb {
         self.sort = sort
     }
     
-    // todo func delete with deps
-    // todo func insert
+    @MainActor
+    func deleteWithDependencies() {
+        BindDb.selectAll().filter { $0.workspaceId == id }.forEach { $0.delete() }
+        DB.modelContainer.mainContext.delete(self)
+        DB.save()
+    }
     
     ///
     

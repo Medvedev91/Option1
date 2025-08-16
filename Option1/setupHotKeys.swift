@@ -49,7 +49,7 @@ private func handleRun(key: Key) {
     print("handleRun() \(key)")
     _ = isAccessibilityGranted(showDialog: true)
     
-    let bindsDb = BindDb.getAll()
+    let bindsDb = BindDb.selectAll()
     
     guard let bindDb: BindDb = {
         let bindsDbForKey = bindsDb.filter { $0.key == key.description }
