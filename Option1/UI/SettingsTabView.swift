@@ -8,19 +8,25 @@ private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eigh
 
 struct SettingsTabView: View {
     
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var axuiElements: [AXUIElement] = []
     @State private var focusedWindow: AXUIElement? = nil
     
-    @Query private var bindsDb: [BindDb] = []
-    @State private var bindsUi: [BindUi] = []
+    @Query private var bindsDb: [BindDb]
+    private var bindsUi: [BindUi] {
+        let workspacesDb = WorkspaceDb.selectAll()
+        return bindsDb.map { bindDb in
+            BindUi(
+                bindDb: bindDb,
+                workspaceDb: workspacesDb.first { $0.id == bindDb.workspaceId },
+            )
+        }
+    }
     
     private let nsApps: [NSRunningApplication] = NSWorkspace.shared.runningApplications.filter {
         $0.activationPolicy == .regular
     }
     
-    @Query private var workspacesDb: [WorkspaceDb] = []
+    @Query private var workspacesDb: [WorkspaceDb]
     
     @State private var formKey: Key = .one
     @State private var formWorkspaceDb: WorkspaceDb? = nil
@@ -119,15 +125,6 @@ struct SettingsTabView: View {
                 let axuiElement = AXUIElementCreateApplication(pid)
                 let windows = try! axuiElement.allWindows(pid)
                 self.axuiElements = windows
-            }
-        }
-        .onChange(of: bindsDb, initial: true) { _, newBindsDb in
-            let workspacesDb = WorkspaceDb.selectAll()
-            bindsUi = newBindsDb.map { bindDb in
-                BindUi(
-                    bindDb: bindDb,
-                    workspaceDb: workspacesDb.first { $0.id == bindDb.workspaceId },
-                )
             }
         }
     }
