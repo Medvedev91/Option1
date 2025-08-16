@@ -4,8 +4,6 @@ import SwiftData
 import HotKey
 import Cocoa
 
-private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
-
 struct SettingsTabView: View {
     
     @State private var axuiElements: [AXUIElement] = []
@@ -75,7 +73,7 @@ struct SettingsTabView: View {
                 HStack {
                     
                     Picker("", selection: $formKey) {
-                        ForEach(keys, id: \.self) { key in
+                        ForEach(HotKeysUtils.keys, id: \.self) { key in
                             Text(key.description).tag(key)
                         }
                     }

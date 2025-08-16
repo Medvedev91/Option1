@@ -1,12 +1,12 @@
 import AppKit
 import HotKey
 
-private let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
-
 private var keepHotKeyHandlers: [Any] = []
 
 class HotKeysUtils {
     
+    static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
+
     static func setup() {
         keys.forEach { key in
             keepHotKeyHandlers.append(
