@@ -17,15 +17,15 @@ class WorkspaceDb {
     }
     
     @MainActor
-    func deleteWithDependencies() {
-        BindDb.selectAll().filter { $0.workspaceId == id }.forEach { $0.delete() }
-        DB.modelContainer.mainContext.delete(self)
+    func updateSort(_ newSort: Int) {
+        sort = newSort
         DB.save()
     }
     
     @MainActor
-    func updateSort(_ newSort: Int) {
-        sort = newSort
+    func deleteWithDependencies() {
+        BindDb.selectAll().filter { $0.workspaceId == id }.forEach { $0.delete() }
+        DB.modelContainer.mainContext.delete(self)
         DB.save()
     }
     
