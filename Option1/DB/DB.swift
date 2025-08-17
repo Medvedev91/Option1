@@ -8,7 +8,7 @@ struct DB {
     // https://gist.github.com/Medvedev91/6d797561326c56e7467ed060b9f6e1ba
     static let modelContainer: ModelContainer = {
         #if DEBUG
-            let folder = "Option1Debug"
+            let folder = "Option1 Debug"
         #else
             let folder = "Option1"
         #endif
