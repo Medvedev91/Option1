@@ -16,19 +16,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
-            //            forName: NSWorkspace.activeSpaceDidChangeNotification,
-            //            forName: NSWorkspace.didChangeFileLabelsNotification,
             object: nil,
             queue: OperationQueue.main,
         ) { (notification: Notification) in
-            if let app = WindowsManager.getActiveApplicationOrNil() {
-                Task {
-                    try await Task.sleep(nanoseconds: 1_000_000_000)
-                    print("NSWorkspace \(app.bundleIdentifier)")
-                    AppObserver.shared.addObserver(for: app)
-                }
+            // https://developer.apple.com/documentation/appkit/nsworkspace/didactivateapplicationnotification
+            guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+                reportApi("didActivateApplicationNotification nil")
+                return
             }
-//            let wOrNil = try! WindowsManager.getFocusedWindowOrNil()
+            AppObserver.shared.addObserver(for: app)
         }
         
         AppObserver.shared.start()
