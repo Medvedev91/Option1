@@ -1,8 +1,5 @@
 import AppKit
 
-var localeChangeObserver: Any?
-let appObserver = AppObserver.shared
-
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -28,12 +25,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 Task {
                     try await Task.sleep(nanoseconds: 1_000_000_000)
                     print("NSWorkspace \(app.bundleIdentifier)")
-                    appObserver.addObserver(for: app)
+                    AppObserver.shared.addObserver(for: app)
                 }
             }
 //            let wOrNil = try! WindowsManager.getFocusedWindowOrNil()
         }
         
-        appObserver.start()
+        AppObserver.shared.start()
     }
 }
