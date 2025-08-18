@@ -32,6 +32,9 @@ struct NavigationScreen: View {
                             Label(workspaceDb.name, systemImage: "rectangle")
                                 .tag(Tab.workspace(workspaceDb: workspaceDb))
                         }
+                        .onMove { from, to in
+                            moveWorkspace(from: from, to: to)
+                        }
                     }
                     .collapsible(false)
                 }
@@ -51,6 +54,23 @@ struct NavigationScreen: View {
                 }
             }
         )
+    }
+    
+    private func moveWorkspace(from: IndexSet, to: Int) {
+        var sortedWorkspacesDb = workspacesDb
+        from.forEach { fromIdx in
+            // Fix crash if single item
+            // and ignore same position
+            if fromIdx == to {
+                return
+            }
+            let newFromIdx = fromIdx
+            let newToIdx = (fromIdx > to ? to : (to - 1))
+            sortedWorkspacesDb.swapAt(newFromIdx, newToIdx)
+        }
+        sortedWorkspacesDb.enumerated().forEach { idx, workspaceDb in
+            workspaceDb.updateSort(idx)
+        }
     }
 }
 
