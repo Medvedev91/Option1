@@ -1,5 +1,5 @@
 //
-// Based on https://gist.github.com/hiepnp1990/97048b56711b6017bd1b09731e061233
+// Based on https://gist.github.com/Medvedev91/58df7d63be01bd5a0f8880565f36d8b8
 //
 
 import Foundation
@@ -9,19 +9,18 @@ class AppObserver {
     
     static let shared = AppObserver()
     
-    var observers: [pid_t: AXObserver] = [:]
+    private var observers: [pid_t: AXObserver] = [:]
     
-    func start() {
-        let runningApps: [NSRunningApplication] = NSWorkspace.shared.runningApplications.filter {
-            $0.activationPolicy == .regular
+    func restart() {
+        observers.forEach {
+            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource($0.value), .defaultMode)
         }
-        for app in runningApps {
-            addObserver(for: app)
-        }
+        NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular }
+            .forEach { addObserver(app: $0) }
     }
     
-    // Adds an accessibility observer for a given application
-    func addObserver(for app: NSRunningApplication) {
+    func addObserver(app: NSRunningApplication) {
         let pid = app.processIdentifier
         
         var observer: AXObserver?
@@ -31,7 +30,6 @@ class AppObserver {
             let appPid = Unmanaged<NSNumber>.fromOpaque(appRefcon).takeUnretainedValue().int32Value
             if let activatedApp = NSRunningApplication(processIdentifier: appPid) {
                 let appName = activatedApp.localizedName ?? activatedApp.bundleIdentifier ?? "Unknown"
-                // Use the shared instance to debounce notifications
                 AppObserver.shared.handleNotification(appName: appName, notification: notification, element: element)
             }
         }

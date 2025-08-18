@@ -13,20 +13,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         HotKeysUtils.setup() 
         MenuManager.setup()
-        
-        NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didActivateApplicationNotification,
-            object: nil,
-            queue: OperationQueue.main,
-        ) { (notification: Notification) in
-            // https://developer.apple.com/documentation/appkit/nsworkspace/didactivateapplicationnotification
-            guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
-                reportApi("didActivateApplicationNotification nil")
-                return
-            }
-            AppObserver.shared.addObserver(for: app)
-        }
-        
-        AppObserver.shared.start()
     }
 }
