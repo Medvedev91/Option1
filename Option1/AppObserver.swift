@@ -30,7 +30,7 @@ class AppObserver {
             let appPid = Unmanaged<NSNumber>.fromOpaque(appRefcon).takeUnretainedValue().int32Value
             if let activatedApp = NSRunningApplication(processIdentifier: appPid) {
                 let appName = activatedApp.localizedName ?? activatedApp.bundleIdentifier ?? "Unknown"
-                AppObserver.shared.handleNotification(appName: appName, notification: notification, element: element)
+                AppObserver.shared.handleNotification(appName: appName, notification: notification, axElement: element)
             }
         }
         
@@ -50,45 +50,26 @@ class AppObserver {
             print("Failed to add activation notification for \(app.localizedName ?? "Unknown")")
         }
         
-        // Add notification for frontmost window changed
-//        addError = AXObserverAddNotification(observer, axApp, kAXFocusedWindowChangedNotification as CFString, appPidRef)
-//        if addError != .success {
-//            print("Failed to add window focus notification for \(app.localizedName ?? "Unknown")")
-//        }
-        
-        // todo check errors
+        // todo check errors like if addError != .success
         addError = AXObserverAddNotification(observer, axApp, kAXFocusedWindowChangedNotification as CFString, appPidRef)
         addError = AXObserverAddNotification(observer, axApp, kAXMainWindowChangedNotification as CFString, appPidRef)
         addError = AXObserverAddNotification(observer, axApp, kAXWindowCreatedNotification as CFString, appPidRef)
         addError = AXObserverAddNotification(observer, axApp, kAXApplicationHiddenNotification as CFString, appPidRef)
         addError = AXObserverAddNotification(observer, axApp, kAXApplicationShownNotification as CFString, appPidRef)
-
+        
         CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
         
         observers[pid] = observer
     }
     
-    func handleNotification(appName: String, notification: CFString, element: AXUIElement) {
-        if notification as String == kAXApplicationActivatedNotification as String {
-            var windowTitle: CFTypeRef?
-            AXUIElementCopyAttributeValue(element, kAXTitleAttribute as CFString, &windowTitle)
-        } else if notification as String == kAXFocusedWindowChangedNotification as String {
-            var windowTitle: CFTypeRef?
-            AXUIElementCopyAttributeValue(element, kAXTitleAttribute as CFString, &windowTitle)
-        } else {
-            var windowTitle: CFTypeRef?
-            AXUIElementCopyAttributeValue(element, kAXTitleAttribute as CFString, &windowTitle)
-        }
+    private func handleNotification(appName: String, notification: CFString, axElement: AXUIElement) {
+        // let notificationString: String = notification as String
+        // var windowTitle: CFTypeRef?
+        // AXUIElementCopyAttributeValue(axElement, kAXTitleAttribute as CFString, &windowTitle)
+        // print("handleNotification \(appName) \(notificationString) \((windowTitle as? String) ?? "--")")
         
-        var windowTitle: CFTypeRef?
-        AXUIElementCopyAttributeValue(element, kAXTitleAttribute as CFString, &windowTitle)
-        
-        ///
-        
-        var pid = pid_t(0)
-        AXUIElementGetPid(element, &pid)
         do {
-            try AXUIElementCreateApplication(pid).focusedWindow()
+            _ = try axElement.focusedWindow()
         } catch {
             reportApi("AppObserver.handleNotification() error:\n\(error)")
         }
