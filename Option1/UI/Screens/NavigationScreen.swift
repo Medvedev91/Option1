@@ -33,6 +33,17 @@ struct NavigationScreen: View {
                             ForEach(workspacesDb) { workspaceDb in
                                 Label(workspaceDb.name, systemImage: "rectangle")
                                     .tag(Tab.workspace(workspaceDb: workspaceDb))
+                                    .contextMenu {
+                                        Button(
+                                            action: {
+                                                workspaceDb.deleteWithDependencies()
+                                            },
+                                            label: {
+                                                Text("Delete")
+                                                    .foregroundColor(.red)
+                                            },
+                                        )
+                                    }
                             }
                             .onMove { from, to in
                                 moveWorkspace(from: from, to: to)
