@@ -22,8 +22,6 @@ struct NavigationScreen: View {
                         
                         Label("Option 1", systemImage: "option")
                             .tag(Tab.main)
-                        Label("Workspaces", systemImage: "rectangle.stack")
-                            .tag(Tab.workspaces)
                         Label("Settings", systemImage: "gearshape")
                             .tag(Tab.settings)
                         
@@ -81,8 +79,6 @@ struct NavigationScreen: View {
                 switch tab {
                 case .main:
                     MainTabView()
-                case .workspaces:
-                    WorkspacesTabView()
                 case .settings:
                     SettingsTabView()
                 case .workspace(let workspaceDb):
@@ -112,7 +108,6 @@ struct NavigationScreen: View {
 
 private enum Tab: Hashable {
     case main
-    case workspaces
     case settings
     case workspace(workspaceDb: WorkspaceDb?)
 }
