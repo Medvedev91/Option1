@@ -16,30 +16,55 @@ struct NavigationScreen: View {
         NavigationSplitView(
             columnVisibility: $columnVisibility,
             sidebar: {
-                List(selection: $tab) {
-                    
-                    Label("Option 1", systemImage: "option")
-                        .tag(Tab.main)
-                    Label("Workspaces", systemImage: "rectangle.stack")
-                        .tag(Tab.workspaces)
-                    Label("Settings", systemImage: "gearshape")
-                        .tag(Tab.settings)
-                    
-                    Section("Workspaces") {
-                        Label("Shared", systemImage: "rectangle.on.rectangle")
-                            .tag(Tab.workspace(workspaceDb: nil))
-                        ForEach(workspacesDb) { workspaceDb in
-                            Label(workspaceDb.name, systemImage: "rectangle")
-                                .tag(Tab.workspace(workspaceDb: workspaceDb))
+                VStack(spacing: 0) {
+
+                    List(selection: $tab) {
+                        
+                        Label("Option 1", systemImage: "option")
+                            .tag(Tab.main)
+                        Label("Workspaces", systemImage: "rectangle.stack")
+                            .tag(Tab.workspaces)
+                        Label("Settings", systemImage: "gearshape")
+                            .tag(Tab.settings)
+                        
+                        Section("Workspaces") {
+                            Label("Shared", systemImage: "rectangle.on.rectangle")
+                                .tag(Tab.workspace(workspaceDb: nil))
+                            ForEach(workspacesDb) { workspaceDb in
+                                Label(workspaceDb.name, systemImage: "rectangle")
+                                    .tag(Tab.workspace(workspaceDb: workspaceDb))
+                            }
+                            .onMove { from, to in
+                                moveWorkspace(from: from, to: to)
+                            }
                         }
-                        .onMove { from, to in
-                            moveWorkspace(from: from, to: to)
-                        }
+                        .collapsible(false)
                     }
-                    .collapsible(false)
+                    .listStyle(.sidebar)
+                    .frame(minWidth: 200)
+                    
+                    Spacer()
+                    
+                    Divider()
+                    
+                    HStack {
+                        Button(
+                            action: {
+                                WorkspaceDb.insert()
+                            },
+                            label: {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 13))
+                            }
+                        )
+                        .buttonStyle(.plain)
+                        .padding(.leading, 8)
+                        .opacity(0.8)
+                        Spacer()
+                    }
+                    .padding(.top, 8)
+                    .padding(.bottom, 10)
                 }
-                .listStyle(.sidebar)
-                .frame(minWidth: 200)
             },
             detail: {
                 switch tab {
