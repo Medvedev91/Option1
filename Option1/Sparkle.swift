@@ -5,7 +5,10 @@
 // - Bump app version,
 // - Xcode: Product -> Archive -> Distribute App -> Direct Distribution;
 // - Wait for Ready to distribute -> Export App. Save to Download with New Folder -> "Option1";
-// - Open Terminal app, cd ~/Downloads/Option1; run: create-dmg 'Option1.app', don't care about signed error;
+// - Open Terminal app
+//   - cd ~/Downloads/Option1
+//   - create-dmg 'Option1.app'
+// - don't care about signed error;
 // - Rename new file to Option1.dmg, remove Option1.app file from Option1 folder.
 // - Right click on Sparkle in project navigator: Show in Finder;
 // - Go to parent folder: Go -> Enclosing Folder -> Artifacts -> sparkle -> Sparkle -> bin;
