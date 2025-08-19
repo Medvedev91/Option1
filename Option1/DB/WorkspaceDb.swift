@@ -17,6 +17,12 @@ class WorkspaceDb {
     }
     
     @MainActor
+    func updateName(_ newName: String) {
+        name = newName
+        DB.save()
+    }
+    
+    @MainActor
     func updateSort(_ newSort: Int) {
         sort = newSort
         DB.save()

@@ -19,6 +19,13 @@ class BindDb {
     }
     
     @MainActor
+    func updateBundleAndSubstring(bundle: String, substring: String) {
+        self.bundle = bundle
+        self.substring = substring
+        DB.save()
+    }
+    
+    @MainActor
     func delete() {
         DB.modelContainer.mainContext.delete(self)
         DB.save()
