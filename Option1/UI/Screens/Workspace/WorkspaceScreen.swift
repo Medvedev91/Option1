@@ -12,17 +12,15 @@ struct WorkspaceScreen: View {
     @State private var formName = ""
     
     var body: some View {
-        List {
+        ScrollView {
             ForEach(HotKeysUtils.keys, id: \.self) { key in
-                HStack {
-                    Image(systemName: "option")
-                        .font(.system(size: 12, weight: .bold))
-                    Text(key.description)
-                }
-                .padding(.vertical, 4)
+                WorkspaceBindView(
+                    key: key,
+                    workspaceDb: workspaceDb,
+                )
+                .padding(.top, key == .one ? 8 : 0)
             }
         }
-        .listStyle(.plain)
         .alert("", isPresented: $formPresented) {
             TextField("Workspace", text: $formName)
             Button("Cancel") {
