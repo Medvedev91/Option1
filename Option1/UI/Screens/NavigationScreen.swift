@@ -83,6 +83,7 @@ struct NavigationScreen: View {
                     SettingsTabView()
                 case .workspace(let workspaceDb):
                     WorkspaceScreen(workspaceDb: workspaceDb)
+                        .id("WorkspaceScreen \(workspaceDb?.id.uuidString ?? "")")
                 }
             }
         )
