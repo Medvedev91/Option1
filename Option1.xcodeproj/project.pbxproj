@@ -10,6 +10,7 @@
 		2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1EE4472E1AEB21007FD28F /* SkyLight.framework */; };
 		2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 2C338CFC2E351B4500A692E3 /* HotKey */; };
 		2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 2C409ED92E38D762009E96D6 /* Sparkle */; };
+		2CBE56A72EC602B700CBAF18 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 2CBE56A62EC602B700CBAF18 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */,
+				2CBE56A72EC602B700CBAF18 /* Alamofire in Frameworks */,
 				2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */,
 				2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */,
 			);
@@ -99,6 +101,7 @@
 			packageProductDependencies = (
 				2C338CFC2E351B4500A692E3 /* HotKey */,
 				2C409ED92E38D762009E96D6 /* Sparkle */,
+				2CBE56A62EC602B700CBAF18 /* Alamofire */,
 			);
 			productName = Option1;
 			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1 DEBUG.app */;
@@ -131,6 +134,7 @@
 			packageReferences = (
 				2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */,
 				2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				2CBE56A52EC602B700CBAF18 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C1EE2A72E1ABB30007FD28F /* Products */;
@@ -395,6 +399,14 @@
 				minimumVersion = 2.7.1;
 			};
 		};
+		2CBE56A52EC602B700CBAF18 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.10.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -407,6 +419,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		2CBE56A62EC602B700CBAF18 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CBE56A52EC602B700CBAF18 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
