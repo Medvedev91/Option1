@@ -17,7 +17,22 @@ class AppObserver {
         }
         NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
-            .forEach { addObserver(app: $0) }
+            .forEach { app in
+                addObserver(app: app)
+                // `Task {}` BECAUSE OF SUPER SLOW LOOP BY ALL APPS USING `.allWindows()`
+                Task {
+                    let pid = app.processIdentifier
+                    let axElement = AXUIElementCreateApplication(pid)
+                    do {
+                        try axElement.allWindows(pid).forEach { axuiElement in
+                            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+                        }
+                    } catch {
+                        reportApi("AppObserver.restart() error:\n\(error)")
+                    }
+                }
+            }
+        
     }
     
     func addObserver(app: NSRunningApplication) {
