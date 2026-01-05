@@ -64,28 +64,20 @@ class AppObserver {
         // Store the process ID as the refcon (reference constant) for later use
         let appPidRef = Unmanaged.passUnretained(NSNumber(value: pid)).toOpaque()
         
+        let errorText = "AppObserver.addObserver() \(app.bundleIdentifier ?? "NO-BUNDLE") error"
+        func attachNotification(_ notification: String) {
+            let error = AXObserverAddNotification(observer, axApp, notification as CFString, appPidRef)
+            if error != .success {
+                reportApi("\(errorText) \(notification) \(error)")
+            }
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             
-            ///
-            /// Документация к каждом из событий ниже в handleNotification()
-            ///
-            
-            let eText = "AppObserver.addObserver() \(app.bundleIdentifier ?? "NO-BUNDLE") error"
-            
-            let e1 = AXObserverAddNotification(observer, axApp, kAXApplicationActivatedNotification as CFString, appPidRef)
-            if e1 != .success {
-                reportApi("\(eText) kAXApplicationActivatedNotification \(e1)")
-            }
-            
-            let e2 = AXObserverAddNotification(observer, axApp, kAXFocusedWindowChangedNotification as CFString, appPidRef)
-            if e2 != .success {
-                reportApi("\(eText) kAXApplicationActivatedNotification \(e2)")
-            }
-            
-            let e3 = AXObserverAddNotification(observer, axApp, kAXTitleChangedNotification as CFString, appPidRef)
-            if e3 != .success {
-                reportApi("\(eText) kAXApplicationActivatedNotification \(e3)")
-            }
+            // Документация к каждому из событий ниже в handleNotification()
+            attachNotification(kAXApplicationActivatedNotification)
+            attachNotification(kAXFocusedWindowChangedNotification)
+            attachNotification(kAXTitleChangedNotification)
             
             CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
             
