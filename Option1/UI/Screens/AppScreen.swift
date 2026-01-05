@@ -40,7 +40,8 @@ struct AppScreen: View {
 
 ///
 
-var activateObserver: Any? = nil
+private var activateObserver: Any? = nil
+private var terminateObserver: Any? = nil
 
 private func setupAppObservers() {
     if let activateObserver = activateObserver {
@@ -56,7 +57,29 @@ private func setupAppObservers() {
             reportApi("didActivateApplicationNotification nil")
             return
         }
-        AppObserver.shared.addObserver(app: app)
+        // Тут нельзя использовать Task, по этому initialTaskOrDispatch = false.
+        AppObserver.shared.addObserver(app: app, initialTaskOrDispatch: false)
     }
+    
+    if let terminateObserver = terminateObserver {
+        NSWorkspace.shared.notificationCenter.removeObserver(terminateObserver)
+    }
+    terminateObserver = NSWorkspace.shared.notificationCenter.addObserver(
+        forName: NSWorkspace.didTerminateApplicationNotification,
+        object: nil,
+        queue: OperationQueue.main,
+    ) { (notification: Notification) in
+        // https://developer.apple.com/documentation/appkit/nsworkspace/didactivateapplicationnotification
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+            reportApi("didTerminateApplicationNotification nil")
+            return
+        }
+        guard let bundle = app.bundleIdentifier else {
+            reportApi("didTerminateApplicationNotification no bundle")
+            return
+        }
+        CachedWindow.cleanByBundle(bundle)
+    }
+    
     AppObserver.shared.restart()
 }
