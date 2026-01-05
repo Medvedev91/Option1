@@ -18,6 +18,8 @@ class AppObserver {
         NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
             .forEach { app in
+                // Если не использовать Task то приложение подвисает на
+                // несколько секунд, по этому initialTaskOrDispatch = true.
                 addObserver(app: app, initialTaskOrDispatch: true)
             }
     }
