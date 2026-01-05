@@ -70,19 +70,21 @@ class AppObserver {
             /// Документация к каждом из событий ниже в handleNotification()
             ///
             
+            let eText = "AppObserver.addObserver() \(app.bundleIdentifier ?? "NO-BUNDLE") error"
+            
             let e1 = AXObserverAddNotification(observer, axApp, kAXApplicationActivatedNotification as CFString, appPidRef)
             if e1 != .success {
-                reportApi("AppObserver.addObserver() kAXApplicationActivatedNotification \(e1)")
+                reportApi("\(eText) kAXApplicationActivatedNotification \(e1)")
             }
             
             let e2 = AXObserverAddNotification(observer, axApp, kAXFocusedWindowChangedNotification as CFString, appPidRef)
             if e2 != .success {
-                reportApi("AppObserver.addObserver() kAXApplicationActivatedNotification \(e2)")
+                reportApi("\(eText) kAXApplicationActivatedNotification \(e2)")
             }
             
             let e3 = AXObserverAddNotification(observer, axApp, kAXTitleChangedNotification as CFString, appPidRef)
             if e3 != .success {
-                reportApi("AppObserver.addObserver() kAXApplicationActivatedNotification \(e3)")
+                reportApi("\(eText) kAXApplicationActivatedNotification \(e3)")
             }
             
             CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
