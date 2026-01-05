@@ -18,25 +18,15 @@ class AppObserver {
         NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
             .forEach { app in
-                addObserver(app: app)
-                // `Task {}` BECAUSE OF SUPER SLOW LOOP BY ALL APPS USING `.allWindows()`
-                Task {
-                    let pid = app.processIdentifier
-                    let axElement = AXUIElementCreateApplication(pid)
-                    do {
-                        try axElement.allWindows(pid).forEach { axuiElement in
-                            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
-                        }
-                    } catch {
-                        reportApi("AppObserver.restart() error:\n\(error)")
-                    }
-                }
+                addObserver(app: app, initialTaskOrDispatch: true)
             }
-        
     }
     
-    func addObserver(app: NSRunningApplication) {
+    func addObserver(app: NSRunningApplication, initialTaskOrDispatch: Bool) {
         let pid = app.processIdentifier
+        
+        initCachedWindows(app: app, taskOrDispatch: initialTaskOrDispatch)
+        
         var observer: AXObserver?
         // Callback function triggered when an application is activated
         let callback: AXObserverCallback = { (observer, axuiElement, notification, refcon) in
@@ -87,6 +77,31 @@ class AppObserver {
 }
 
 ///
+
+// Не понимаю как работает, но иногда можно вызывать
+// из Task{} а иногда при вызове получаю крэш.
+private func initCachedWindows(
+    app: NSRunningApplication,
+    taskOrDispatch: Bool,
+) {
+    // Fill Initial CachedWindow
+    func initCachedWindow() {
+        do {
+            try CachedWindow.addByApp(app)
+        } catch {
+            reportApi("AppObserver.addObserver() taskOrDispatch:\(taskOrDispatch) error:\(error)")
+        }
+    }
+    if taskOrDispatch {
+        Task {
+            initCachedWindow()
+        }
+    } else {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            initCachedWindow()
+        }
+    }
+}
 
 private func handleNotification(
     app: NSRunningApplication,
