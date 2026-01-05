@@ -49,4 +49,12 @@ struct CachedWindow {
             }
         }
     }
+    
+    static func cleanByBundle(_ bundle: String) {
+        cachedWindows
+            .filter { $0.value.appBundle == bundle }
+            .forEach { hashValue, d in
+                cachedWindows.removeValue(forKey: hashValue)
+            }
+    }
 }
