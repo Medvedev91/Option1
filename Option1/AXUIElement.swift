@@ -82,7 +82,16 @@ extension AXUIElement {
     func id() -> AXUIElementID? {
         let pointer = UnsafeRawPointer(Unmanaged.passUnretained(self).toOpaque()).advanced(by: 0x20)
         let cfDataPointer = pointer.load(as: CFData?.self)
-        let cfData = cfDataPointer
+        // Доработка Option1, иначе креш приложения.
+        guard let cfData = cfDataPointer else {
+            let exTitles = ["loginwindow"]
+            let title: String? = try? title()
+            if let title = title, exTitles.contains(title) {
+                return nil
+            }
+            reportApi("AXUIElement.id() cfData = nil for \(title ?? "NO TITLE")")
+            return nil
+        }
         let bytePtr = CFDataGetBytePtr(cfData)
         return bytePtr?.withMemoryRebound(to: AXUIElementID.self, capacity: 1) { $0.pointee }
     }
