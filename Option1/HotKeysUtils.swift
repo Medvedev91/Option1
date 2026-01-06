@@ -45,6 +45,7 @@ private func handleRun(key: Key) {
         return
     }
     
+    // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
     guard let runningApplication = NSWorkspace.shared.runningApplications.first(where: {
         $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
     }) else {
