@@ -70,7 +70,7 @@ class AppObserver {
             attachNotification(kAXApplicationActivatedNotification)
             attachNotification(kAXFocusedWindowChangedNotification)
             attachNotification(kAXTitleChangedNotification)
-            
+
             CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
             
             self.observers[pid] = observer
@@ -124,7 +124,7 @@ private func handleNotification(
             // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
             try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         } else if (String(notification) == kAXTitleChangedNotification) {
-            // Срабатывает на изменение заголовка и окна.
+            // Срабатывает на изменение заголовка у окна.
             // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
             // Частые вызовы с пустым `.title()`. Их нужно пропускать.
             // kAXTitleChangedNotification исправлял баг при отладке запуска IntelliJ Idea:
