@@ -53,17 +53,19 @@ private func handleRun(key: Key) {
         return
     }
     
-    let pid = runningApplication.processIdentifier
-    let axElement = AXUIElementCreateApplication(pid)
-    
     do {
-        let windows = try axElement.allWindows(pid)
-        
-        guard let window = try windows.first(where: {
-            try $0.title()!.lowercased().contains(bindDb.substring.lowercased())
+        // Т.к. cleanClosed() занимает время, нужно ее использовать только
+        // когда важен ее результат, т.е. перед использованием cachedWindows.
+        // todo Проверять скорость работы и репортить если ниже 100мс.
+        CachedWindow.cleanClosed()
+
+        let windows: [CachedWindow] = cachedWindows.map { $0.value }
+        guard let window: CachedWindow = windows.first(where: {
+            $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
+            $0.appBundle == bindDb.bundle
         }) else { return }
-        
-        try WindowsManager.focusWindow(axuiElement: window)
+
+        try WindowsManager.focusWindow(axuiElement: window.axuiElement)
         // Fix Corner Case:
         // - bind Telegram app (option + shift + 1),
         // - press cmd + w to close the window,
