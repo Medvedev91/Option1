@@ -210,6 +210,15 @@ extension AXUIElement {
     func size() throws -> CGSize? {
         return try value(kAXSizeAttribute, CGSize.zero, .cgSize)
     }
+    
+    // Option 1 Implementation
+    func isElementExists() -> Bool {
+        guard let subrole = try? subrole() else {
+            return false
+        }
+        // Подсмотрено в методе windowsByBruteForce()
+        return [kAXStandardWindowSubrole, kAXDialogSubrole].contains(subrole)
+    }
 
     /// Внимание! Очень медленная функция!
     /// we combine both the normal approach and brute-force to get all possible windows
