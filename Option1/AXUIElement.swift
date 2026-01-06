@@ -211,6 +211,7 @@ extension AXUIElement {
         return try value(kAXSizeAttribute, CGSize.zero, .cgSize)
     }
 
+    /// Внимание! Очень медленная функция!
     /// we combine both the normal approach and brute-force to get all possible windows
     /// with only normal approach: we miss other-Spaces windows
     /// with only brute-force approach: we miss windows when the app launches (e.g. launch Note.app: first window is not found by brute-force)
@@ -220,6 +221,7 @@ extension AXUIElement {
         return Array(Set(aWindows + bWindows))
     }
 
+    /// Внимание! Очень медленная функция!
     /// brute-force getting the windows of a process by iterating over AXUIElementID one by one
     private static func windowsByBruteForce(_ pid: pid_t) -> [AXUIElement] {
         // we use this to call _AXUIElementCreateWithRemoteToken; we reuse the object for performance
@@ -230,7 +232,8 @@ extension AXUIElement {
         remoteToken.replaceSubrange(8..<12, with: withUnsafeBytes(of: Int32(0x636f636f)) { Data($0) })
         var axWindows = [AXUIElement]()
         // we iterate to 1000 as a tradeoff between performance, and missing windows of long-lived processes
-        for axUiElementId: AXUIElementID in 0..<1000 {
+        // Увеличил до 6000. Мой максимальный PID 5187.
+        for axUiElementId: AXUIElementID in 0..<6_000 {
             remoteToken.replaceSubrange(12..<20, with: withUnsafeBytes(of: axUiElementId) { Data($0) })
             if let axUiElement = _AXUIElementCreateWithRemoteToken(remoteToken as CFData)?.takeRetainedValue(),
                let subrole = try? axUiElement.subrole(),
