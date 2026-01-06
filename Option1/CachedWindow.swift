@@ -27,7 +27,6 @@ struct CachedWindow {
                 appBundle: bundleIdentifier
             )
         }
-        cleanClosed()
     }
     
     // ВНИМАНИЕ! SUPER SLOW `.allWindows()`
@@ -38,6 +37,16 @@ struct CachedWindow {
         }
     }
     
+    //
+    // Внимание 1
+    // Вызов функции занимает время хоть и не много: 2-50млс,
+    // не желательно вызывать в критичных местах.
+    //
+    // Внимание 2
+    // Нельзя вызывать данную функцию например после перехода macOS
+    // в режим сна, в таком случае она удалит вообще все окна, хотя
+    // по факту они сохранятся после пробуждения.
+    //
     static func cleanClosed() {
         cachedWindows.forEach { hashValue, cachedWindow in
             let isExists: Bool = AXUIElement.isElementIdExists(
@@ -53,7 +62,7 @@ struct CachedWindow {
     static func cleanByBundle(_ bundle: String) {
         cachedWindows
             .filter { $0.value.appBundle == bundle }
-            .forEach { hashValue, d in
+            .forEach { hashValue, _ in
                 cachedWindows.removeValue(forKey: hashValue)
             }
     }
