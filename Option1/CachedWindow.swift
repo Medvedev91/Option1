@@ -48,15 +48,13 @@ struct CachedWindow {
     // по факту они сохранятся после пробуждения.
     //
     static func cleanClosed() {
-        cachedWindows.forEach { hashValue, cachedWindow in
-            let isExists: Bool = AXUIElement.isElementIdExists(
-                pid: cachedWindow.pid,
-                axuiElementId: cachedWindow.axuiElementId,
-            )
-            if !isExists {
+        cachedWindows
+            .filter { _, cachedWindow in
+                !cachedWindow.axuiElement.isElementExists()
+            }
+            .forEach { hashValue, cachedWindow in
                 cachedWindows.removeValue(forKey: hashValue)
             }
-        }
     }
     
     static func cleanByBundle(_ bundle: String) {
