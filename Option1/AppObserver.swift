@@ -17,26 +17,38 @@ class AppObserver {
         }
         NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
-            .forEach { addObserver(app: $0) }
+            .forEach { app in
+                // Если не использовать Task то приложение подвисает на
+                // несколько секунд, по этому initialTaskOrDispatch = true.
+                // Нет смысла в initialDelaySeconds т.к. окна давно запущены.
+                addObserver(app: app, initialTaskOrDispatch: true, initialDelaySeconds: 0)
+            }
     }
     
-    func addObserver(app: NSRunningApplication) {
+    func addObserver(app: NSRunningApplication, initialTaskOrDispatch: Bool, initialDelaySeconds: CGFloat) {
         let pid = app.processIdentifier
+        
+        initCachedWindows(app: app, taskOrDispatch: initialTaskOrDispatch, delaySeconds: initialDelaySeconds)
         
         var observer: AXObserver?
         // Callback function triggered when an application is activated
-        let callback: AXObserverCallback = { (observer, element, notification, refcon) in
+        let callback: AXObserverCallback = { (observer, axuiElement, notification, refcon) in
             guard let appRefcon = refcon else { return }
             let appPid = Unmanaged<NSNumber>.fromOpaque(appRefcon).takeUnretainedValue().int32Value
             if let activatedApp = NSRunningApplication(processIdentifier: appPid) {
                 let appName = activatedApp.localizedName ?? activatedApp.bundleIdentifier ?? "Unknown"
-                AppObserver.shared.handleNotification(appName: appName, notification: notification, axElement: element)
+                handleNotification(
+                    app: activatedApp,
+                    appName: appName,
+                    notification: notification,
+                    axuiElement: axuiElement,
+                )
             }
         }
         
         let createError = AXObserverCreate(pid, callback, &observer)
         guard createError == .success, let observer = observer else {
-            print("Failed to create observer for \(app.localizedName ?? "Unknown")")
+            reportApi("Failed to create observer for \(app.localizedName ?? "Unknown")")
             return
         }
         
@@ -45,33 +57,89 @@ class AppObserver {
         // Store the process ID as the refcon (reference constant) for later use
         let appPidRef = Unmanaged.passUnretained(NSNumber(value: pid)).toOpaque()
         
-        var addError = AXObserverAddNotification(observer, axApp, kAXApplicationActivatedNotification as CFString, appPidRef)
-        if addError != .success {
-            print("Failed to add activation notification for \(app.localizedName ?? "Unknown")")
+        let errorText = "AppObserver.addObserver() \(app.bundleIdentifier ?? "NO-BUNDLE") error"
+        func attachNotification(_ notification: String) {
+            let error = AXObserverAddNotification(observer, axApp, notification as CFString, appPidRef)
+            if error != .success {
+                reportApi("\(errorText) \(notification) \(error)")
+            }
         }
         
-        // todo check errors like if addError != .success
-        addError = AXObserverAddNotification(observer, axApp, kAXFocusedWindowChangedNotification as CFString, appPidRef)
-        addError = AXObserverAddNotification(observer, axApp, kAXMainWindowChangedNotification as CFString, appPidRef)
-        addError = AXObserverAddNotification(observer, axApp, kAXWindowCreatedNotification as CFString, appPidRef)
-        addError = AXObserverAddNotification(observer, axApp, kAXApplicationHiddenNotification as CFString, appPidRef)
-        addError = AXObserverAddNotification(observer, axApp, kAXApplicationShownNotification as CFString, appPidRef)
-        
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
-        
-        observers[pid] = observer
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            
+            // Документация к каждому из событий ниже в handleNotification()
+            attachNotification(kAXApplicationActivatedNotification)
+            attachNotification(kAXFocusedWindowChangedNotification)
+            attachNotification(kAXTitleChangedNotification)
+
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
+            
+            self.observers[pid] = observer
+        }
     }
-    
-    private func handleNotification(appName: String, notification: CFString, axElement: AXUIElement) {
-        // let notificationString: String = notification as String
-        // var windowTitle: CFTypeRef?
-        // AXUIElementCopyAttributeValue(axElement, kAXTitleAttribute as CFString, &windowTitle)
-        // print("handleNotification \(appName) \(notificationString) \((windowTitle as? String) ?? "--")")
-        
+}
+
+///
+
+// Не понимаю как работает, но иногда можно вызывать
+// из Task{} а иногда при вызове получаю крэш.
+private func initCachedWindows(
+    app: NSRunningApplication,
+    taskOrDispatch: Bool,
+    delaySeconds: CGFloat,
+) {
+    // Fill Initial CachedWindow
+    func initCachedWindow() {
         do {
-            _ = try axElement.focusedWindow()
+            try CachedWindow.addByApp(app)
         } catch {
-            reportApi("AppObserver.handleNotification() error:\n\(error)")
+            reportApi("AppObserver.addObserver() taskOrDispatch:\(taskOrDispatch) error:\(error)")
         }
+    }
+    if taskOrDispatch {
+        Task {
+            try await Task.sleep(nanoseconds: UInt64(delaySeconds * CGFloat(1_000_000_000)))
+            initCachedWindow()
+        }
+    } else {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds) {
+            initCachedWindow()
+        }
+    }
+}
+
+private func handleNotification(
+    app: NSRunningApplication,
+    appName: String,
+    notification: CFString,
+    axuiElement: AXUIElement,
+) {
+    do {
+        // Срабатывает при фокусе окна другого приложения.
+        // Нужно использовать `focusedWindow()`
+        if (String(notification) == kAXApplicationActivatedNotification) {
+            if let focusedWindow = try axuiElement.focusedWindow() {
+                try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: focusedWindow)
+            }
+        } else if (String(notification) == kAXFocusedWindowChangedNotification) {
+            // Срабатывает при смене окна у текущего приложения. Например между
+            // окнами Xcode. Иногда срабатывает при фокусе на другое приложение.
+            // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
+            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+        } else if (String(notification) == kAXTitleChangedNotification) {
+            // Срабатывает на изменение заголовка у окна.
+            // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
+            // Частые вызовы с пустым `.title()`. Их нужно пропускать.
+            // kAXTitleChangedNotification исправлял баг при отладке запуска IntelliJ Idea:
+            // при холодном старте Idea в которой откроется несколько окон, у части окон
+            // не полные имена, соответственно поиск по заголовку может не сработать.
+            if let title = try axuiElement.title(), title.isEmpty == false {
+                try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+            }
+        } else {
+            reportApi("AppObserver.handleNotification() unhandled notification")
+        }
+    } catch {
+        reportApi("AppObserver.handleNotification() error:\n\(error)")
     }
 }

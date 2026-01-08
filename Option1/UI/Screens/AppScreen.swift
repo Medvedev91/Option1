@@ -40,23 +40,47 @@ struct AppScreen: View {
 
 ///
 
-var activateObserver: Any? = nil
+private var appLaunchObserver: Any? = nil
+private var appTerminateObserver: Any? = nil
 
 private func setupAppObservers() {
-    if let activateObserver = activateObserver {
-        NSWorkspace.shared.notificationCenter.removeObserver(activateObserver)
+    if let appLaunchObserver = appLaunchObserver {
+        NSWorkspace.shared.notificationCenter.removeObserver(appLaunchObserver)
     }
-    activateObserver = NSWorkspace.shared.notificationCenter.addObserver(
-        forName: NSWorkspace.didActivateApplicationNotification,
+    appLaunchObserver = NSWorkspace.shared.notificationCenter.addObserver(
+        forName: NSWorkspace.didLaunchApplicationNotification,
+        object: nil,
+        queue: OperationQueue.main,
+    ) { (notification: Notification) in
+        // https://developer.apple.com/documentation/appkit/nsworkspace/didLaunchApplicationNotification
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+            reportApi("didLaunchApplicationNotification nil")
+            return
+        }
+        // Тут нельзя использовать Task, по этому initialTaskOrDispatch = false.
+        // После запуска приложения надо подождать для загрузки окон - initialDelaySeconds.
+        AppObserver.shared.addObserver(app: app, initialTaskOrDispatch: false, initialDelaySeconds: 2)
+    }
+    
+    if let appTerminateObserver = appTerminateObserver {
+        NSWorkspace.shared.notificationCenter.removeObserver(appTerminateObserver)
+    }
+    appTerminateObserver = NSWorkspace.shared.notificationCenter.addObserver(
+        forName: NSWorkspace.didTerminateApplicationNotification,
         object: nil,
         queue: OperationQueue.main,
     ) { (notification: Notification) in
         // https://developer.apple.com/documentation/appkit/nsworkspace/didactivateapplicationnotification
         guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
-            reportApi("didActivateApplicationNotification nil")
+            reportApi("didTerminateApplicationNotification nil")
             return
         }
-        AppObserver.shared.addObserver(app: app)
+        guard let bundle = app.bundleIdentifier else {
+            reportApi("didTerminateApplicationNotification no bundle")
+            return
+        }
+        CachedWindow.cleanByBundle(bundle)
     }
+    
     AppObserver.shared.restart()
 }
