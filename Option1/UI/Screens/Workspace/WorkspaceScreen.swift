@@ -7,12 +7,15 @@ struct WorkspaceScreen: View {
     
     ///
     
-    @State private var activeAxuiElements: [AXUIElement] = []
+    @State private var activeAppsUi: [ActiveAppUi] = []
     
     // Fix WTF bug - name is empty on second form open.
     @State private var formId = UUID()
     @State private var formPresented = false
     @State private var formName = ""
+    
+    // 2 секунды чтобы в т.ч. успеть CachedWindow.cleanClosed()
+    private let updateActiveAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ScrollView {
@@ -28,11 +31,12 @@ struct WorkspaceScreen: View {
             Divider()
                 .padding()
             
-            VStack(spacing: 8) {
-                ForEach(activeAxuiElements, id: \.self) { axuiElement in
-                    ActiveAppView(axuiElement: axuiElement)
+            VStack(spacing: 12) {
+                ForEach(activeAppsUi, id: \.app) { activeAppUi in
+                    ActiveAppView(activeAppUi: activeAppUi)
                 }
             }
+            .padding(.bottom, 24)
         }
         .alert("", isPresented: $formPresented) {
             TextField("Workspace", text: $formName)
@@ -44,6 +48,12 @@ struct WorkspaceScreen: View {
             }
             .disabled(formName.isEmpty)
             .keyboardShortcut(.defaultAction)
+        }
+        .onReceive(updateActiveAppsUiTimer) { _ in
+            updateActiveAppsUi()
+        }
+        .onAppear {
+            updateActiveAppsUi()
         }
         .id(formId)
         .navigationTitle(workspaceDb?.name ?? "Shared")
@@ -64,26 +74,58 @@ struct WorkspaceScreen: View {
         formName = workspaceDb.name
         formPresented = true
     }
+    
+    private func updateActiveAppsUi() {
+        CachedWindow.cleanClosed()
+        // Running Apps
+        var localActiveAppsUi: [ActiveAppUi] = []
+        NSWorkspace.shared.runningApplications.forEach { app in
+            guard let bundle: String = app.bundleIdentifier else { return }
+            let appCachedWindows: [CachedWindow] = cachedWindows
+                .map { $0.value }
+                .filter { $0.appBundle == bundle }
+                .sorted { $0.title < $1.title }
+            guard !appCachedWindows.isEmpty else { return }
+            let activeAppUi = ActiveAppUi(app: app, cachedWindows: appCachedWindows)
+            localActiveAppsUi.append(activeAppUi)
+        }
+        // Other Apps
+        let usedCachedWindows: [CachedWindow] = localActiveAppsUi.flatMap(\.cachedWindows)
+        let otherCachedWindows: [CachedWindow] = cachedWindows
+            .map { $0.value }
+            .filter { !usedCachedWindows.contains($0) }
+        if !otherCachedWindows.isEmpty {
+            localActiveAppsUi.append(ActiveAppUi(app: nil, cachedWindows: otherCachedWindows))
+        }
+        ///
+        activeAppsUi = localActiveAppsUi
+    }
+}
+
+///
+
+private struct ActiveAppUi: Hashable {
+    let app: NSRunningApplication? // nil means unknown app
+    let cachedWindows: [CachedWindow]
 }
 
 private struct ActiveAppView: View {
     
-    let axuiElement: AXUIElement
+    let activeAppUi: ActiveAppUi
     
     ///
     
-    private var title: String {
-        do {
-            return try axuiElement.title() ?? "--"
-        } catch {
-            reportApi("WorkspaceScreen ActiveAppView title error: \(error)")
-            return "--"
-        }
-    }
-    
     var body: some View {
-        Text("\(title) #\(axuiElement.id() ?? 0)")
-            .textAlign(.leading)
-            .padding(.horizontal)
+        VStack {
+            Text(activeAppUi.app?.localizedName ?? "Other")
+                .fontWeight(.bold)
+                .textAlign(.leading)
+                .padding(.horizontal)
+            ForEach(activeAppUi.cachedWindows, id: \.self) { cachedWindow in
+                Text(cachedWindow.title)
+                    .textAlign(.leading)
+                    .padding(.horizontal)
+            }
+        }
     }
 }
