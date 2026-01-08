@@ -23,19 +23,7 @@ struct NavigationScreen: View {
                             Label("Shared", systemImage: "rectangle.on.rectangle")
                                 .tag(Tab.workspace(workspaceDb: nil))
                             ForEach(workspacesDb) { workspaceDb in
-                                Label(workspaceDb.name, systemImage: "rectangle")
-                                    .tag(Tab.workspace(workspaceDb: workspaceDb))
-                                    .contextMenu {
-                                        Button(
-                                            action: {
-                                                workspaceDb.deleteWithDependencies()
-                                            },
-                                            label: {
-                                                Text("Delete")
-                                                    .foregroundColor(.red)
-                                            },
-                                        )
-                                    }
+                                WorkspaceItemView(workspaceDb: workspaceDb)
                             }
                             .onMove { from, to in
                                 moveWorkspace(from: from, to: to)
@@ -102,4 +90,41 @@ struct NavigationScreen: View {
 private enum Tab: Hashable {
     case main
     case workspace(workspaceDb: WorkspaceDb?)
+}
+
+private struct WorkspaceItemView: View {
+    
+    let workspaceDb: WorkspaceDb
+    
+    ///
+    
+    @State private var isDeleteConfirmationPresented = false
+    
+    var body: some View {
+        
+        Label(workspaceDb.name, systemImage: "rectangle")
+            .tag(Tab.workspace(workspaceDb: workspaceDb))
+            .contextMenu {
+                Button(
+                    action: {
+                        isDeleteConfirmationPresented = true
+                    },
+                    label: {
+                        Text("Delete")
+                            .foregroundColor(.red)
+                    },
+                )
+            }
+            .confirmationDialog(
+                "Are you sure to delete \(workspaceDb.name)?",
+                isPresented: $isDeleteConfirmationPresented,
+            ) {
+                Button("Yes") {
+                    workspaceDb.deleteWithDependencies()
+                }
+                .keyboardShortcut(.defaultAction)
+                
+                Button("No", role: .cancel) {}
+            }
+    }
 }
