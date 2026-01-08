@@ -14,6 +14,11 @@ struct MainTabView: View {
                     .textAlign(.leading)
                     .padding(.top, 4)
                 
+                Divider()
+                    .padding(.vertical)
+                
+                SparkleButtonView()
+                
                 Spacer()
             }
             .padding()
