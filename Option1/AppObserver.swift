@@ -61,7 +61,11 @@ class AppObserver {
         func attachNotification(_ notification: String) {
             let error = AXObserverAddNotification(observer, axApp, notification as CFString, appPidRef)
             if error != .success {
-                reportApi("\(errorText) \(notification) \(error)")
+                if error == .cannotComplete {
+                    reportLog("\(errorText) \(notification) \(error)")
+                } else {
+                    reportApi("\(errorText) \(notification) \(error)")
+                }
             }
         }
         
