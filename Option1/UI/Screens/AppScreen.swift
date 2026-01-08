@@ -58,7 +58,8 @@ private func setupAppObservers() {
             return
         }
         // Тут нельзя использовать Task, по этому initialTaskOrDispatch = false.
-        AppObserver.shared.addObserver(app: app, initialTaskOrDispatch: false)
+        // После запуска приложения надо подождать для загрузки окон - initialDelaySeconds.
+        AppObserver.shared.addObserver(app: app, initialTaskOrDispatch: false, initialDelaySeconds: 2)
     }
     
     if let appTerminateObserver = appTerminateObserver {

@@ -20,14 +20,15 @@ class AppObserver {
             .forEach { app in
                 // Если не использовать Task то приложение подвисает на
                 // несколько секунд, по этому initialTaskOrDispatch = true.
-                addObserver(app: app, initialTaskOrDispatch: true)
+                // Нет смысла в initialDelaySeconds т.к. окна давно запущены.
+                addObserver(app: app, initialTaskOrDispatch: true, initialDelaySeconds: 0)
             }
     }
     
-    func addObserver(app: NSRunningApplication, initialTaskOrDispatch: Bool) {
+    func addObserver(app: NSRunningApplication, initialTaskOrDispatch: Bool, initialDelaySeconds: CGFloat) {
         let pid = app.processIdentifier
         
-        initCachedWindows(app: app, taskOrDispatch: initialTaskOrDispatch)
+        initCachedWindows(app: app, taskOrDispatch: initialTaskOrDispatch, delaySeconds: initialDelaySeconds)
         
         var observer: AXObserver?
         // Callback function triggered when an application is activated
@@ -85,6 +86,7 @@ class AppObserver {
 private func initCachedWindows(
     app: NSRunningApplication,
     taskOrDispatch: Bool,
+    delaySeconds: CGFloat,
 ) {
     // Fill Initial CachedWindow
     func initCachedWindow() {
@@ -96,10 +98,11 @@ private func initCachedWindows(
     }
     if taskOrDispatch {
         Task {
+            try await Task.sleep(nanoseconds: UInt64(delaySeconds * CGFloat(1_000_000_000)))
             initCachedWindow()
         }
     } else {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delaySeconds) {
             initCachedWindow()
         }
     }
