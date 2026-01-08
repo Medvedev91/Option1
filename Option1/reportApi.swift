@@ -1,7 +1,7 @@
 import Alamofire
 
 func reportApi(_ message: String) {
-    print(message)
+    reportLog("reportApi() \(message)")
     let parameters: [String: String] = [
         "message": message,
     ]
