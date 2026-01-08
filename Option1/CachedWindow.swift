@@ -2,7 +2,7 @@ import AppKit
 
 var cachedWindows: [Int: CachedWindow] = [:]
 
-struct CachedWindow {
+struct CachedWindow: Hashable {
     
     let axuiElement: AXUIElement
     let pid: pid_t
