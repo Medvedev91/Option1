@@ -21,20 +21,6 @@ struct WorkspaceScreen: View {
                 WorkspaceBindView(
                     key: key,
                     workspaceDb: workspaceDb,
-                    onSelected: { bundle in
-                        guard let runningApplication = NSWorkspace.shared.runningApplications.first(where: {
-                            $0.bundleIdentifier?.lowercased() == bundle.lowercased()
-                        }) else { return }
-                        let pid = runningApplication.processIdentifier
-                        let axuiElement = AXUIElementCreateApplication(pid)
-                        do {
-                            let windows = try axuiElement.allWindows(pid)
-                            self.activeAxuiElements = windows
-                        } catch {
-                            reportApi("WorkspaceScreen onSelected() error: \(error)")
-                            return
-                        }
-                    },
                 )
                 .padding(.top, key == .one ? 8 : 0)
             }

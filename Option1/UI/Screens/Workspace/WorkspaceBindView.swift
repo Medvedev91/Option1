@@ -5,7 +5,6 @@ struct WorkspaceBindView: View {
     
     private let key: Key
     private let workspaceDb: WorkspaceDb?
-    private let onSelected: (String /* Bundle */) -> Void
     
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
@@ -13,14 +12,12 @@ struct WorkspaceBindView: View {
     init(
         key: Key,
         workspaceDb: WorkspaceDb?,
-        onSelected: @escaping (String) -> Void,
     ) {
         self.key = key
         self.workspaceDb = workspaceDb
         self.appsUi = buildAppsUi()
         let bindDb: BindDb? = selectBindDbOrNil(workspaceDb: workspaceDb, key: key)
         self.formUi = FormUi(bundle: bindDb?.bundle, substring: bindDb?.substring ?? "")
-        self.onSelected = onSelected
     }
     
     var body: some View {
@@ -74,11 +71,6 @@ struct WorkspaceBindView: View {
                 if let bindDb = bindDb {
                     bindDb.delete()
                 }
-            }
-        }
-        .onChange(of: formUi) { _, newFormUi in
-            if let bundle = newFormUi.bundle {
-                onSelected(bundle)
             }
         }
     }
