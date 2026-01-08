@@ -9,11 +9,6 @@ struct WorkspaceScreen: View {
     
     @State private var activeAppsUi: [ActiveAppUi] = []
     
-    // Fix WTF bug - name is empty on second form open.
-    @State private var formId = UUID()
-    @State private var formPresented = false
-    @State private var formName = ""
-    
     // 2 секунды чтобы в т.ч. успеть CachedWindow.cleanClosed()
     private let updateActiveAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
@@ -38,41 +33,13 @@ struct WorkspaceScreen: View {
             }
             .padding(.bottom, 24)
         }
-        .alert("", isPresented: $formPresented) {
-            TextField("Workspace", text: $formName)
-            Button("Cancel") {
-            }
-            .keyboardShortcut(.cancelAction)
-            Button("Save") {
-                workspaceDb?.updateName(formName)
-            }
-            .disabled(formName.isEmpty)
-            .keyboardShortcut(.defaultAction)
-        }
         .onReceive(updateActiveAppsUiTimer) { _ in
             updateActiveAppsUi()
         }
         .onAppear {
             updateActiveAppsUi()
         }
-        .id(formId)
         .navigationTitle(workspaceDb?.name ?? "Shared")
-        .toolbar {
-            if let workspaceDb = workspaceDb {
-                ToolbarItem(placement: .primaryAction) {
-                    RenameButton()
-                        .renameAction {
-                            showForm(workspaceDb: workspaceDb)
-                        }
-                }
-            }
-        }
-    }
-    
-    private func showForm(workspaceDb: WorkspaceDb) {
-        formId = UUID()
-        formName = workspaceDb.name
-        formPresented = true
     }
     
     private func updateActiveAppsUi() {

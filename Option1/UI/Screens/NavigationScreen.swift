@@ -100,11 +100,26 @@ private struct WorkspaceItemView: View {
     
     @State private var isDeleteConfirmationPresented = false
     
+    @State private var isEditPresented = false
+    @State private var editName: String = ""
+    
+    // Fix WTF bug - name is empty on second form open.
+    @State private var uuid = UUID()
+    
     var body: some View {
         
         Label(workspaceDb.name, systemImage: "rectangle")
+            .id(uuid)
             .tag(Tab.workspace(workspaceDb: workspaceDb))
             .contextMenu {
+                Button(
+                    action: {
+                        isEditPresented = true
+                    },
+                    label: {
+                        Text("Edit")
+                    },
+                )
                 Button(
                     action: {
                         isDeleteConfirmationPresented = true
@@ -125,6 +140,21 @@ private struct WorkspaceItemView: View {
                 .keyboardShortcut(.defaultAction)
                 
                 Button("No", role: .cancel) {}
+            }
+            .alert("", isPresented: $isEditPresented) {
+                TextField("Workspace", text: $editName)
+                Button("Cancel") {
+                }
+                .keyboardShortcut(.cancelAction)
+                Button("Save") {
+                    workspaceDb.updateName(editName)
+                    uuid = UUID()
+                }
+                .disabled(editName.isEmpty)
+                .keyboardShortcut(.defaultAction)
+            }
+            .onAppear {
+                editName = workspaceDb.name
             }
     }
 }
