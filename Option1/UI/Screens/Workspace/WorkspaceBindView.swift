@@ -9,6 +9,10 @@ struct WorkspaceBindView: View {
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
+    // Т.к. одновременно данное View отображается 10 раз а в формировании
+    // списка много внутренней логики нужно давать хотябы 2 секунды.
+    private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+
     init(
         key: Key,
         workspaceDb: WorkspaceDb?,
@@ -50,6 +54,9 @@ struct WorkspaceBindView: View {
             Spacer()
         }
         .padding(.leading, 12)
+        .onReceive(updateAppsUiTimer) { _ in
+            appsUi = buildAppsUi()
+        }
         .onChange(of: formUi) { _, newFormUi in
             let bundle: String? = newFormUi.bundle
             let bindDb: BindDb? = selectBindDbOrNil(workspaceDb: workspaceDb, key: key)
