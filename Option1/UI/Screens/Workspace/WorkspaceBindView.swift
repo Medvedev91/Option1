@@ -112,6 +112,7 @@ private func buildAppsUi() -> [AppUi] {
     BindDb.selectAll()
         .filter { !usedBundles.contains($0.bundle) }
         .map(\.bundle)
+        .unique()
         .forEach { bundle in
             localAppsUi.append(AppUi(title: bundle, bundle: bundle))
         }
