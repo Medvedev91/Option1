@@ -93,6 +93,7 @@ private func selectBindDbOrNil(workspaceDb: WorkspaceDb?, key: Key) -> BindDb? {
     }
 }
 
+@MainActor
 private func buildAppsUi() -> [AppUi] {
     var localAppsUi: [AppUi] = NSWorkspace.shared.runningApplications
         .filter { $0.activationPolicy == .regular }
@@ -100,7 +101,13 @@ private func buildAppsUi() -> [AppUi] {
             guard let title = app.localizedName, let bundle = app.bundleIdentifier else { return nil }
             return AppUi(title: title, bundle: bundle)
         }
-    // todo if bind not in list
+    let usedBundles: [String] = localAppsUi.map(\.bundle)
+    BindDb.selectAll()
+        .filter { !usedBundles.contains($0.bundle) }
+        .map(\.bundle)
+        .forEach { bundle in
+            localAppsUi.append(AppUi(title: bundle, bundle: bundle))
+        }
     // todo update list on app activate
     return localAppsUi
 }
