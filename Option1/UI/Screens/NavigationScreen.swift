@@ -6,6 +6,7 @@ struct NavigationScreen: View {
     @State private var tab: Tab = .main
     @State private var columnVisibility = NavigationSplitViewVisibility.all
     
+    @StateObject private var menuManager = MenuManager.instance
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
     
     var body: some View {
@@ -13,15 +14,17 @@ struct NavigationScreen: View {
             columnVisibility: $columnVisibility,
             sidebar: {
                 VStack(spacing: 0) {
-
+                    
                     List(selection: $tab) {
                         
                         Label("Option 1", systemImage: "option")
                             .tag(Tab.main)
                         
                         Section("Workspaces") {
-                            Label("Shared", systemImage: "rectangle.on.rectangle")
+                            
+                            Label("Shared", systemImage: menuManager.workspaceDb == nil ? "inset.filled.circle" : "circle")
                                 .tag(Tab.workspace(workspaceDb: nil))
+                            
                             ForEach(workspacesDb) { workspaceDb in
                                 WorkspaceItemView(workspaceDb: workspaceDb)
                             }
@@ -67,6 +70,11 @@ struct NavigationScreen: View {
                 }
             }
         )
+        .onChange(of: tab, initial: true) { _, newTab in
+            if case let .workspace(workspaceDb) = newTab {
+                menuManager.setWorkspaceDb(workspaceDb)
+            }
+        }
     }
     
     private func moveWorkspace(from: IndexSet, to: Int) {
@@ -98,6 +106,8 @@ private struct WorkspaceItemView: View {
     
     ///
     
+    @StateObject private var menuManager = MenuManager.instance
+    
     @State private var isDeleteConfirmationPresented = false
     
     @State private var isEditPresented = false
@@ -105,10 +115,10 @@ private struct WorkspaceItemView: View {
     
     // Fix WTF bug - name is empty on second form open.
     @State private var uuid = UUID()
-    
+
     var body: some View {
         
-        Label(workspaceDb.name, systemImage: "rectangle")
+        Label(workspaceDb.name, systemImage: menuManager.workspaceDb?.id == workspaceDb.id ? "inset.filled.circle" : "circle")
             .id(uuid)
             .tag(Tab.workspace(workspaceDb: workspaceDb))
             .contextMenu {
