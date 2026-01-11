@@ -12,6 +12,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         HotKeysUtils.setup() 
-        MenuManager.setup()
+        MenuManager.instance.setup()
     }
 }

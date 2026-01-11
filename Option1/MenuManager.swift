@@ -14,22 +14,24 @@ private let statusItem: NSStatusItem = statusBar.statusItem(
 )
 private let statusMenu = NSMenu(title: "Option 1")
 
-class MenuManager {
+class MenuManager: ObservableObject {
     
-    static var workspaceDb: WorkspaceDb?
-    static var workspacesDb: [WorkspaceDb] = []
+    static let instance = MenuManager()
     
-    static func setup() {
+    @Published var workspaceDb: WorkspaceDb?
+    @Published var workspacesDb: [WorkspaceDb] = []
+    
+    func setup() {
         statusItem.menu = statusMenu
         updateUi()
     }
     
-    static func setWorkspaceDb(_ workspaceDb: WorkspaceDb?) {
+    func setWorkspaceDb(_ workspaceDb: WorkspaceDb?) {
         self.workspaceDb = workspaceDb
         updateUi()
     }
     
-    static func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
+    func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
         self.workspacesDb = workspacesDb
         if let workspaceDb = self.workspaceDb {
             if !workspacesDb.contains(where: { $0.id == workspaceDb.id }) {
@@ -41,7 +43,7 @@ class MenuManager {
     
     ///
 
-    private static func updateUi() {
+    private func updateUi() {
         
         //
         // Menu
@@ -95,6 +97,6 @@ private extension AppDelegate {
     
     @objc func setWorkspace(_ menuItem: NSMenuItem) {
         let workspaceDb: WorkspaceDb? = menuItem.representedObject as? WorkspaceDb
-        MenuManager.setWorkspaceDb(workspaceDb)
+        MenuManager.instance.setWorkspaceDb(workspaceDb)
     }
 }
