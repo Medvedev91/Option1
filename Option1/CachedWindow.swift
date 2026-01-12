@@ -43,19 +43,30 @@ struct CachedWindow: Hashable {
     // не желательно вызывать в критичных местах.
     //
     // Внимание 2
-    // Нельзя вызывать данную функцию например после перехода macOS
-    // в режим сна, в таком случае она удалит вообще все окна, хотя
-    // по факту они сохранятся после пробуждения.
-    // todo обдумать проверку выхода из учетки через начилие Finder.
+    // Изучить реализацию, там компромисная логика.
     //
     static func cleanClosed() {
-        cachedWindows
-            .filter { _, cachedWindow in
-                !cachedWindow.axuiElement.isElementExists()
-            }
-            .forEach { hashValue, cachedWindow in
-                cachedWindows.removeValue(forKey: hashValue)
-            }
+        let windowsToRemove: [Int: CachedWindow] = cachedWindows.filter { _, cachedWindow in
+            !cachedWindow.axuiElement.isElementExists()
+        }
+        // Внимание! Компромисная логика!
+        // В момент когда macOS на экране ввода логина, при вызове .isElementExists()
+        // всегда возвращается false, хотя по факту окна восстановятся после пробуждения.
+        // Это значит что как только macOS уходит в фон, окна удаляются и Option 1
+        // НЕ работает после пробуждения. Это легко можно добиться, если открыть экран
+        // воркспейса (на нем по таймеру просиходит вызов .cleanClosed()) и выйти на
+        // экран ввода логина macOS. Я не нашел способа определять что окно еще живое
+        // в момент когда macOS в фоне, по этому единственный способ избегать ошибочного
+        // удаления всех окон - проверять, если все окна удаляются разом - значит фон.
+        // Такая логика может давать сбой если нужно удалить действительно последнее окно,
+        // но это очень редкая ситуация когда человек закрывает все программы. Даже если
+        // это так, то ничего страшного, ведь открывать больше нечего.
+        if windowsToRemove.count == cachedWindows.count {
+            return
+        }
+        windowsToRemove.forEach { hashValue, _ in
+            cachedWindows.removeValue(forKey: hashValue)
+        }
     }
     
     static func cleanByBundle(_ bundle: String) {
