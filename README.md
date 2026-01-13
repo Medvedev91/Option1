@@ -4,6 +4,10 @@
 
 # Option 1 - MacOS Window Manager
 
+The idea - you will bind shortcuts like `⌥+1`, `⌥+2` .. for windows you need.
+
+## todo docs
+
 First of all, it is pragmatic. It is not a replacement for the built-in macOS window management, but an addition.
 
 ## Download
