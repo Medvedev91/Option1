@@ -4,7 +4,7 @@
 
 # Option1 - MacOS Window Manager
 
-The idea - you will bind shortcuts like `⌥-1`, `⌥-2` .. for windows you need.
+The idea - you will bind shortcuts like `⌥-1`, `⌥-2` for windows you need.
 
 Try it now. Press `⌥-1` to open Calendar app, and `⌥-2` to open Notes app. This is the default Option1 settings.
 
