@@ -4,9 +4,7 @@
 
 # Option 1 - MacOS Window Manager
 
-Bind Window - `Option + Shift + 1` .. `9`
-
-Focus Window - `Option + 1` .. `9`
+First of all, it is pragmatic. It is not a replacement for the built-in macOS window management, but an addition.
 
 ## Download
 
