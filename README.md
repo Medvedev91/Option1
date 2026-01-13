@@ -2,7 +2,7 @@
   <img width="256" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon1024.png">
 </p>
 
-# Option 1 - macOS Window Manager
+# Option 1 - MacOS Window Manager
 
 Bind Window - `Option + Shift + 1` .. `9`
 
