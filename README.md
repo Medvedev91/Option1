@@ -4,7 +4,7 @@
 
 # Option 1 - MacOS Window Manager
 
-The idea - you will bind shortcuts like `⌥+1`, `⌥+2` .. for windows you need.
+The idea - you will bind shortcuts like `⌥-1`, `⌥-2` .. for windows you need.
 
 ## todo docs
 
