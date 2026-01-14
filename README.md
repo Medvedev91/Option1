@@ -8,7 +8,7 @@ The idea - to bind shortcuts like `⌥-1`, `⌥-2` for windows you need.
 
 Try it now. Press `⌥-1` to open Safari, `⌥-2` to open Calendar app. This is the default Option1 settings.
 
-## Feature 1 - Basics
+## Feature 1 - Shortcuts
 
 todo
 
