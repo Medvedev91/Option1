@@ -8,6 +8,18 @@ The idea - to bind shortcuts like `⌥-1`, `⌥-2` for windows you need.
 
 Try it now. Press `⌥-1` to open Safari, `⌥-2` to open Calendar app. This is the default Option1 settings.
 
+## Feature 1 - Basics
+
+todo
+
+## Feature 2 - Windows
+
+todo
+
+## Feature 3 - Workspaces
+
+todo
+
 ## todo docs
 
 First of all, it is pragmatic. It is not a replacement for the built-in macOS window management, but an addition.
