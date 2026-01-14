@@ -43,17 +43,17 @@ class WorkspaceDb {
     }
     
     @MainActor
-    static func insert() {
+    static func insert() -> WorkspaceDb {
         let lastSort: Int = selectAll().max { $0.sort < $1.sort }?.sort ?? 0
         let nextSort: Int = lastSort + 1
-        DB.modelContainer.mainContext.insert(
-            WorkspaceDb(
-                id: UUID(),
-                name: "Workspace #\(nextSort)",
-                date: Date.now,
-                sort: nextSort,
-            )
+        let workspaceDb = WorkspaceDb(
+            id: UUID(),
+            name: "Workspace #\(nextSort)",
+            date: Date.now,
+            sort: nextSort,
         )
+        DB.modelContainer.mainContext.insert(workspaceDb)
         DB.save()
+        return workspaceDb
     }
 }
