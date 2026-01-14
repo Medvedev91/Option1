@@ -13,7 +13,7 @@ Try it now. Press `⌥-1` to open Safari, `⌥-2` to open Calendar app. This is 
 todo
 
 <p align="left">
-  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics_2.png">
+  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
 </p>
 
 ## Feature 2 - Windows
