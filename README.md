@@ -4,7 +4,7 @@
 
 # Option1 - Pragmatic Window Manager for macOS
 
-The idea - binding shortcuts like `⌥-1`, `⌥-2` for windows you need.
+The idea - binding shortcuts like **`⌥-1`**, **`⌥-2`** for windows you need.
 
 Try it now. Press `⌥-1` to open Safari, `⌥-2` to open Calendar app.
 
