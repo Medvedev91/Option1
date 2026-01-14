@@ -26,7 +26,12 @@ struct NavigationScreen: View {
                                 .tag(Tab.workspace(workspaceDb: nil))
                             
                             ForEach(workspacesDb) { workspaceDb in
-                                WorkspaceItemView(workspaceDb: workspaceDb)
+                                WorkspaceItemView(
+                                    workspaceDb: workspaceDb,
+                                    onDelete: {
+                                        tab = .workspace(workspaceDb: nil)
+                                    },
+                                )
                             }
                             .onMove { from, to in
                                 moveWorkspace(from: from, to: to)
@@ -103,6 +108,7 @@ private enum Tab: Hashable {
 private struct WorkspaceItemView: View {
     
     let workspaceDb: WorkspaceDb
+    let onDelete: () -> Void
     
     ///
     
@@ -146,6 +152,7 @@ private struct WorkspaceItemView: View {
             ) {
                 Button("Yes") {
                     workspaceDb.deleteWithDependencies()
+                    onDelete()
                 }
                 .keyboardShortcut(.defaultAction)
                 
