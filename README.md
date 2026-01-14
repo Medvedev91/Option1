@@ -6,9 +6,7 @@
 
 The idea - binding shortcuts like `⌥-1`, `⌥-2` for windows you need.
 
-Try it now. Press `⌥-1` to open Safari, `⌥-2` to open Calendar app.
-
-Let's customize it for yourself.
+Press `⌥-1` to open Safari, `⌥-2` to open Calendar app. Let's customize it for yourself.
 
 <p align="left">
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
