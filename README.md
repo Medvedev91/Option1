@@ -30,6 +30,8 @@ I call it pragmatic because I focus on features I miss on build-in macOS window 
 
 It is not a replacement but an addition to the built-in macOS window management.
 
+I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
+
 Customize it for yourself on the `Shared` tab.
 
 ## Download
