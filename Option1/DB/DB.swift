@@ -12,6 +12,7 @@ struct DB {
         #else
             let folder = "Option1"
         #endif
+        // cd ~/Library/Application\ Support/
         let fileURL = URL.applicationSupportDirectory.appending(path: "\(folder)/SwiftData.store")
         let schema = Schema([KvDb.self, WorkspaceDb.self, BindDb.self])
         let configuration = ModelConfiguration(
