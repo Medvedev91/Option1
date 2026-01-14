@@ -49,7 +49,8 @@ struct NavigationScreen: View {
                     HStack {
                         Button(
                             action: {
-                                WorkspaceDb.insert()
+                                let workspaceDb = WorkspaceDb.insert()
+                                tab = .workspace(workspaceDb: workspaceDb)
                             },
                             label: {
                                 Image(systemName: "plus")
