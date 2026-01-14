@@ -26,7 +26,9 @@ todo
 
 ## todo docs
 
-First of all, it is pragmatic. It is not a replacement for the built-in macOS window management, but an addition.
+I call it pragmatic because I focus on features I miss on build-in macOS window management.
+
+It is not a replacement but an addition to the built-in macOS window management.
 
 Customize it for yourself on the `Shared` tab.
 
