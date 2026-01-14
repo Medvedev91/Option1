@@ -20,11 +20,7 @@ todo
 
 todo
 
-## todo docs
-
-I call it pragmatic because I focus on features I miss on build-in macOS window management.
-
-It is not a replacement but an addition to the built-in macOS window management.
+## My Personal Advice
 
 I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
 
