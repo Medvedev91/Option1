@@ -37,3 +37,5 @@ https://github.com/soffes/HotKey
 https://github.com/sparkle-project/Sparkle
 
 https://github.com/sindresorhus/create-dmg
+
+https://github.com/Alamofire/Alamofire
