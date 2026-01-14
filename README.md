@@ -12,13 +12,13 @@ Press `⌥-1` to open Safari, `⌥-2` to open Calendar app. Customize it for you
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
 </p>
 
-## Feature 1 - Windows
+## Feature - Windows
 
 Let's say we have two open windows for one app, like two Xcode projects. We cannot open the window we need using built-in `⌘-Tab` because macOS opens apps, not windows. Let's solve this with Option1.
 
 todo
 
-## Feature 2 - Workspaces
+## Feature - Workspaces
 
 todo
 
