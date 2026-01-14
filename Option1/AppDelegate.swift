@@ -11,7 +11,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        HotKeysUtils.setup() 
+        initData()
+        HotKeysUtils.setup()
         MenuManager.instance.setup()
+    }
+}
+
+private func initData() {
+    Task { @MainActor in
+        if !BindDb.selectAll().isEmpty {
+            return
+        }
+        BindDb.insert(key: "1", workspaceDb: nil, bundle: "com.apple.Safari", substring: "")
+        BindDb.insert(key: "2", workspaceDb: nil, bundle: "com.apple.iCal", substring: "")
     }
 }
