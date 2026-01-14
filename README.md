@@ -6,7 +6,7 @@
 
 The idea - to bind shortcuts like `⌥-1`, `⌥-2` for windows you need.
 
-Try it now. Press `⌥-1` to open Calendar app, and `⌥-2` to open Notes app. This is the default Option1 settings.
+Try it now. Press `⌥-1` to open Calendar app, `⌥-2` to open Notes app. This is the default Option1 settings.
 
 ## todo docs
 
