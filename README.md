@@ -20,11 +20,15 @@ todo
 
 todo
 
-## My Personal Advice
+<!--
+
+## My Personal Advice 
 
 I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
 
 todo
+
+-->
 
 ## Download
 
