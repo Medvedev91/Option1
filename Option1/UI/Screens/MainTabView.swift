@@ -23,6 +23,6 @@ struct MainTabView: View {
             }
             .padding()
         }
-        .navigationTitle("Option 1")
+        .navigationTitle("Option 1 - Pragmatic Window Manager")
     }
 }
