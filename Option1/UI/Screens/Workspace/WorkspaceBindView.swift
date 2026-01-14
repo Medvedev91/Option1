@@ -46,7 +46,7 @@ struct WorkspaceBindView: View {
             .padding(.trailing, 8)
             
             if formUi.bundle != nil {
-                TextField("Title Substring (optional)", text: $formUi.substring)
+                TextField("title substring (optional)", text: $formUi.substring)
                     .autocorrectionDisabled()
                     .frame(width: 180)
             }
