@@ -84,10 +84,13 @@ private struct ActiveAppView: View {
     
     var body: some View {
         VStack {
-            Text(activeAppUi.app?.localizedName ?? "Other")
-                .fontWeight(.bold)
-                .textAlign(.leading)
-                .padding(.horizontal)
+            HStack(spacing: 0) {
+                Text(activeAppUi.app?.localizedName ?? "Other")
+                    .fontWeight(.bold)
+                Text(" - " + (activeAppUi.app?.bundleIdentifier ?? "Other"))
+                Spacer()
+            }
+            .padding(.horizontal)
             ForEach(activeAppUi.cachedWindows, id: \.self) { cachedWindow in
                 Text(cachedWindow.title)
                     .textAlign(.leading)
