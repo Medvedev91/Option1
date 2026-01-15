@@ -35,6 +35,12 @@ todo
   <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
 </p>
 
+todo
+
+<p align="left">
+  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
+</p>
+
 <!--
 
 ## My Personal Advice 
