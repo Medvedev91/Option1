@@ -9,7 +9,7 @@ The idea - binding shortcuts like `⌥-1`, `⌥-2` to windows you need.
 Press `⌥-1` to open Safari, and `⌥-2` to open Calendar app. Customize it for yourself.
 
 <p align="left">
-  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
+  <img height="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
 </p>
 
 ## Feature - Windows
@@ -30,6 +30,14 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 ## Feature - Workspaces
 
 todo
+
+<p align="left">
+  <img height="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspace_1.png">
+</p>
+
+<p align="left">
+  <img height="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspace_2.png">
+</p>
 
 <!--
 
