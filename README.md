@@ -21,7 +21,7 @@ Look at the screenshot:
 - for `⌥-3` I bind `Xcode` with `Option1` title,
 - for `⌥-4` I bind `Xcode` with `timeto.me` title.
 
-This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` opens with `timeto.me`. Solved!
+This means `⌥-3` opens Xcode window with `Option1` in the title, but `⌥-4` with `timeto.me`. Solved!
 
 <p align="left">
   <img width="1024" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/windows.png">
