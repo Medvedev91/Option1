@@ -41,6 +41,10 @@ todo
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
 </p>
 
+## Other Features
+
+todo
+
 <!--
 
 ## My Personal Advice 
