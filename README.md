@@ -12,7 +12,7 @@ Press `⌥-1` to open Safari, and `⌥-2` to open Calendar app. Customize it for
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
 </p>
 
-## Feature - Windows
+## Windows
 
 Let's say we have two windows for one app, like two Xcode projects. We cannot open the window we need with built-in `⌘-Tab` because macOS opens apps, not windows. Let's solve this with Option1.
 
@@ -27,7 +27,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
   <img width="1024" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/windows.png">
 </p>
 
-## Feature - Workspaces
+## Workspaces
 
 todo
 
