@@ -32,11 +32,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 todo
 
 <p align="left">
-  <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspace_1.png">
-</p>
-
-<p align="left">
-  <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspace_2.png">
+  <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
 </p>
 
 <!--
