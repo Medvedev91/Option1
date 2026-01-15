@@ -43,7 +43,9 @@ todo
 
 ## Other Features
 
-todo
+- Supports multiple displays ✅
+- Supports built-in macOS desktops ✅
+- Supports full screen windows ✅
 
 <!--
 
