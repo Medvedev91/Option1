@@ -29,7 +29,11 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 ## Workspaces
 
-My go-to feature. I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to open `Xcode` and `⌥-4` to `IntelliJ IDEA`.
+It is my go-to feature.
+
+I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to always open `Xcode` and `⌥-4` to always `IntelliJ IDEA`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1` window, and when I work on `timeto.me` I want the same `⌥-3` but opens `Xcode - timeto.me` window.
+
+This is how I created and set up two workspaces:
 
 <p align="left">
   <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
