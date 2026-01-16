@@ -29,13 +29,13 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 ## Workspaces
 
-todo
+My go-to feature. I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to open `Xcode` and `⌥-4` to `IntelliJ IDEA`.
 
 <p align="left">
   <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
 </p>
 
-todo
+To switch between workspaces, use menu bar.
 
 <p align="left">
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
