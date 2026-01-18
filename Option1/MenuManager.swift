@@ -12,7 +12,7 @@ private let statusBar: NSStatusBar = NSStatusBar.system
 private let statusItem: NSStatusItem = statusBar.statusItem(
     withLength: NSStatusItem.variableLength
 )
-private let statusMenu = NSMenu(title: "Option 1")
+private let statusMenu = NSMenu(title: "Option1")
 
 class MenuManager: ObservableObject {
     

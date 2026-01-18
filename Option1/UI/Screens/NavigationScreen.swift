@@ -17,7 +17,7 @@ struct NavigationScreen: View {
                     
                     List(selection: $tab) {
                         
-                        Label("Option 1", systemImage: "option")
+                        Label("Option1", systemImage: "option")
                             .tag(Tab.main)
                         
                         Section("Workspaces") {
