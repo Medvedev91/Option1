@@ -117,7 +117,7 @@ private struct WorkspaceItemView: View {
     
     @State private var isDeleteConfirmationPresented = false
     
-    @State private var isEditPresented = false
+    @State private var isRenamePresented = false
     @State private var editName: String = ""
     
     // Fix WTF bug - name is empty on second form open.
@@ -131,10 +131,10 @@ private struct WorkspaceItemView: View {
             .contextMenu {
                 Button(
                     action: {
-                        isEditPresented = true
+                        isRenamePresented = true
                     },
                     label: {
-                        Text("Edit")
+                        Text("Rename")
                     },
                 )
                 Button(
@@ -159,7 +159,7 @@ private struct WorkspaceItemView: View {
                 
                 Button("No", role: .cancel) {}
             }
-            .alert("", isPresented: $isEditPresented) {
+            .alert("", isPresented: $isRenamePresented) {
                 TextField("Workspace", text: $editName)
                 Button("Cancel") {
                 }
