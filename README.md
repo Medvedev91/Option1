@@ -14,6 +14,8 @@ Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
 
 ## Windows
 
+Feature to manage apps with multiple open windows. Like multiple open Word documents or Xcode projects.
+
 Let's say we have two windows for one app, like two Xcode projects. We cannot open the window we need with built-in `⌘-Tab` because macOS opens apps, not windows. Let's solve this with Option1.
 
 Look at the screenshot:
