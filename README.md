@@ -35,7 +35,7 @@ Feature to setup sets of shortcuts for different projects.
 
 I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to always open `Xcode` and `⌥-4` to always `IntelliJ IDEA`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1` window, but when I work on `timeto.me` I want the same `⌥-3` but opens `Xcode - timeto.me` window.
 
-This is how I created and setup two workspaces:
+This is how I setup two workspaces:
 
 <p align="left">
   <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
