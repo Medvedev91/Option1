@@ -69,6 +69,9 @@ I call it pragmatic because I focus on the features I miss in macOS. It is not a
 - Supports built-in macOS desktops ✅
 - Supports full screen windows ✅
 
+Best regards,
+Ivan
+
 -->
 
 ## Thanks
