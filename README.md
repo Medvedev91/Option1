@@ -37,10 +37,6 @@ I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` t
 
 The same way, depending on the project I'm working on, `⌥-4` should open the right `IntelliJ IDEA` window.
 
-<!--
-I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to `Xcode` and `⌥-4` to `IntelliJ IDEA`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` I want the same `⌥-3` but opens `Xcode - timeto.me`.
--->
-
 This is how I setup two workspaces:
 
 <p align="left">
@@ -53,29 +49,27 @@ To switch between workspaces, use menu bar.
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
 </p>
 
+## Download
+
+https://option1.io/Option1.dmg
+
+## Contacts
+
+todo
+
+## P.S.
+
+todo
+
 <!--
 
-## Other Features
+I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
 
 - Supports multiple displays ✅
 - Supports built-in macOS desktops ✅
 - Supports full screen windows ✅
 
 -->
-
-<!--
-
-## My Personal Advice 
-
-I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
-
-todo
-
--->
-
-## Download
-
-https://option1.io/Option1.dmg
 
 ## Thanks
 
