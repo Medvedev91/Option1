@@ -33,7 +33,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 Feature to setup sets of shortcuts for different projects.
 
-I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` I want the same `⌥-3` but opens `Xcode - timeto.me`.
+I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` the same `⌥-3` should open `Xcode - timeto.me`.
 
 The same way `⌥-4` opens the right `IntelliJ IDEA` window.
 
