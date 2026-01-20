@@ -31,7 +31,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 ## Workspaces
 
-It is my go-to feature.
+Feature to setup sets of shortcuts for different projects.
 
 I work on two projects: `Option1` and `timeto.me`. For each project, I use two apps: `Xcode` and `IntelliJ IDEA`. I got used to press `⌥-3` to always open `Xcode` and `⌥-4` to always `IntelliJ IDEA`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1` window, but when I work on `timeto.me` I want the same `⌥-3` but opens `Xcode - timeto.me` window.
 
