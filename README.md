@@ -49,6 +49,19 @@ To switch between workspaces, use menu bar.
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
 </p>
 
+## P.S.
+
+I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
+
+- Supports multiple displays ✅
+- Supports built-in macOS desktops ✅
+- Supports full screen windows ✅
+
+<!--
+Best regards,
+Ivan
+-->
+
 ## Download
 
 https://option1.io/Option1.dmg
@@ -58,23 +71,6 @@ https://option1.io/Option1.dmg
 ivan@option1.io
 
 https://option1.io
-
-## P.S.
-
-todo
-
-<!--
-
-I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management.
-
-- Supports multiple displays ✅
-- Supports built-in macOS desktops ✅
-- Supports full screen windows ✅
-
-Best regards,
-Ivan
-
--->
 
 ## Thanks
 
