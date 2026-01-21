@@ -57,7 +57,7 @@ https://option1.io/Option1.dmg
 
 https://option1.io
 
-todo email
+ivan@option1.io
 
 ## P.S.
 
