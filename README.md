@@ -53,9 +53,9 @@ To switch between workspaces, use menu bar.
 
 I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management:
 
-- supports multiple displays ✅,
-- supports built-in macOS desktops ✅,
-- supports full-screen windows ✅.
+- supports multiple displays ✅
+- supports built-in macOS desktops ✅
+- supports full-screen windows ✅
 
 <!--
 Best regards,
