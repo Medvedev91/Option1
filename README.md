@@ -66,6 +66,8 @@ Ivan
 
 https://option1.io/Option1.dmg
 
+https://github.com/Medvedev91/Option1/releases
+
 ## Contacts
 
 ivan@option1.io
