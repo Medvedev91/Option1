@@ -55,7 +55,9 @@ https://option1.io/Option1.dmg
 
 ## Contacts
 
-todo
+https://option1.io
+
+todo email
 
 ## P.S.
 
