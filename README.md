@@ -55,9 +55,9 @@ https://option1.io/Option1.dmg
 
 ## Contacts
 
-https://option1.io
+Any questions ivan@option1.io
 
-ivan@option1.io
+Website https://option1.io
 
 ## P.S.
 
