@@ -1,8 +1,11 @@
 <p align="center">
   <img width="200" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon1024.png">
+  <h1 align="center">Option1 - Pragmatic Window Manager for macOS</h1>
 </p>
 
+<!--
 # Option1 - Pragmatic Window Manager for macOS
+-->
 
 The idea - binding shortcuts like `⌥-1`, `⌥-2` to windows you need.
 
