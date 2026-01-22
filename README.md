@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="256" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon1024.png">
+  <img width="200" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon1024.png">
 </p>
 
 # Option1 - Pragmatic Window Manager for macOS
