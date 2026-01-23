@@ -33,7 +33,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 Feature to setup sets of shortcuts for different projects.
 
-I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. It means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` the same `⌥-3` should open `Xcode - timeto.me`.
+I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. This means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` the same `⌥-3` should open `Xcode - timeto.me`.
 
 The same way, depending on the project I'm working on, `⌥-4` should open the right `IntelliJ IDEA` window.
 
@@ -43,7 +43,7 @@ This is how I setup two workspaces:
   <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
 </p>
 
-To switch between workspaces, use menu bar.
+To switch between workspaces, use menu bar:
 
 <p align="left">
   <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
