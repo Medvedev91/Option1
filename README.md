@@ -14,7 +14,7 @@ Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
 
 ## Windows
 
-Feature to manage apps with multiple open windows. Like multiple open Word documents or Xcode projects.
+Manage apps with multiple open windows. Like multiple open Word documents or Xcode projects.
 
 Let's say we have two windows for one app, like two Xcode projects. We cannot open the window we need with built-in `⌘-Tab` because macOS opens apps, not windows. Let's solve this with Option1.
 
@@ -31,7 +31,7 @@ This means `⌥-3` opens Xcode window with `Option1` in the title, and `⌥-4` w
 
 ## Workspaces
 
-Feature to setup sets of shortcuts for different projects.
+Setup sets of shortcuts for different projects.
 
 I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. This means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` the same `⌥-3` should open `Xcode - timeto.me`.
 
