@@ -32,6 +32,7 @@ class MenuManager: ObservableObject {
     }
     
     func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
+        // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
         self.workspacesDb = workspacesDb
         if let workspaceDb = self.workspaceDb {
             if !workspacesDb.contains(where: { $0.id == workspaceDb.id }) {
