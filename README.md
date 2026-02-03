@@ -85,3 +85,5 @@ https://github.com/sparkle-project/Sparkle
 https://github.com/sindresorhus/create-dmg
 
 https://github.com/Alamofire/Alamofire
+
+https://github.com/SwiftyJSON/SwiftyJSON
