@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         initData()
         HotKeysUtils.setup()
         MenuManager.instance.setup()
+        ping()
     }
 }
 
