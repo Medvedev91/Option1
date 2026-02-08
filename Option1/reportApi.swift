@@ -10,6 +10,6 @@ func reportApi(_ message: String) {
     _ = AF.request(
         "https://api.option1.io/report",
         method: .post,
-        parameters: parameters
+        parameters: parameters,
     ).responseString { _ in }
 }
