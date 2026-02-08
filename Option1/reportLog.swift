@@ -1,3 +1,3 @@
 func reportLog(_ message: String) {
-    print("log \(message)")
+    print(";; log \(time()): \(message)")
 }
