@@ -26,6 +26,7 @@ class HotKeysUtils {
 
 @MainActor
 private func handleRun(key: Key) {
+    ping()
     _ = isAccessibilityGranted(showDialog: true)
     
     let bindsDb = BindDb.selectAll()
