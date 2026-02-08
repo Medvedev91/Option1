@@ -17,8 +17,9 @@ func ping() {
         reportLog("ping()")
         let parameters: [String: String] = [
             "token": KvDb.getTokenOrNil() ?? "",
-            "model": getModelIdentifier() ?? "",
-            "os": getOsVersion(),
+            "build": SystemInfo.getBuildOrNil().map { "\($0)" } ?? "",
+            "model": SystemInfo.getModelIdentifierOrNil() ?? "",
+            "os": SystemInfo.getOsVersion(),
         ]
         isPingInProgress = true
         _ = AF.request(
