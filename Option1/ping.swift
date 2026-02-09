@@ -18,7 +18,7 @@ func ping() {
         let parameters: [String: String] = [
             "token": KvDb.getTokenOrNil() ?? "",
             "build": SystemInfo.getBuildOrNil().map { "\($0)" } ?? "",
-            "model": SystemInfo.getModelIdentifierOrNil() ?? "",
+            "device": SystemInfo.getModelIdentifierOrNil() ?? "",
             "os": SystemInfo.getOsVersion(),
         ]
         isPingInProgress = true

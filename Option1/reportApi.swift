@@ -5,7 +5,7 @@ func reportApi(_ message: String) {
     let parameters: [String: String] = [
         "message": message,
         "build": SystemInfo.getBuildOrNil().map { "\($0)" } ?? "",
-        "model": SystemInfo.getModelIdentifierOrNil() ?? "",
+        "device": SystemInfo.getModelIdentifierOrNil() ?? "",
         "os": SystemInfo.getOsVersion(),
     ]
     _ = AF.request(
