@@ -68,12 +68,7 @@ struct MainTab: View {
                 MyText("Best regards,\nIvan")
                 
                 VStack {}
-                    .frame(height: 10)
-                
-                Divider()
-                    .padding(.vertical)
-                
-                SparkleButtonView()
+                    .frame(height: 24)
             }
             .padding()
         }
@@ -111,6 +106,6 @@ private struct MyText: View {
         .font(.system(size: 14))
         .lineSpacing(4)
         .textAlign(.leading)
-        .frame(maxWidth: 700)
+        .frame(maxWidth: 650)
     }
 }
