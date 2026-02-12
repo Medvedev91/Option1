@@ -69,7 +69,7 @@ struct NavigationScreen: View {
             detail: {
                 switch tab {
                 case .main:
-                    MainTabView()
+                    MainTab()
                 case .workspace(let workspaceDb):
                     WorkspaceScreen(workspaceDb: workspaceDb)
                         .id("WorkspaceScreen \(workspaceDb?.id.uuidString ?? "")")

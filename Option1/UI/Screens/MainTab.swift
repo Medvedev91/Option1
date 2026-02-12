@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MainTabView: View {
+struct MainTab: View {
     
     var body: some View {
         ScrollView {
