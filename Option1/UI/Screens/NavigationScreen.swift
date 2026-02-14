@@ -23,6 +23,9 @@ struct NavigationScreen: View {
                         Label("Settings", systemImage: "gearshape")
                             .tag(Tab.settings)
                         
+                        Label("Donations", systemImage: "heart")
+                            .tag(Tab.donations)
+                        
                         Section("Workspaces") {
                             
                             Label("Shared", systemImage: menuManager.workspaceDb == nil ? "inset.filled.circle" : "circle")
@@ -75,6 +78,8 @@ struct NavigationScreen: View {
                     MainTab()
                 case .settings:
                     SettingsTab()
+                case .donations:
+                    DonationsTab()
                 case .workspace(let workspaceDb):
                     WorkspaceScreen(workspaceDb: workspaceDb)
                         .id("WorkspaceScreen \(workspaceDb?.id.uuidString ?? "")")
@@ -109,6 +114,7 @@ struct NavigationScreen: View {
 private enum Tab: Hashable {
     case main
     case settings
+    case donations
     case workspace(workspaceDb: WorkspaceDb?)
 }
 
