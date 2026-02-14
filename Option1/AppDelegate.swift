@@ -20,10 +20,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 private func initData() {
     Task { @MainActor in
-        if !BindDb.selectAll().isEmpty {
-            return
+        _ = KvDb.selectOrInsertInitTime()
+        
+        if BindDb.selectAll().isEmpty {
+            BindDb.insert(key: "1", workspaceDb: nil, bundle: "com.apple.Safari", substring: "")
+            BindDb.insert(key: "2", workspaceDb: nil, bundle: "com.apple.iCal", substring: "")
         }
-        BindDb.insert(key: "1", workspaceDb: nil, bundle: "com.apple.Safari", substring: "")
-        BindDb.insert(key: "2", workspaceDb: nil, bundle: "com.apple.iCal", substring: "")
     }
 }

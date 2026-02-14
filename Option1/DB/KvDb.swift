@@ -21,6 +21,19 @@ class KvDb {
         selectAll().first { $0.key == key }
     }
     
+    ///
+    
+    @MainActor
+    static func selectOrInsertInitTime() -> Int {
+        if let initTime = KvDb.selectByKeyOrNil(INIT_TIME_KEY)?.value {
+            return Int(initTime)!
+        }
+        let now = time()
+        DB.modelContainer.mainContext.insert(KvDb(key: INIT_TIME_KEY, value: String(now)))
+        DB.save()
+        return Int(now)
+    }
+    
     //
     // Token
     
@@ -42,3 +55,4 @@ class KvDb {
 }
 
 private let TOKEN_KEY = "token"
+private let INIT_TIME_KEY = "init-time"
