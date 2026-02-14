@@ -10,7 +10,7 @@ struct DonationsTab: View {
 
                 AppText("Please donate any amount here [https://buymeacoffee.com/medvedev91](https://buymeacoffee.com/medvedev91)\nand enter the transaction ID to hide donation notifications.")
                 
-                AppText("One donation for lifetime usage of the app.")
+                AppText("One donation for lifetime app usage.")
                 
                 HStack {
                     Spacer()
