@@ -16,22 +16,22 @@ class KvDb {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<KvDb>())
     }
     
+    @MainActor
+    static func selectByKeyOrNil(_ key: String) -> KvDb? {
+        selectAll().first { $0.key == key }
+    }
+    
     //
     // Token
     
     @MainActor
-    static func getTokenKvDbOrNil() -> KvDb? {
-        selectAll().first { $0.key == TOKEN_KEY }
-    }
-    
-    @MainActor
     static func getTokenOrNil() -> String? {
-        getTokenKvDbOrNil()?.value
+        selectByKeyOrNil(TOKEN_KEY)?.value
     }
     
     @MainActor
     static func upsertToken(_ token: String) {
-        guard let kvDb = getTokenKvDbOrNil() else {
+        guard let kvDb = selectByKeyOrNil(TOKEN_KEY) else {
             DB.modelContainer.mainContext.insert(KvDb(key: TOKEN_KEY, value: token))
             DB.save()
             return
