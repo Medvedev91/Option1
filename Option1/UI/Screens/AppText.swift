@@ -2,6 +2,10 @@ import SwiftUI
 
 struct AppText: View {
     
+    static let FONT_SIZE: CGFloat = 14
+    
+    ///
+    
     private let text: String
     
     init(_ text: String) {
@@ -13,7 +17,7 @@ struct AppText: View {
             markdown: text,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace),
         ))
-        .font(.system(size: 14))
+        .font(.system(size: AppText.FONT_SIZE))
         .lineSpacing(4)
         .textAlign(.leading)
         .frame(maxWidth: 650)
