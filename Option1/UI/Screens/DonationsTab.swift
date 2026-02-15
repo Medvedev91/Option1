@@ -2,6 +2,8 @@ import SwiftUI
 
 struct DonationsTab: View {
     
+    @State private var transactionIdForm = ""
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -13,6 +15,17 @@ struct DonationsTab: View {
                 AppText("One donation for lifetime app usage.")
                 
                 HStack {
+                    
+                    Text("Transaction ID")
+                        .font(.system(size: AppText.FONT_SIZE))
+                    
+                    TextField("", text: $transactionIdForm)
+                        .autocorrectionDisabled()
+                        .frame(width: 180)
+                    
+                    Button("Activate") {
+                    }
+                    
                     Spacer()
                 }
             }
