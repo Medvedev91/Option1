@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DonationsTab: View {
     
+    @State private var isActivated = false
     @State private var transactionIdForm = ""
     
     var body: some View {
@@ -14,14 +15,20 @@ struct DonationsTab: View {
                 
                 HStack {
                     
-                    Text("Transaction ID")
-                        .font(.system(size: AppText.FONT_SIZE))
-                    
-                    TextField("...", text: $transactionIdForm)
-                        .autocorrectionDisabled()
-                        .frame(width: 150)
-                    
-                    Button("Activate") {
+                    if isActivated {
+                        AppText("Activated")
+                            .foregroundColor(.green)
+                    } else {
+                        
+                        Text("Transaction ID")
+                            .font(.system(size: AppText.FONT_SIZE))
+                        
+                        TextField("...", text: $transactionIdForm)
+                            .autocorrectionDisabled()
+                            .frame(width: 150)
+                        
+                        Button("Activate") {
+                        }
                     }
                     
                     Spacer()
