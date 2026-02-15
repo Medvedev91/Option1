@@ -77,7 +77,11 @@ struct NavigationScreen: View {
                 case .main:
                     MainTab()
                 case .settings:
-                    SettingsTab()
+                    SettingsTab(
+                        onDonationsClick: {
+                            tab = .donations
+                        },
+                    )
                 case .donations:
                     DonationsTab()
                 case .workspace(let workspaceDb):
