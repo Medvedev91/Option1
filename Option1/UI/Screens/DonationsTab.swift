@@ -12,22 +12,22 @@ struct DonationsTab: View {
 
                 AppText("Please donate any amount here [https://buymeacoffee.com/medvedev91](https://buymeacoffee.com/medvedev91)\nand enter the transaction ID to hide donation notifications.")
                 
-                AppText("One donation for lifetime app usage.")
-                
                 HStack {
                     
                     Text("Transaction ID")
                         .font(.system(size: AppText.FONT_SIZE))
                     
-                    TextField("", text: $transactionIdForm)
+                    TextField("...", text: $transactionIdForm)
                         .autocorrectionDisabled()
-                        .frame(width: 180)
+                        .frame(width: 150)
                     
                     Button("Activate") {
                     }
                     
                     Spacer()
                 }
+                
+                AppText("One donation for lifetime app usage.")
             }
             .padding()
         }
