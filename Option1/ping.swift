@@ -16,7 +16,7 @@ func ping() {
         }
         reportLog("ping()")
         let parameters: [String: String] = [
-            "token": KvDb.getTokenOrNil() ?? "",
+            "token": KvDb.selectTokenOrNil() ?? "",
             "build": SystemInfo.getBuildOrNil().map { "\($0)" } ?? "",
             "device": SystemInfo.getModelIdentifierOrNil() ?? "",
             "os": SystemInfo.getOsVersion(),

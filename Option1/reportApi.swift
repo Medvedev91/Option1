@@ -5,7 +5,7 @@ func reportApi(_ message: String) {
         reportLog("reportApi() \(message)")
         let parameters: [String: String] = [
             "message": message,
-            "token": KvDb.getTokenOrNil() ?? "",
+            "token": KvDb.selectTokenOrNil() ?? "",
             "build": SystemInfo.getBuildOrNil().map { "\($0)" } ?? "",
             "device": SystemInfo.getModelIdentifierOrNil() ?? "",
             "os": SystemInfo.getOsVersion(),

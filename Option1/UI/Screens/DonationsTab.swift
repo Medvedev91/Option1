@@ -71,7 +71,7 @@ struct DonationsTab: View {
         }
         
         let parameters: [String: String] = [
-            "token": KvDb.getTokenOrNil() ?? "",
+            "token": KvDb.selectTokenOrNil() ?? "",
             "transaction_id": transactionIdForm,
         ]
         _ = AF.request(

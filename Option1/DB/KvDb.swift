@@ -62,7 +62,7 @@ class KvDb {
     // Token
     
     @MainActor
-    static func getTokenOrNil() -> String? {
+    static func selectTokenOrNil() -> String? {
         selectByKeyOrNil(TOKEN_KEY)?.value
     }
     
