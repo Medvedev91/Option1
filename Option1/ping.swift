@@ -50,7 +50,7 @@ func ping() {
                     lastPingTime = time()
                 }
             case let .failure(error):
-                reportLog("ping() failure:\(error)")
+                reportApi("ping() failure:\(error)")
             }
             isPingInProgress = false
         }
