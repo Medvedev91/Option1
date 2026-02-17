@@ -46,6 +46,19 @@ class KvDb {
     }
     
     //
+    // Activation Transaction ID
+    
+    @MainActor
+    static func selectActivationTransactionIdOrNil() -> String? {
+        selectByKeyOrNil(ACTIVATION_TRANSACTION_ID_KEY)?.value
+    }
+    
+    @MainActor
+    static func upsertActivationTransactionId(_ activationTransactionId: String) {
+        upsert(key: ACTIVATION_TRANSACTION_ID_KEY, value: activationTransactionId)
+    }
+    
+    //
     // Token
     
     @MainActor
@@ -67,3 +80,4 @@ class KvDb {
 
 private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
+private let ACTIVATION_TRANSACTION_ID_KEY = "activation-transaction-id"
