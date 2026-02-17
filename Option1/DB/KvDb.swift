@@ -68,13 +68,7 @@ class KvDb {
     
     @MainActor
     static func upsertToken(_ token: String) {
-        guard let kvDb = selectByKeyOrNil(TOKEN_KEY) else {
-            DB.modelContainer.mainContext.insert(KvDb(key: TOKEN_KEY, value: token))
-            DB.save()
-            return
-        }
-        kvDb.value = token
-        DB.save()
+        upsert(key: TOKEN_KEY, value: token)
     }
 }
 
