@@ -21,6 +21,17 @@ class KvDb {
         selectAll().first { $0.key == key }
     }
     
+    @MainActor
+    static func upsert(key: String, value: String) {
+        guard let kvDb = selectByKeyOrNil(key) else {
+            DB.modelContainer.mainContext.insert(KvDb(key: key, value: value))
+            DB.save()
+            return
+        }
+        kvDb.value = value
+        DB.save()
+    }
+    
     ///
     
     @MainActor
