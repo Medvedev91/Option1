@@ -93,6 +93,7 @@ private struct ActiveAppView: View {
             .padding(.horizontal)
             ForEach(activeAppUi.cachedWindows, id: \.self) { cachedWindow in
                 Text(cachedWindow.title)
+                    .textSelection(.enabled)
                     .textAlign(.leading)
                     .padding(.horizontal)
             }

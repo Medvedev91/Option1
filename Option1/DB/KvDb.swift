@@ -21,6 +21,17 @@ class KvDb {
         selectAll().first { $0.key == key }
     }
     
+    @MainActor
+    static func upsert(key: String, value: String) {
+        guard let kvDb = selectByKeyOrNil(key) else {
+            DB.modelContainer.mainContext.insert(KvDb(key: key, value: value))
+            DB.save()
+            return
+        }
+        kvDb.value = value
+        DB.save()
+    }
+    
     ///
     
     @MainActor
@@ -35,24 +46,32 @@ class KvDb {
     }
     
     //
+    // Activation Transaction ID
+    
+    @MainActor
+    static func selectActivationTransactionIdOrNil() -> String? {
+        selectByKeyOrNil(ACTIVATION_TRANSACTION_ID_KEY)?.value
+    }
+    
+    @MainActor
+    static func upsertActivationTransactionId(_ activationTransactionId: String) {
+        upsert(key: ACTIVATION_TRANSACTION_ID_KEY, value: activationTransactionId)
+    }
+    
+    //
     // Token
     
     @MainActor
-    static func getTokenOrNil() -> String? {
+    static func selectTokenOrNil() -> String? {
         selectByKeyOrNil(TOKEN_KEY)?.value
     }
     
     @MainActor
     static func upsertToken(_ token: String) {
-        guard let kvDb = selectByKeyOrNil(TOKEN_KEY) else {
-            DB.modelContainer.mainContext.insert(KvDb(key: TOKEN_KEY, value: token))
-            DB.save()
-            return
-        }
-        kvDb.value = token
-        DB.save()
+        upsert(key: TOKEN_KEY, value: token)
     }
 }
 
 private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
+private let ACTIVATION_TRANSACTION_ID_KEY = "activation-transaction-id"
