@@ -5,6 +5,7 @@ struct NavigationScreen: View {
     
     @State private var tab: Tab = .main
     @State private var columnVisibility = NavigationSplitViewVisibility.all
+    @State private var isDonationsAlertPresented = false
     
     @StateObject private var menuManager = MenuManager.instance
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
@@ -94,6 +95,25 @@ struct NavigationScreen: View {
             if case let .workspace(workspaceDb) = newTab {
                 menuManager.setWorkspaceDb(workspaceDb)
             }
+        }
+        .onReceive(DonationsAlertUtils.instance.$needToShow) { needToShow in
+            if needToShow {
+                DonationsAlertUtils.instance.needToShow = false
+                tab = .donations
+                isDonationsAlertPresented = true
+            }
+        }
+        .confirmationDialog(
+            "Option1 is 100% free. I only ask for donations.",
+            isPresented: $isDonationsAlertPresented,
+        ) {
+            Button("Donate Any Amount") {
+            }
+            .keyboardShortcut(.defaultAction)
+            
+            Button("Another Time", role: .cancel) {}
+        } message: {
+            Text("Please donate any amount to hide donation notifications.")
         }
     }
     
