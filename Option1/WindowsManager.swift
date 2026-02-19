@@ -35,10 +35,13 @@ struct WindowsManager {
         openApplicationByBundle(bundle)
     }
     
-    static func openApplicationByBundle(_ bundle: String) {
+    static func openApplicationByBundle(
+        _ bundle: String,
+        arguments: [String] = [],
+    ) {
         guard let url: URL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else { return }
         let configuration = NSWorkspace.OpenConfiguration()
-        configuration.arguments = ["/bin"]
+        configuration.arguments = arguments
         NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: nil)
     }
     
