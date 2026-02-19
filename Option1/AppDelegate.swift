@@ -3,6 +3,7 @@ import AppKit
 class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillFinishLaunching(_ notification: Notification) {
+        launchTime = time()
         // In logs we see "Warning: Background app automatically schedules for update checks but does
         // not implement gentle reminders...https://sparkle-project.org/documentation/gentle-reminders/".
         // That is because Option 1 is "dockless" app - app that does not appear in the Dock.
