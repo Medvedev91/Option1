@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 
 class DonationsAlertUtils: ObservableObject {
@@ -13,6 +14,7 @@ class DonationsAlertUtils: ObservableObject {
         let isNeedToShow = calcIsNeedToShow()
         if isNeedToShow {
             DonationsAlertUtils.instance.needToShow = true
+            WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
         }
         return isNeedToShow
     }
