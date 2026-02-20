@@ -35,6 +35,12 @@ struct AppScreen: View {
                 setupAppObservers()
             }
         }
+        .onAppear {
+            // Fix после первого открытия окно Option1 уходит за другие окна
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+            }
+        }
     }
 }
 
