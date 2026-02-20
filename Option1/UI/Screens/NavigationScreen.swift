@@ -108,10 +108,13 @@ struct NavigationScreen: View {
             isPresented: $isDonationsAlertPresented,
         ) {
             Button("Donate Any Amount") {
+                KvDb.upsertDonationsLastAlertTime()
             }
             .keyboardShortcut(.defaultAction)
             
-            Button("Another Time", role: .cancel) {}
+            Button("Another Time", role: .cancel) {
+                KvDb.upsertDonationsLastAlertTime()
+            }
         } message: {
             Text("Please donate any amount to hide donation notifications.")
         }

@@ -46,6 +46,19 @@ class KvDb {
     }
     
     //
+    // Donations Last Reponse Time
+    
+    @MainActor
+    static func selectDonationsLastAlertTimeOrNil() -> Int? {
+        selectByKeyOrNil(DONATIONS_LAST_ALERT_TIME_KEY).map { Int($0.value)! }
+    }
+    
+    @MainActor
+    static func upsertDonationsLastAlertTime() {
+        upsert(key: DONATIONS_LAST_ALERT_TIME_KEY, value: String(time()))
+    }
+    
+    //
     // Activation Transaction ID
     
     @MainActor
@@ -75,3 +88,4 @@ class KvDb {
 private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
 private let ACTIVATION_TRANSACTION_ID_KEY = "activation-transaction-id"
+private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"

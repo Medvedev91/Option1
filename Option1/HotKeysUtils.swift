@@ -29,6 +29,10 @@ private func handleRun(key: Key) {
     ping()
     _ = isAccessibilityGranted(showDialog: true)
     
+    if DonationsAlertUtils.checkUp() {
+        return
+    }
+    
     let bindsDb = BindDb.selectAll()
     
     guard let bindDb: BindDb = {
