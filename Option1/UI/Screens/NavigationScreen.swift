@@ -74,20 +74,29 @@ struct NavigationScreen: View {
                 }
             },
             detail: {
-                switch tab {
-                case .main:
-                    MainTab()
-                case .settings:
-                    SettingsTab(
-                        onDonationsClick: {
-                            tab = .donations
-                        },
-                    )
-                case .donations:
-                    DonationsTab()
-                case .workspace(let workspaceDb):
-                    WorkspaceScreen(workspaceDb: workspaceDb)
-                        .id("WorkspaceScreen \(workspaceDb?.id.uuidString ?? "")")
+                Group {
+                    switch tab {
+                    case .main:
+                        MainTab()
+                    case .settings:
+                        SettingsTab(
+                            onDonationsClick: {
+                                tab = .donations
+                            },
+                        )
+                    case .donations:
+                        DonationsTab()
+                    case .workspace(let workspaceDb):
+                        WorkspaceScreen(workspaceDb: workspaceDb)
+                            .id("WorkspaceScreen \(workspaceDb?.id.uuidString ?? "")")
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Hide") {
+                            closeWindow()
+                        }
+                    }
                 }
             }
         )

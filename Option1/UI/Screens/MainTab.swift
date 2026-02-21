@@ -67,8 +67,10 @@ struct MainTab: View {
                 
                 AppText("Best regards,\nIvan")
                 
-                VStack {}
-                    .frame(height: 24)
+                HStack {
+                    Spacer()
+                }
+                .frame(height: 24)
             }
             .padding()
         }
