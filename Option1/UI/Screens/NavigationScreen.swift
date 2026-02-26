@@ -7,6 +7,9 @@ struct NavigationScreen: View {
     @State private var columnVisibility = NavigationSplitViewVisibility.all
     @State private var isDonationsAlertPresented = false
     
+    @State private var isNewWorkspacePresented = false
+    @State private var newWorkspaceName: String = ""
+    
     @StateObject private var menuManager = MenuManager.instance
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
     
@@ -56,8 +59,8 @@ struct NavigationScreen: View {
                     HStack {
                         Button(
                             action: {
-                                let workspaceDb = WorkspaceDb.insert()
-                                tab = .workspace(workspaceDb: workspaceDb)
+                                newWorkspaceName = ""
+                                isNewWorkspacePresented = true
                             },
                             label: {
                                 Image(systemName: "plus")
@@ -126,6 +129,18 @@ struct NavigationScreen: View {
             }
         } message: {
             Text("Please donate any amount to hide donation notifications.")
+        }
+        .alert("New Workspace", isPresented: $isNewWorkspacePresented) {
+            TextField("Workspace", text: $newWorkspaceName)
+            Button("Cancel") {
+            }
+            .keyboardShortcut(.cancelAction)
+            Button("Create") {
+                let workspaceDb = WorkspaceDb.insert(name: newWorkspaceName)
+                tab = .workspace(workspaceDb: workspaceDb)
+            }
+            .disabled(newWorkspaceName.isEmpty)
+            .keyboardShortcut(.defaultAction)
         }
     }
     
