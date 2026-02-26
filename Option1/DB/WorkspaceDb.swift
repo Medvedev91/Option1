@@ -43,12 +43,12 @@ class WorkspaceDb {
     }
     
     @MainActor
-    static func insert() -> WorkspaceDb {
+    static func insert(name: String) -> WorkspaceDb {
         let lastSort: Int = selectAll().max { $0.sort < $1.sort }?.sort ?? 0
         let nextSort: Int = lastSort + 1
         let workspaceDb = WorkspaceDb(
             id: UUID(),
-            name: "Workspace #\(nextSort)",
+            name: name,
             date: Date.now,
             sort: nextSort,
         )
