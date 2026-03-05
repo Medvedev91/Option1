@@ -29,7 +29,7 @@ private func calcIsNeedToShow() -> Bool {
         return false
     }
     
-    if KvDb.selectActivationTransactionIdOrNil() != nil {
+    if KvDb.selectActivationEmailOrNil() != nil {
         return false
     }
     
