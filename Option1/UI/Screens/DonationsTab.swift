@@ -6,7 +6,7 @@ struct DonationsTab: View {
     
     @State private var isActivated = false
     @State private var isActivationRequestInProgress = false
-    @State private var transactionIdForm = ""
+    @State private var emailForm = ""
     
     @State private var isErrorPresented = false
     @State private var errorMessage = ""
@@ -17,7 +17,9 @@ struct DonationsTab: View {
                 
                 AppText("Option1 is 100% free and open source. I only ask for donations.")
                 
-                AppText("Please donate any amount here [https://buymeacoffee.com/medvedev91](https://buymeacoffee.com/medvedev91)\nand enter the transaction ID to hide donation notifications.")
+                AppText("Please donate any amount here [https://buymeacoffee.com/medvedev91](https://buymeacoffee.com/medvedev91)\nand enter the supporter's email to hide donation notifications.")
+                
+                AppText("One donation for lifetime app usage.")
                 
                 HStack {
                     
@@ -26,23 +28,18 @@ struct DonationsTab: View {
                             .foregroundColor(.green)
                     } else {
                         
-                        Text("Transaction ID")
-                            .font(.system(size: AppText.FONT_SIZE))
-                        
-                        TextField("...", text: $transactionIdForm)
+                        TextField("Email", text: $emailForm)
                             .autocorrectionDisabled()
                             .frame(width: 150)
                         
                         Button("Activate") {
                             activationRequest()
                         }
-                        .disabled(isActivationRequestInProgress || transactionIdForm.isEmpty)
+                        .disabled(isActivationRequestInProgress || emailForm.isEmpty)
                     }
                     
                     Spacer()
                 }
-                
-                AppText("One donation for lifetime app usage.")
             }
             .padding()
             .alert(
@@ -54,7 +51,7 @@ struct DonationsTab: View {
         }
         .navigationTitle("Donations")
         .onAppear {
-            if KvDb.selectActivationTransactionIdOrNil() != nil {
+            if KvDb.selectActivationEmailOrNil() != nil {
                 isActivated = true
             }
         }
@@ -72,7 +69,7 @@ struct DonationsTab: View {
         
         let parameters: [String: String] = [
             "token": KvDb.selectTokenOrNil() ?? "",
-            "transaction_id": transactionIdForm,
+            "email": emailForm,
         ]
         _ = AF.request(
             "https://api.option1.io/activate",
@@ -102,12 +99,12 @@ struct DonationsTab: View {
                     reportApi("activationRequest() .success not success:\(jString)")
                     break
                 }
-                guard let transactionId: String = j["data"]["transaction_id"].string else {
-                    reportApi("activationRequest() .success no transaction_id:\(jString)")
+                guard let email: String = j["data"]["email"].string else {
+                    reportApi("activationRequest() .success no email:\(jString)")
                     break
                 }
                 Task { @MainActor in
-                    KvDb.upsertActivationTransactionId(transactionId)
+                    KvDb.upsertActivationEmail(email)
                     isActivated = true
                 }
             case let .failure(error):
