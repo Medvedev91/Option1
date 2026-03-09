@@ -119,9 +119,9 @@ private func handleNotification(
     axuiElement: AXUIElement,
 ) {
     do {
-        // Срабатывает при фокусе окна другого приложения.
-        // Нужно использовать `focusedWindow()`
         if (String(notification) == kAXApplicationActivatedNotification) {
+            // Срабатывает при фокусе окна другого приложения.
+            // Нужно использовать `focusedWindow()`
             if let focusedWindow = try axuiElement.focusedWindow() {
                 try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: focusedWindow)
             }
