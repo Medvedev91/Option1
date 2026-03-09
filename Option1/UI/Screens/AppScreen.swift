@@ -90,7 +90,7 @@ private func setupAppObservers() {
         if NSWorkspace.shared.runningApplications.first(where: { $0.bundleIdentifier == app.bundleIdentifier }) != nil {
             return
         }
-
+        
         guard let bundle = app.bundleIdentifier else {
             reportApi("didTerminateApplicationNotification no bundle")
             return
