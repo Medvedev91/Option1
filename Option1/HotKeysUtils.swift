@@ -73,18 +73,22 @@ private func handleRun(key: Key) {
             $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
             $0.appBundle == bindDb.bundle
         }) else { return }
-
-        try WindowsManager.focusWindow(axuiElement: window.axuiElement)
-        // Fix Corner Case:
-        // - bind Telegram app (option + shift + 1),
-        // - press cmd + w to close the window,
-        // - press option + 1 to open.
-        // Telegram's window won't open.
-        if try WindowsManager.getFocusedWindowOrNil() == nil {
-            WindowsManager.focusActiveApplication()
-        }
+        
+        try focusAxuiElement(window.axuiElement)
     } catch {
         reportApi("handleRun() error:\(error.localizedDescription)")
+    }
+}
+
+private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
+    try WindowsManager.focusWindow(axuiElement: axuiElement)
+    // Fix Corner Case:
+    // - bind Telegram app (option + shift + 1),
+    // - press cmd + w to close the window,
+    // - press option + 1 to open.
+    // Telegram's window won't open.
+    if try WindowsManager.getFocusedWindowOrNil() == nil {
+        WindowsManager.focusActiveApplication()
     }
 }
 
