@@ -50,6 +50,10 @@ private func handleRun(key: Key) {
         return
     }
     
+    if handleSpecial(bindDb: bindDb) {
+        return
+    }
+    
     // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
     if NSWorkspace.shared.runningApplications.first(where: {
         $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
@@ -59,27 +63,100 @@ private func handleRun(key: Key) {
     }
     
     do {
-        // Т.к. cleanClosed() занимает время, нужно ее использовать только
-        // когда важен ее результат, т.е. перед использованием cachedWindows.
-        // todo Проверять скорость работы и репортить если ниже 100мс.
-        CachedWindow.cleanClosed()
-
+        CachedWindow.cleanClosed__slow()
+        
         let windows: [CachedWindow] = cachedWindows.map { $0.value }
         guard let window: CachedWindow = windows.first(where: {
             $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
             $0.appBundle == bindDb.bundle
         }) else { return }
-
-        try WindowsManager.focusWindow(axuiElement: window.axuiElement)
-        // Fix Corner Case:
-        // - bind Telegram app (option + shift + 1),
-        // - press cmd + w to close the window,
-        // - press option + 1 to open.
-        // Telegram's window won't open.
-        if try WindowsManager.getFocusedWindowOrNil() == nil {
-            WindowsManager.focusActiveApplication()
-        }
+        
+        try focusAxuiElement(window.axuiElement)
     } catch {
         reportApi("handleRun() error:\(error.localizedDescription)")
     }
+}
+
+private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
+    try WindowsManager.focusWindow(axuiElement: axuiElement)
+    // Fix Corner Case:
+    // - bind Telegram app (option + shift + 1),
+    // - press cmd + w to close the window,
+    // - press option + 1 to open.
+    // Telegram's window won't open.
+    if try WindowsManager.getFocusedWindowOrNil() == nil {
+        WindowsManager.focusActiveApplication()
+    }
+}
+
+private func handleSpecial(
+    bindDb: BindDb,
+) -> Bool {
+    if bindDb.bundle == "com.apple.dt.Xcode" {
+        let fileManager = FileManager.default
+        let project = bindDb.substring
+        if project.first == "/",
+           fileManager.fileExists(atPath: project) {
+            let result = shell("xed", project)
+            // No sense to update cachedWindows
+            return result == 0
+        }
+        return false
+    }
+    
+    if bindDb.bundle == "com.jetbrains.intellij" {
+        let bundle = bindDb.bundle
+        let fileManager = FileManager.default
+        let project = bindDb.substring
+        if project.first == "/",
+           fileManager.fileExists(atPath: project) {
+            
+            // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
+            // macOS начинает анимацию запуска приложения в Dock, хотя по факту открывается еще
+            // одно окно а не всё приложение. Каждый раз смотреть эти подпрыгивания не охото,
+            // по этому если уже есть окно с этим ideaProject - то его запуск.
+            CachedWindow.cleanClosed__slow()
+            if let cachedProject = cachedWindows.first(where: { $0.value.ideaProject == project }) {
+                try? focusAxuiElement(cachedProject.value.axuiElement)
+                return true
+            }
+            
+            guard let url: URL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else {
+                return false
+            }
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.arguments = [project]
+            configuration.createsNewApplicationInstance = true
+            NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: { _, _ in
+                // Почему-то у объекта приложения из completionHandler .bundleIdentifier всегда nil,
+                // из-за этого .addByAxuiElement() работает неправильно. Ищем в запущенных приложениях.
+                guard let nsApp = NSWorkspace.shared.runningApplications.first(where: {
+                    $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+                }) else {
+                    reportApi("handleSpecial() no app: \(bindDb.bundle)")
+                    return
+                }
+                if let focused = try? WindowsManager.getFocusedWindowOrNil() {
+                    try? CachedWindow.addByAxuiElement(
+                        nsRunningApplication: nsApp,
+                        axuiElement: focused,
+                        ideaProject: project,
+                    )
+                }
+            })
+            return true
+        }
+        return false
+    }
+    
+    return false
+}
+
+private func shell(_ args: String...) -> Int32 {
+    let task = Process()
+    task.launchPath = "/usr/bin/env"
+    task.arguments = args
+    task.launch()
+    task.waitUntilExit()
+    return task.terminationStatus
 }
