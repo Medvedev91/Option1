@@ -9,22 +9,27 @@ struct CachedWindow: Hashable {
     let axuiElementId: AXUIElementID
     let title: String
     let appBundle: String
+    let ideaProject: String?
     
     static func addByAxuiElement(
         nsRunningApplication: NSRunningApplication,
-        axuiElement: AXUIElement
+        axuiElement: AXUIElement,
+        ideaProject: String? = nil,
     ) throws {
         if
             let pid = try axuiElement.pid(),
             let axuiElementId = axuiElement.id(),
             let title = try axuiElement.title(),
             let bundleIdentifier = nsRunningApplication.bundleIdentifier {
+            
+            let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
             cachedWindows[axuiElement.hashValue] = CachedWindow(
                 axuiElement: axuiElement,
                 pid: pid,
                 axuiElementId: axuiElementId,
                 title: title,
-                appBundle: bundleIdentifier
+                appBundle: bundleIdentifier,
+                ideaProject: ideaProject ?? oldCachedWindow?.ideaProject,
             )
         }
     }
