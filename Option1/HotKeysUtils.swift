@@ -67,7 +67,7 @@ private func handleRun(key: Key) {
         // когда важен ее результат, т.е. перед использованием cachedWindows.
         // todo Проверять скорость работы и репортить если ниже 100мс.
         CachedWindow.cleanClosed()
-
+        
         let windows: [CachedWindow] = cachedWindows.map { $0.value }
         guard let window: CachedWindow = windows.first(where: {
             $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
