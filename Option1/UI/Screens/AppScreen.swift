@@ -85,7 +85,7 @@ private func setupAppObservers() {
         
         // При вызове NSWorkspace.shared.openApplication() c createsNewApplicationInstance
         // срабатывает didTerminateApplicationNotification хотя приложение по факту не закрывалось,
-        // это вызывает удаение всех окон из кеша (вызов CachedWindow.cleanByBundle() ниже).
+        // это вызывает удаление всех окон из кеша (вызов CachedWindow.cleanByBundle() ниже).
         // Проверка чтобы это избежать.
         if NSWorkspace.shared.runningApplications.first(where: { $0.bundleIdentifier == app.bundleIdentifier }) != nil {
             return
