@@ -114,7 +114,7 @@ private func handleSpecial(
             // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
             // macOS начинает анимацию запуска приложения в Dock, хотя по факту открывается еще
             // одно окно а не всё приложение. Каждый раз смотреть эти подпрыгивания не охото,
-            // по этому если ужже есть окно с этим ideaProject - то его запуск.
+            // по этому если уже есть окно с этим ideaProject - то его запуск.
             CachedWindow.cleanClosed__slow()
             if let cachedProject = cachedWindows.first(where: { $0.value.ideaProject == project }) {
                 try? focusAxuiElement(cachedProject.value.axuiElement)
