@@ -103,6 +103,52 @@ private func handleSpecial(
         }
         return false
     }
+    
+    if bindDb.bundle == "com.jetbrains.intellij" {
+        let bundle = bindDb.bundle
+        let fileManager = FileManager.default
+        let project = bindDb.substring
+        if project.first == "/",
+           fileManager.fileExists(atPath: project) {
+            
+            // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
+            // macOS начинает анимацию запуска приложения в Dock, хотя по факту открывается еще
+            // одно окно а не всё приложение. Каждый раз смотреть эти подпрыгивания не охото,
+            // по этому если ужже есть окно с этим ideaProject - то его запуск.
+            CachedWindow.cleanClosed__slow()
+            if let cachedProject = cachedWindows.first(where: { $0.value.ideaProject == project }) {
+                try? focusAxuiElement(cachedProject.value.axuiElement)
+                return true
+            }
+            
+            guard let url: URL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else {
+                return false
+            }
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.arguments = [project]
+            configuration.createsNewApplicationInstance = true
+            NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: { _, _ in
+                // Почему-то у объекта приложения из completionHandler .bundleIdentifier всегда nil,
+                // из-за этого .addByAxuiElement() работает неправильно. Ищем в запущенных приложениях.
+                guard let nsApp = NSWorkspace.shared.runningApplications.first(where: {
+                    $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+                }) else {
+                    reportApi("handleSpecial() no app: \(bindDb.bundle)")
+                    return
+                }
+                if let focused = try? WindowsManager.getFocusedWindowOrNil() {
+                    try? CachedWindow.addByAxuiElement(
+                        nsRunningApplication: nsApp,
+                        axuiElement: focused,
+                        ideaProject: project,
+                    )
+                }
+            })
+            return true
+        }
+        return false
+    }
+    
     return false
 }
 
