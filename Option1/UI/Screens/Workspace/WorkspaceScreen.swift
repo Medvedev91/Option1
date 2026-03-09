@@ -9,7 +9,7 @@ struct WorkspaceScreen: View {
     
     @State private var activeAppsUi: [ActiveAppUi] = []
     
-    // 2 секунды чтобы в т.ч. успеть CachedWindow.cleanClosed()
+    // 2 секунды чтобы в т.ч. успеть CachedWindow.cleanClosed__slow()
     private let updateActiveAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -43,7 +43,7 @@ struct WorkspaceScreen: View {
     }
     
     private func updateActiveAppsUi() {
-        CachedWindow.cleanClosed()
+        CachedWindow.cleanClosed__slow()
         // Running Apps
         var localActiveAppsUi: [ActiveAppUi] = []
         NSWorkspace.shared.runningApplications.forEach { app in

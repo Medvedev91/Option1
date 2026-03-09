@@ -63,10 +63,7 @@ private func handleRun(key: Key) {
     }
     
     do {
-        // Т.к. cleanClosed() занимает время, нужно ее использовать только
-        // когда важен ее результат, т.е. перед использованием cachedWindows.
-        // todo Проверять скорость работы и репортить если ниже 100мс.
-        CachedWindow.cleanClosed()
+        CachedWindow.cleanClosed__slow()
         
         let windows: [CachedWindow] = cachedWindows.map { $0.value }
         guard let window: CachedWindow = windows.first(where: {

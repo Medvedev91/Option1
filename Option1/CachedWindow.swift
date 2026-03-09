@@ -50,16 +50,26 @@ struct CachedWindow: Hashable {
     // Внимание 2
     // Изучить реализацию, там компромисная логика.
     //
-    static func cleanClosed() {
+    // Внимание 3
+    // Вызывать только когда важен результат, т.е. перед использованием cachedWindows.
+    //
+    static func cleanClosed__slow() {
+        let timeStartMls = timeMls()
         let windowsToRemove: [Int: CachedWindow] = cachedWindows.filter { _, cachedWindow in
             !cachedWindow.axuiElement.isElementExists()
         }
+        let elapsedMls = timeMls() - timeStartMls
+        reportLog("cleanClosed__slow elapsed \(elapsedMls) mls")
+        if elapsedMls > 100 {
+            reportApi("cleanClosed__slow too slow: \(elapsedMls) mls, cachedWindows: \(cachedWindows.count)")
+        }
+        
         // Внимание! Компромисная логика!
         // В момент когда macOS на экране ввода логина, при вызове .isElementExists()
         // всегда возвращается false, хотя по факту окна восстановятся после пробуждения.
         // Это значит что как только macOS уходит в фон, окна удаляются и Option 1
         // НЕ работает после пробуждения. Это легко можно добиться, если открыть экран
-        // воркспейса (на нем по таймеру просиходит вызов .cleanClosed()) и выйти на
+        // воркспейса (на нем по таймеру просиходит вызов .cleanClosed__slow()) и выйти на
         // экран ввода логина macOS. Я не нашел способа определять что окно еще живое
         // в момент когда macOS в фоне, по этому единственный способ избегать ошибочного
         // удаления всех окон - проверять, если все окна удаляются разом - значит фон.
