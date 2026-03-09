@@ -50,6 +50,10 @@ private func handleRun(key: Key) {
         return
     }
     
+    if handleSpecial(bindDb: bindDb) {
+        return
+    }
+    
     // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
     if NSWorkspace.shared.runningApplications.first(where: {
         $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
@@ -82,4 +86,30 @@ private func handleRun(key: Key) {
     } catch {
         reportApi("handleRun() error:\(error.localizedDescription)")
     }
+}
+
+private func handleSpecial(
+    bindDb: BindDb,
+) -> Bool {
+    if bindDb.bundle == "com.apple.dt.Xcode" {
+        let fileManager = FileManager.default
+        let project = bindDb.substring
+        if project.first == "/",
+           fileManager.fileExists(atPath: project) {
+            let result = shell("xed", project)
+            // No sense to update cachedWindows
+            return result == 0
+        }
+        return false
+    }
+    return false
+}
+
+private func shell(_ args: String...) -> Int32 {
+    let task = Process()
+    task.launchPath = "/usr/bin/env"
+    task.arguments = args
+    task.launch()
+    task.waitUntilExit()
+    return task.terminationStatus
 }
