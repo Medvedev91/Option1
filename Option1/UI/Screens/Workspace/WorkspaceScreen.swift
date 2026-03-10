@@ -26,11 +26,17 @@ struct WorkspaceScreen: View {
             Divider()
                 .padding()
             
+            Text("Open Windows")
+                .font(.system(size: 20, weight: .semibold))
+                .padding(.horizontal)
+                .textAlign(.leading)
+            
             VStack(spacing: 12) {
                 ForEach(activeAppsUi, id: \.app) { activeAppUi in
                     ActiveAppView(activeAppUi: activeAppUi)
                 }
             }
+            .padding(.top, 1)
             .padding(.bottom, 24)
         }
         .onReceive(updateActiveAppsUiTimer) { _ in
