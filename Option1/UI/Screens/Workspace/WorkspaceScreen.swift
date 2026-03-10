@@ -93,7 +93,7 @@ private struct ActiveAppView: View {
             HStack(spacing: 0) {
                 Text(activeAppUi.app?.localizedName ?? "Other")
                     .fontWeight(.bold)
-                Text(" - " + (activeAppUi.app?.bundleIdentifier ?? "Other"))
+                Text(" – " + (activeAppUi.app?.bundleIdentifier ?? "Other"))
                 Spacer()
             }
             .padding(.horizontal)
