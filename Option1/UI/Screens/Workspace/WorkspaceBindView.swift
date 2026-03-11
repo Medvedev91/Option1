@@ -27,8 +27,8 @@ struct WorkspaceBindView: View {
     }
     
     private var filePickerButtonText: String {
-        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
-        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "Selected" : "Select Xcode Project" }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "Selected" : "Select IDEA Project" }
         return "Select"
     }
 
