@@ -12,6 +12,12 @@ struct WorkspaceBindView: View {
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    
+    private var placeholder: String {
+        if formUi.bundle == BundleIds.Xcode { return "Xcode project path" }
+        if formUi.bundle == BundleIds.IntelliJ { return "IntelliJ IDEA project path" }
+        return "Title substring (optional)"
+    }
 
     init(
         key: Key,
@@ -35,7 +41,7 @@ struct WorkspaceBindView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .frame(width: 12)
                 .padding(.vertical, 8)
-
+            
             Picker("", selection: $formUi.bundle) {
                 Text("").tag(nil as String?)
                 ForEach(appsUi, id: \.self) { appUi in
@@ -46,7 +52,7 @@ struct WorkspaceBindView: View {
             .padding(.trailing, 8)
             
             if formUi.bundle != nil {
-                TextField("title substring (optional)", text: $formUi.substring)
+                TextField(placeholder, text: $formUi.substring)
                     .autocorrectionDisabled()
                     .frame(width: 180)
             }
