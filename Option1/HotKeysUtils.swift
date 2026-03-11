@@ -93,10 +93,8 @@ private func handleSpecial(
     bindDb: BindDb,
 ) -> Bool {
     if bindDb.bundle == BundleIds.Xcode {
-        let fileManager = FileManager.default
         let project = bindDb.substring
-        if project.first == "/",
-           fileManager.fileExists(atPath: project) {
+        if isFileExists(project) {
             let result = shell("xed", project)
             // No sense to update cachedWindows
             return result == 0
