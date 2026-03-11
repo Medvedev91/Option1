@@ -6,6 +6,8 @@ struct WorkspaceBindView: View {
     private let key: Key
     private let workspaceDb: WorkspaceDb?
     
+    @State private var isFilePickerPresented = false
+
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
@@ -25,15 +27,21 @@ struct WorkspaceBindView: View {
     }
     
     private var filePickerButtonText: String {
-        if formUi.bundle == BundleIds.Xcode { return "Select Project" }
-        if formUi.bundle == BundleIds.IntelliJ { return "Select Project" }
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
         return "Select"
     }
 
     private var filePickerButtonIcon: String {
-        if formUi.bundle == BundleIds.Xcode { return "Select Project" }
-        if formUi.bundle == BundleIds.IntelliJ { return "Select Project" }
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
         return "Select"
+    }
+
+    private var filePickerButtonTint: Color? {
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? .green : nil }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? .green : nil }
+        return nil
     }
 
     init(
@@ -78,10 +86,11 @@ struct WorkspaceBindView: View {
                             isFilePickerPresented = true
                         },
                         label: {
-                            Label(filePickerButtonText, systemImage: "magnifyingglass")
+                            Label(filePickerButtonText, systemImage: filePickerButtonIcon)
                         },
                     )
                     .padding(.leading)
+                    .tint(filePickerButtonTint)
                 }
             }
             
@@ -114,6 +123,18 @@ struct WorkspaceBindView: View {
                 }
             }
         }
+        .fileImporter(
+            isPresented: $isFilePickerPresented,
+            allowedContentTypes: [.data, .directory],
+            onCompletion: { result in
+                switch result {
+                case .success(let url):
+                    formUi.substring = url.relativePath
+                case .failure:
+                    break
+                }
+            }
+        )
     }
 }
 
