@@ -14,8 +14,8 @@ struct WorkspaceBindView: View {
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
     private var placeholder: String {
-        if formUi.bundle == BundleIds.Xcode { return "Xcode project path" }
-        if formUi.bundle == BundleIds.IntelliJ { return "IntelliJ IDEA project path" }
+        if formUi.bundle == BundleIds.Xcode { return "Xcode project path or title" }
+        if formUi.bundle == BundleIds.IntelliJ { return "IDEA project path or title" }
         return "Title substring (optional)"
     }
 
