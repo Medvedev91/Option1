@@ -18,6 +18,17 @@ struct WorkspaceBindView: View {
         if formUi.bundle == BundleIds.IntelliJ { return "IDEA project path or title" }
         return "Title substring (optional)"
     }
+    
+    private var showFilePickerButton: Bool {
+        formUi.bundle == BundleIds.Xcode ||
+        formUi.bundle == BundleIds.IntelliJ
+    }
+    
+    private var filePickerButtonText: String {
+        if formUi.bundle == BundleIds.Xcode { return "Select Project" }
+        if formUi.bundle == BundleIds.IntelliJ { return "Select Project" }
+        return "Select"
+    }
 
     init(
         key: Key,
@@ -54,7 +65,18 @@ struct WorkspaceBindView: View {
             if formUi.bundle != nil {
                 TextField(placeholder, text: $formUi.substring)
                     .autocorrectionDisabled()
-                    .frame(width: 180)
+                    .frame(width: 200)
+                if showFilePickerButton {
+                    Button(
+                        action: {
+                            isFilePickerPresented = true
+                        },
+                        label: {
+                            Label(filePickerButtonText, systemImage: "magnifyingglass")
+                        },
+                    )
+                    .padding(.leading)
+                }
             }
             
             Spacer()
