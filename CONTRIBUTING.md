@@ -1,0 +1,5 @@
+<img src="/Misc/contributing.png" width="500" />
+
+Sad but true. Sorry :(
+
+I'm welcome issues and bug reports, but I want every line of code to be written by me, so I don't accept pull requests.
