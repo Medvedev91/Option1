@@ -95,7 +95,15 @@ struct NavigationScreen: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        if #available(macOS 26.0, *), case .workspace = tab {
+                            Button("How to Use") {
+                                tab = .main
+                            }
+                            .buttonStyle(.glassProminent)
+                            .tint(.blue)
+                        } else {
+                        }
                         Button("Hide") {
                             closeWindow()
                         }
