@@ -92,11 +92,9 @@ private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
 private func handleSpecial(
     bindDb: BindDb,
 ) -> Bool {
-    if bindDb.bundle == "com.apple.dt.Xcode" {
-        let fileManager = FileManager.default
+    if bindDb.bundle == BundleIds.Xcode {
         let project = bindDb.substring
-        if project.first == "/",
-           fileManager.fileExists(atPath: project) {
+        if isFileExists(project) {
             let result = shell("xed", project)
             // No sense to update cachedWindows
             return result == 0
@@ -104,7 +102,7 @@ private func handleSpecial(
         return false
     }
     
-    if bindDb.bundle == "com.jetbrains.intellij" {
+    if bindDb.bundle == BundleIds.IntelliJ {
         let bundle = bindDb.bundle
         let fileManager = FileManager.default
         let project = bindDb.substring

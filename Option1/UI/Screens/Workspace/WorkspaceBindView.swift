@@ -6,12 +6,43 @@ struct WorkspaceBindView: View {
     private let key: Key
     private let workspaceDb: WorkspaceDb?
     
+    @State private var isFilePickerPresented = false
+
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    
+    private var placeholder: String {
+        if formUi.bundle == BundleIds.Xcode { return "Xcode project path or title" }
+        if formUi.bundle == BundleIds.IntelliJ { return "IDEA project path or title" }
+        return "Title substring (optional)"
+    }
+    
+    private var showFilePickerButton: Bool {
+        formUi.bundle == BundleIds.Xcode ||
+        formUi.bundle == BundleIds.IntelliJ
+    }
+    
+    private var filePickerButtonText: String {
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "Selected" : "Select Project" }
+        return "Select"
+    }
+
+    private var filePickerButtonIcon: String {
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
+        return "Select"
+    }
+
+    private var filePickerButtonTint: Color? {
+        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? .green : nil }
+        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? .green : nil }
+        return nil
+    }
 
     init(
         key: Key,
@@ -35,7 +66,7 @@ struct WorkspaceBindView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .frame(width: 12)
                 .padding(.vertical, 8)
-
+            
             Picker("", selection: $formUi.bundle) {
                 Text("").tag(nil as String?)
                 ForEach(appsUi, id: \.self) { appUi in
@@ -46,9 +77,21 @@ struct WorkspaceBindView: View {
             .padding(.trailing, 8)
             
             if formUi.bundle != nil {
-                TextField("title substring (optional)", text: $formUi.substring)
+                TextField(placeholder, text: $formUi.substring)
                     .autocorrectionDisabled()
-                    .frame(width: 180)
+                    .frame(width: 200)
+                if showFilePickerButton {
+                    Button(
+                        action: {
+                            isFilePickerPresented = true
+                        },
+                        label: {
+                            Label(filePickerButtonText, systemImage: filePickerButtonIcon)
+                        },
+                    )
+                    .padding(.leading)
+                    .tint(filePickerButtonTint)
+                }
             }
             
             Spacer()
@@ -80,6 +123,18 @@ struct WorkspaceBindView: View {
                 }
             }
         }
+        .fileImporter(
+            isPresented: $isFilePickerPresented,
+            allowedContentTypes: [.data, .directory],
+            onCompletion: { result in
+                switch result {
+                case .success(let url):
+                    formUi.substring = url.relativePath
+                case .failure:
+                    break
+                }
+            }
+        )
     }
 }
 
