@@ -30,6 +30,12 @@ struct WorkspaceBindView: View {
         return "Select"
     }
 
+    private var filePickerButtonIcon: String {
+        if formUi.bundle == BundleIds.Xcode { return "Select Project" }
+        if formUi.bundle == BundleIds.IntelliJ { return "Select Project" }
+        return "Select"
+    }
+
     init(
         key: Key,
         workspaceDb: WorkspaceDb?,
