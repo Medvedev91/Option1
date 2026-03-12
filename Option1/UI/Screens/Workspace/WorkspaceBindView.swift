@@ -41,8 +41,10 @@ struct WorkspaceBindView: View {
             
             Picker("", selection: $formUi.bundle) {
                 Text("").tag(nil as String?)
-                ForEach(appsUi, id: \.self) { appUi in
-                    Text(appUi.title).tag(appUi.bundle)
+                Section("Open Apps") {
+                    ForEach(appsUi, id: \.self) { appUi in
+                        Text(appUi.title).tag(appUi.bundle)
+                    }
                 }
             }
             .padding(.leading, 2)
