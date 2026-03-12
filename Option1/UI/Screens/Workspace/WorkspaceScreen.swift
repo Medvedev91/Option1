@@ -26,7 +26,7 @@ struct WorkspaceScreen: View {
             Divider()
                 .padding()
             
-            Text("Open Windows")
+            Text("Open Window Titles")
                 .font(.system(size: 20, weight: .semibold))
                 .padding(.horizontal)
                 .textAlign(.leading)
@@ -92,8 +92,8 @@ private struct ActiveAppView: View {
         VStack {
             HStack(spacing: 0) {
                 Text(activeAppUi.app?.localizedName ?? "Other")
-                    .fontWeight(.bold)
-                Text(" – " + (activeAppUi.app?.bundleIdentifier ?? "Other"))
+                    .fontWeight(.heavy)
+                    .help(activeAppUi.app?.bundleIdentifier ?? "Other")
                 Spacer()
             }
             .padding(.horizontal)
