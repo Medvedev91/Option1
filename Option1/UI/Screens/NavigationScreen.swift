@@ -100,8 +100,6 @@ struct NavigationScreen: View {
                             Button("How to Use") {
                                 tab = .main
                             }
-                            .buttonStyle(.glassProminent)
-                            .tint(.blue)
                         } else {
                         }
                         Button("Hide") {
