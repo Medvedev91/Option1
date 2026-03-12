@@ -1,12 +1,13 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import HotKey
+
+private let fontSize = 13.0
 
 struct WorkspaceBindView: View {
     
     private let key: Key
     private let workspaceDb: WorkspaceDb?
-    
-    @State private var isFilePickerPresented = false
 
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
@@ -15,35 +16,6 @@ struct WorkspaceBindView: View {
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
-    private var placeholder: String {
-        if formUi.bundle == BundleIds.Xcode { return "Xcode project path or title" }
-        if formUi.bundle == BundleIds.IntelliJ { return "IDEA project path or title" }
-        return "Title substring (optional)"
-    }
-    
-    private var showFilePickerButton: Bool {
-        formUi.bundle == BundleIds.Xcode ||
-        formUi.bundle == BundleIds.IntelliJ
-    }
-    
-    private var filePickerButtonText: String {
-        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "Selected" : "Select Xcode Project" }
-        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "Selected" : "Select IDEA Project" }
-        return "Select"
-    }
-
-    private var filePickerButtonIcon: String {
-        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
-        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? "checkmark" : "magnifyingglass" }
-        return "Select"
-    }
-
-    private var filePickerButtonTint: Color? {
-        if formUi.bundle == BundleIds.Xcode { return isFileExists(formUi.substring) ? .green : nil }
-        if formUi.bundle == BundleIds.IntelliJ { return isFileExists(formUi.substring) ? .green : nil }
-        return nil
-    }
-
     init(
         key: Key,
         workspaceDb: WorkspaceDb?,
@@ -63,7 +35,7 @@ struct WorkspaceBindView: View {
                 .padding(.trailing, 6)
             
             Text(key.description)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: fontSize, weight: .semibold))
                 .frame(width: 12)
                 .padding(.vertical, 8)
             
@@ -73,24 +45,33 @@ struct WorkspaceBindView: View {
                     Text(appUi.title).tag(appUi.bundle)
                 }
             }
-            .frame(width: 180)
-            .padding(.trailing, 8)
+            .padding(.leading, 2)
+            .padding(.trailing, 12)
             
             if formUi.bundle != nil {
-                TextField(placeholder, text: $formUi.substring)
-                    .autocorrectionDisabled()
-                    .frame(width: 200)
-                if showFilePickerButton {
-                    Button(
-                        action: {
-                            isFilePickerPresented = true
-                        },
-                        label: {
-                            Label(filePickerButtonText, systemImage: filePickerButtonIcon)
+                
+                if formUi.bundle == BundleIds.Xcode {
+                    ProjectPickerView(
+                        path: formUi.substring,
+                        pickerButtonText: "Select Xcode Project File or Folder",
+                        fileTypes: [.data, .directory],
+                        onPathChanged: { path in
+                            formUi.substring = path
                         },
                     )
-                    .padding(.leading)
-                    .tint(filePickerButtonTint)
+                } else if formUi.bundle == BundleIds.IntelliJ {
+                    ProjectPickerView(
+                        path: formUi.substring,
+                        pickerButtonText: "Select IDEA Project Folder",
+                        fileTypes: [.directory],
+                        onPathChanged: { path in
+                            formUi.substring = path
+                        },
+                    )
+                } else {
+                    TextField("Part of title (optional)", text: $formUi.substring)
+                        .autocorrectionDisabled()
+                        .frame(width: 200)
                 }
             }
             
@@ -123,13 +104,56 @@ struct WorkspaceBindView: View {
                 }
             }
         }
+    }
+}
+
+private struct ProjectPickerView: View {
+    
+    let path: String
+    let pickerButtonText: String
+    let fileTypes: [UTType]
+    let onPathChanged: (String) -> Void
+    
+    ///
+    
+    @State private var isFilePickerPresented = false
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            if path.isEmpty {
+                Button(
+                    action: {
+                        isFilePickerPresented = true
+                    },
+                    label: {
+                        Label(pickerButtonText, systemImage: "folder")
+                    },
+                )
+            } else {
+                Text(path)
+                    .padding(.vertical, 8)
+                    .foregroundColor(.green)
+                    .font(.system(size: fontSize, weight: .regular))
+                
+                Button(
+                    action: {
+                        onPathChanged("")
+                    },
+                    label: {
+                        Image(systemName: "xmark.circle")
+                            .font(.system(size: fontSize, weight: .medium))
+                    },
+                )
+                .buttonStyle(.borderless)
+            }
+        }
         .fileImporter(
             isPresented: $isFilePickerPresented,
-            allowedContentTypes: [.data, .directory],
+            allowedContentTypes: fileTypes,
             onCompletion: { result in
                 switch result {
                 case .success(let url):
-                    formUi.substring = url.relativePath
+                    onPathChanged(url.relativePath)
                 case .failure:
                     break
                 }
@@ -137,6 +161,8 @@ struct WorkspaceBindView: View {
         )
     }
 }
+
+///
 
 private struct AppUi: Hashable {
     var title: String
