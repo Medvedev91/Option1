@@ -53,14 +53,14 @@ struct CachedWindow: Hashable {
     // Внимание 3
     // Вызывать только когда важен результат, т.е. перед использованием cachedWindows.
     //
-    static func cleanClosed__slow() {
+    static func cleanClosed__slow(reportIfSlow: Bool = true) {
         let timeStartMls = timeMls()
         let windowsToRemove: [Int: CachedWindow] = cachedWindows.filter { _, cachedWindow in
             !cachedWindow.axuiElement.isElementExists()
         }
         let elapsedMls = timeMls() - timeStartMls
         reportLog("cleanClosed__slow elapsed \(elapsedMls) mls")
-        if elapsedMls > 100 {
+        if reportIfSlow, elapsedMls > 100 {
             reportApi("cleanClosed__slow too slow: \(elapsedMls) mls, cachedWindows: \(cachedWindows.count)")
         }
         

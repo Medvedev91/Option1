@@ -49,7 +49,7 @@ struct WorkspaceScreen: View {
     }
     
     private func updateActiveAppsUi() {
-        CachedWindow.cleanClosed__slow()
+        CachedWindow.cleanClosed__slow(reportIfSlow: false)
         // Running Apps
         var localActiveAppsUi: [ActiveAppUi] = []
         NSWorkspace.shared.runningApplications.forEach { app in
