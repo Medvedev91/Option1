@@ -136,6 +136,9 @@ private struct ProjectPickerView: View {
                     .padding(.vertical, 8)
                     .foregroundColor(.green)
                     .font(.system(size: fontSize, weight: .regular))
+                    .onTapGesture {
+                        isFilePickerPresented = true
+                    }
                 
                 Button(
                     action: {
@@ -161,6 +164,7 @@ private struct ProjectPickerView: View {
                 }
             }
         )
+        .fileDialogDefaultDirectory(URL(filePath: path))
     }
 }
 
