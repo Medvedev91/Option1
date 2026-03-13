@@ -67,6 +67,10 @@ private func setupAppObservers() {
         // Тут нельзя использовать Task, по этому initialTaskOrDispatch = false.
         // После запуска приложения надо подождать для загрузки окон - initialDelaySeconds.
         AppObserver.shared.addObserver(app: app, initialTaskOrDispatch: false, initialDelaySeconds: 2)
+        
+        Task { @MainActor in
+            AppDb.upsert(runningApps: [app])
+        }
     }
     
     if let appTerminateObserver = appTerminateObserver {
@@ -99,4 +103,8 @@ private func setupAppObservers() {
     }
     
     AppObserver.shared.restart()
+    
+    Task { @MainActor in
+        AppDb.upsert(runningApps: NSWorkspace.shared.runningApplications)
+    }
 }
