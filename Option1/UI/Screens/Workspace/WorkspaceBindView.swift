@@ -164,7 +164,7 @@ private struct ProjectPickerView: View {
                 }
             }
         )
-        .fileDialogDefaultDirectory(URL(filePath: path))
+        .fileDialogDefaultDirectory(path.isEmpty ? nil : URL(filePath: path))
     }
 }
 
