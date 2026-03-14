@@ -137,7 +137,7 @@ struct NavigationScreen: View {
             Text("Please donate any amount to hide donation notifications.")
         }
         .alert("New Workspace", isPresented: $isNewWorkspacePresented) {
-            TextField("Workspace", text: $newWorkspaceName)
+            TextField("Name", text: $newWorkspaceName)
             Button("Cancel") {
             }
             .keyboardShortcut(.cancelAction)
@@ -229,7 +229,7 @@ private struct WorkspaceItemView: View {
                 Button("No", role: .cancel) {}
             }
             .alert("", isPresented: $isRenamePresented) {
-                TextField("Workspace", text: $editName)
+                TextField("Name", text: $editName)
                 Button("Cancel") {
                 }
                 .keyboardShortcut(.cancelAction)
