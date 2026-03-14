@@ -20,7 +20,6 @@ class AppDb {
     
     @MainActor
     static func upsert(runningApps: [NSRunningApplication]) {
-        let appsDb: [AppDb] = selectAll()
         runningApps.forEach { runningApp in
             if runningApp.activationPolicy != .regular {
                 return
@@ -33,18 +32,26 @@ class AppDb {
                 reportLog("AppDb no localizedName")
                 return
             }
-            guard let appDb = appsDb.first(where: { $0.bundle == bundle }) else {
-                DB.modelContainer.mainContext.insert(AppDb(bundle: bundle, name: name))
-                DB.save()
-                reportLog("AppDb insert: \(bundle) \(name)")
-                return
-            }
-            if appDb.name == name {
-                return
-            }
-            appDb.name = name
-            DB.save()
-            reportLog("AppDb update: \(bundle) \(name)")
+            upsertRaw(bundle: bundle, name: name)
         }
+    }
+    
+    @MainActor
+    static func upsertRaw(
+        bundle: String,
+        name: String,
+    ) {
+        guard let appDb = selectAll().first(where: { $0.bundle == bundle }) else {
+            DB.modelContainer.mainContext.insert(AppDb(bundle: bundle, name: name))
+            DB.save()
+            reportLog("AppDb.upsertRaw() insert: \(bundle) \(name)")
+            return
+        }
+        if appDb.name == name {
+            return
+        }
+        appDb.name = name
+        DB.save()
+        reportLog("AppDb.upsertRaw() update: \(bundle) \(name)")
     }
 }
