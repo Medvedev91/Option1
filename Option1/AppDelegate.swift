@@ -24,8 +24,12 @@ private func initData() {
         _ = KvDb.selectOrInsertInitTime()
         
         if BindDb.selectAll().isEmpty {
-            BindDb.insert(key: "1", workspaceDb: nil, bundle: "com.apple.Safari", substring: "")
-            BindDb.insert(key: "2", workspaceDb: nil, bundle: "com.apple.iCal", substring: "")
+            let safariBundle = "com.apple.Safari"
+            let calendarBundle = "com.apple.iCal"
+            AppDb.upsertRaw(bundle: safariBundle, name: "Safari")
+            AppDb.upsertRaw(bundle: calendarBundle, name: "Calendar")
+            BindDb.insert(key: "1", workspaceDb: nil, bundle: safariBundle, substring: "")
+            BindDb.insert(key: "2", workspaceDb: nil, bundle: calendarBundle, substring: "")
         }
     }
 }
