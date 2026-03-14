@@ -19,7 +19,7 @@ struct DonationsTab: View {
                 
                 AppText("Please donate any amount here [https://buymeacoffee.com/medvedev91](https://buymeacoffee.com/medvedev91)\nand enter the supporter's email to hide donation notifications.")
                 
-                AppText("One donation for lifetime app usage.")
+                AppText("One donation for lifetime app usage. But I would be especially grateful for\n\"Make this monthly\" enabled.")
                 
                 HStack {
                     
@@ -42,6 +42,7 @@ struct DonationsTab: View {
                 }
             }
             .padding()
+            .frame(minWidth: AppText.MAX_WIDTH)
             .alert(
                 "Error",
                 isPresented: $isErrorPresented,
