@@ -84,7 +84,7 @@ struct WorkspaceBindView: View {
                         .foregroundColor(.secondary)
                         .font(.system(size: fontSize, weight: .semibold))
                         .padding(.vertical, 8)
-                    Text(" from shared.")
+                    Text(" from shared")
                         .foregroundColor(.secondary)
                         .font(.system(size: fontSize))
                         .padding(.vertical, 8)
