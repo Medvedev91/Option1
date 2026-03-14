@@ -16,6 +16,8 @@ struct WorkspaceBindView: View {
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     
+    private let sharedOverride: String?
+    
     init(
         key: Key,
         workspaceDb: WorkspaceDb?,
@@ -25,6 +27,7 @@ struct WorkspaceBindView: View {
         self.appsUi = buildAppsUi()
         let bindDb: BindDb? = selectBindDbOrNil(workspaceDb: workspaceDb, key: key)
         self.formUi = FormUi(bundle: bindDb?.bundle, substring: bindDb?.substring ?? "")
+        self.sharedOverride = findSharedOverride(key: key, workspaceDb: workspaceDb)
     }
     
     var body: some View {
@@ -75,6 +78,13 @@ struct WorkspaceBindView: View {
                         .autocorrectionDisabled()
                         .frame(width: 200)
                 }
+            } else if let sharedOverride = sharedOverride {
+                Text(sharedOverride)
+                    .foregroundColor(.secondary)
+                    .font(.system(size: fontSize, weight: .semibold)) +
+                Text(" from shared.")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: fontSize))
             }
             
             Spacer()
@@ -201,4 +211,19 @@ private func buildAppsUi() -> [AppUi] {
             localAppsUi.append(AppUi(title: bundle, bundle: bundle))
         }
     return localAppsUi.sorted { $0.title.lowercased() < $1.title.lowercased() }
+}
+
+@MainActor
+private func findSharedOverride(
+    key: Key,
+    workspaceDb: WorkspaceDb?,
+) -> String? {
+    if workspaceDb == nil {
+        return nil
+    }
+    let sharedBindDb: BindDb? = BindDb.selectAll()
+        .first { $0.workspaceId == nil && $0.key == key.description }
+    let appDb: AppDb? = AppDb.selectAll()
+        .first { $0.bundle == sharedBindDb?.bundle }
+    return appDb?.name ?? sharedBindDb?.bundle
 }
