@@ -3,6 +3,7 @@ import SwiftUI
 struct AppText: View {
     
     static let FONT_SIZE: CGFloat = 14
+    static let MAX_WIDTH: CGFloat = 650
     
     ///
     
@@ -20,6 +21,6 @@ struct AppText: View {
         .font(.system(size: AppText.FONT_SIZE))
         .lineSpacing(4)
         .textAlign(.leading)
-        .frame(maxWidth: 650)
+        .frame(maxWidth: AppText.MAX_WIDTH)
     }
 }
