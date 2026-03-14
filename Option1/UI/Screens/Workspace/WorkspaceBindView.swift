@@ -79,12 +79,16 @@ struct WorkspaceBindView: View {
                         .frame(width: 200)
                 }
             } else if let sharedOverride = sharedOverride {
-                Text(sharedOverride)
-                    .foregroundColor(.secondary)
-                    .font(.system(size: fontSize, weight: .semibold)) +
-                Text(" from shared.")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: fontSize))
+                HStack(spacing: 0) {
+                    Text(sharedOverride)
+                        .foregroundColor(.secondary)
+                        .font(.system(size: fontSize, weight: .semibold))
+                        .padding(.vertical, 8)
+                    Text(" from shared.")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: fontSize))
+                        .padding(.vertical, 8)
+                }
             }
             
             Spacer()
