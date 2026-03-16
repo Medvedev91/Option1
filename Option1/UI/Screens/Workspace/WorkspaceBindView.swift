@@ -154,7 +154,7 @@ private struct ProjectPickerView: View {
             } else {
                 Text(validatedPath)
                     .padding(.vertical, 8)
-                    .foregroundColor(.green)
+                    .foregroundColor(.blue)
                     .font(.system(size: fontSize, weight: .regular))
                     .onTapGesture {
                         isFilePickerPresented = true
@@ -166,7 +166,7 @@ private struct ProjectPickerView: View {
                     },
                     label: {
                         Image(systemName: "xmark.circle")
-                            .font(.system(size: fontSize, weight: .medium))
+                            .font(.system(size: fontSize, weight: .regular))
                     },
                 )
                 .buttonStyle(.borderless)
