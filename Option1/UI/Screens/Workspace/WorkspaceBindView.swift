@@ -11,6 +11,7 @@ struct WorkspaceBindView: View {
 
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
+    @State private var isTitleInfoPresented = false
     
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
@@ -77,6 +78,18 @@ struct WorkspaceBindView: View {
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
                         .frame(width: 180)
+                    Button(
+                        action: {
+                            isTitleInfoPresented = true
+                        },
+                        label: {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .buttonStyle(.borderless)
+                    .padding(.leading, 10)
                 }
             } else if let sharedOverride = sharedOverride {
                 HStack(spacing: 0) {
@@ -120,6 +133,15 @@ struct WorkspaceBindView: View {
                 }
             }
         }
+        .alert(
+            "",
+            isPresented: $isTitleInfoPresented,
+            actions: {},
+            // todo
+            // If you have many opened window's for __APP__ you can set the title that window will open with.
+            // You can type part of title
+            message: { Text("TODO from doc") },
+        )
     }
 }
 
