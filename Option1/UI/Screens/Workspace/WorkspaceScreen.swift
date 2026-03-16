@@ -26,7 +26,7 @@ struct WorkspaceScreen: View {
             Divider()
                 .padding()
             
-            Text("Open Window Titles")
+            Text("Window Titles")
                 .font(.system(size: 20, weight: .semibold))
                 .padding(.horizontal)
                 .textAlign(.leading)
