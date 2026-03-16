@@ -76,7 +76,7 @@ struct WorkspaceBindView: View {
                 } else {
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
-                        .frame(width: 200)
+                        .frame(width: 180)
                 }
             } else if let sharedOverride = sharedOverride {
                 HStack(spacing: 0) {
