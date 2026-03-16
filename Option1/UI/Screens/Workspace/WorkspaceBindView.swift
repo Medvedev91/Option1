@@ -123,6 +123,8 @@ struct WorkspaceBindView: View {
     }
 }
 
+private let userRelativePathRegex = /^\/Users\/(.*?)\/\b/
+
 private struct ProjectPickerView: View {
     
     let path: String
@@ -133,6 +135,10 @@ private struct ProjectPickerView: View {
     ///
     
     @State private var isFilePickerPresented = false
+    
+    private var validatedPath: String {
+        return path.replacing(userRelativePathRegex, with: "~/")
+    }
     
     var body: some View {
         HStack(spacing: 4) {
@@ -146,7 +152,7 @@ private struct ProjectPickerView: View {
                     },
                 )
             } else {
-                Text(path)
+                Text(validatedPath)
                     .padding(.vertical, 8)
                     .foregroundColor(.green)
                     .font(.system(size: fontSize, weight: .regular))
