@@ -74,7 +74,7 @@ struct WorkspaceBindView: View {
                         },
                     )
                 } else {
-                    TextField("Part of title (optional)", text: $formUi.substring)
+                    TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
                         .frame(width: 200)
                 }
