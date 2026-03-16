@@ -137,7 +137,7 @@ private struct ProjectPickerView: View {
     @State private var isFilePickerPresented = false
     
     private var validatedPath: String {
-        return path.replacing(userRelativePathRegex, with: "~/")
+        path.replacing(userRelativePathRegex, with: "~/")
     }
     
     var body: some View {
