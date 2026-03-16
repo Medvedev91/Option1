@@ -9,12 +9,12 @@ struct CachedWindow: Hashable {
     let axuiElementId: AXUIElementID
     let title: String
     let appBundle: String
-    let ideaProject: String?
+    let shellWithNewWindow: String?
     
     static func addByAxuiElement(
         nsRunningApplication: NSRunningApplication,
         axuiElement: AXUIElement,
-        ideaProject: String? = nil,
+        shellWithNewWindow: String? = nil,
     ) throws {
         if
             let pid = try axuiElement.pid(),
@@ -29,7 +29,7 @@ struct CachedWindow: Hashable {
                 axuiElementId: axuiElementId,
                 title: title,
                 appBundle: bundleIdentifier,
-                ideaProject: ideaProject ?? oldCachedWindow?.ideaProject,
+                shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
             )
         }
     }
