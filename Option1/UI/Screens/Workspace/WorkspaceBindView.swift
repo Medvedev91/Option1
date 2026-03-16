@@ -56,7 +56,7 @@ struct WorkspaceBindView: View {
             if formUi.bundle != nil {
                 
                 if formUi.bundle == BundleIds.Xcode {
-                    ProjectPickerView(
+                    FileTypeView(
                         path: formUi.substring,
                         pickerButtonText: "Select Xcode Project File or Folder",
                         fileTypes: [.data, .directory],
@@ -65,7 +65,7 @@ struct WorkspaceBindView: View {
                         },
                     )
                 } else if formUi.bundle == BundleIds.IntelliJ {
-                    ProjectPickerView(
+                    FileTypeView(
                         path: formUi.substring,
                         pickerButtonText: "Select IDEA Project Folder",
                         fileTypes: [.directory],
@@ -125,7 +125,7 @@ struct WorkspaceBindView: View {
 
 private let userRelativePathRegex = /^\/Users\/(.*?)\/\b/
 
-private struct ProjectPickerView: View {
+private struct FileTypeView: View {
     
     let path: String
     let pickerButtonText: String
