@@ -74,6 +74,15 @@ struct WorkspaceBindView: View {
                             formUi.substring = path
                         },
                     )
+                } else if formUi.bundle == BundleIds.MicrosoftWord {
+                    FileTypeView(
+                        path: formUi.substring,
+                        pickerButtonText: "Select Word Document",
+                        fileTypes: [.data],
+                        onPathChanged: { path in
+                            formUi.substring = path
+                        },
+                    )
                 } else {
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
