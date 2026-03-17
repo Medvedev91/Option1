@@ -88,6 +88,15 @@ struct WorkspaceBindView: View {
                             formUi.substring = path
                         },
                     )
+                } else if isFileExists(formUi.substring) {
+                    FileTypeView(
+                        path: formUi.substring,
+                        pickerButtonText: "---", // Impossible to show because of .isFileExists()
+                        fileTypes: [.data, .directory],
+                        onPathChanged: { path in
+                            formUi.substring = path
+                        },
+                    )
                 } else {
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
