@@ -11,7 +11,12 @@ struct WorkspaceBindView: View {
 
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
+    
     @State private var isTitleInfoPresented = false
+    private var titleInfoPrentedText: String {
+        let selectedName: String = appsUi.first(where: { $0.bundle == formUi.bundle })?.title ?? "app"
+        return "If you have multiple \(selectedName) windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well."
+    }
     
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
@@ -146,10 +151,7 @@ struct WorkspaceBindView: View {
             "",
             isPresented: $isTitleInfoPresented,
             actions: {},
-            // todo
-            // If you have many opened window's for __APP__ you can set the title that window will open with.
-            // You can type part of title
-            message: { Text("TODO from doc") },
+            message: { Text(titleInfoPrentedText) },
         )
     }
 }
