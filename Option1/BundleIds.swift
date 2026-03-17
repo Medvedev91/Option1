@@ -1,3 +1,7 @@
+// todo Android Studio
+// todo Jetbrain IDE's
+// todo Microsoft Office Products: Word, Excel, ...
+// todo Text Edit
 class BundleIds {
     
     static let Finder = "com.apple.finder"
