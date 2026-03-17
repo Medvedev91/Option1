@@ -18,6 +18,9 @@ struct WorkspaceBindView: View {
         return "If you have multiple \(selectedName) windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well."
     }
     
+    @State private var isAnyFilePickerPresented = false
+    @State private var isAnyFilePickerInfoPresented = false
+    
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
@@ -98,9 +101,24 @@ struct WorkspaceBindView: View {
                         },
                     )
                 } else {
+                    
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
                         .frame(width: 180)
+                    
+                    Button(
+                        action: {
+                            isAnyFilePickerInfoPresented = true
+                        },
+                        label: {
+                            Image(systemName: "folder")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .buttonStyle(.borderless)
+                    .padding(.leading, 12)
+                    
                     Button(
                         action: {
                             isTitleInfoPresented = true
@@ -112,7 +130,7 @@ struct WorkspaceBindView: View {
                         },
                     )
                     .buttonStyle(.borderless)
-                    .padding(.leading, 10)
+                    .padding(.leading, 8)
                 }
             } else if let sharedOverride = sharedOverride {
                 HStack(spacing: 0) {
@@ -161,6 +179,32 @@ struct WorkspaceBindView: View {
             isPresented: $isTitleInfoPresented,
             actions: {},
             message: { Text(titleInfoPrentedText) },
+        )
+        .confirmationDialog(
+            "",
+            isPresented: $isAnyFilePickerInfoPresented,
+        ) {
+            Button("Select File or Folder") {
+                isAnyFilePickerPresented = true
+            }
+            .keyboardShortcut(.defaultAction)
+            
+            Button("Cancel", role: .cancel) {
+            }
+        } message: {
+            Text("If the app supports opening files or folders, select the one you want to open.")
+        }
+        .fileImporter(
+            isPresented: $isAnyFilePickerPresented,
+            allowedContentTypes: [.data, .directory],
+            onCompletion: { result in
+                switch result {
+                case .success(let url):
+                    formUi.substring = url.relativePath
+                case .failure:
+                    break
+                }
+            }
         )
     }
 }
