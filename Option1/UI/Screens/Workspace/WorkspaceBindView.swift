@@ -130,7 +130,7 @@ struct WorkspaceBindView: View {
                         Button("Cancel", role: .cancel) {
                         }
                     } message: {
-                        Text("If the app supports opening files or folders, select the one you want to open.")
+                        Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.")
                     }
                     .fileImporter(
                         isPresented: $isAnyFilePickerPresented,
