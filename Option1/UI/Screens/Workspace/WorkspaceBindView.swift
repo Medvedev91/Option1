@@ -118,7 +118,33 @@ struct WorkspaceBindView: View {
                     )
                     .buttonStyle(.borderless)
                     .padding(.leading, 12)
-                    
+                    .confirmationDialog(
+                        "",
+                        isPresented: $isAnyFilePickerInfoPresented,
+                    ) {
+                        Button("Select File or Folder") {
+                            isAnyFilePickerPresented = true
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        
+                        Button("Cancel", role: .cancel) {
+                        }
+                    } message: {
+                        Text("If the app supports opening files or folders, select the one you want to open.")
+                    }
+                    .fileImporter(
+                        isPresented: $isAnyFilePickerPresented,
+                        allowedContentTypes: [.data, .directory],
+                        onCompletion: { result in
+                            switch result {
+                            case .success(let url):
+                                formUi.substring = url.relativePath
+                            case .failure:
+                                break
+                            }
+                        }
+                    )
+
                     Button(
                         action: {
                             isTitleInfoPresented = true
@@ -179,32 +205,6 @@ struct WorkspaceBindView: View {
             isPresented: $isTitleInfoPresented,
             actions: {},
             message: { Text(titleInfoPrentedText) },
-        )
-        .confirmationDialog(
-            "",
-            isPresented: $isAnyFilePickerInfoPresented,
-        ) {
-            Button("Select File or Folder") {
-                isAnyFilePickerPresented = true
-            }
-            .keyboardShortcut(.defaultAction)
-            
-            Button("Cancel", role: .cancel) {
-            }
-        } message: {
-            Text("If the app supports opening files or folders, select the one you want to open.")
-        }
-        .fileImporter(
-            isPresented: $isAnyFilePickerPresented,
-            allowedContentTypes: [.data, .directory],
-            onCompletion: { result in
-                switch result {
-                case .success(let url):
-                    formUi.substring = url.relativePath
-                case .failure:
-                    break
-                }
-            }
         )
     }
 }
