@@ -13,9 +13,9 @@ struct WorkspaceBindView: View {
     @State private var formUi: FormUi
     
     @State private var isTitleInfoPresented = false
-    private var titleInfoPrentedText: String {
-        let selectedName: String = appsUi.first(where: { $0.bundle == formUi.bundle })?.title ?? "app"
-        return "If you have multiple \(selectedName) windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well."
+    
+    private var selectedAppName: String? {
+        appsUi.first(where: { $0.bundle == formUi.bundle })?.title
     }
     
     @State private var isAnyFilePickerPresented = false
@@ -204,7 +204,7 @@ struct WorkspaceBindView: View {
             "",
             isPresented: $isTitleInfoPresented,
             actions: {},
-            message: { Text(titleInfoPrentedText) },
+            message: { Text("If you have multiple \(selectedAppName ?? "app") windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well.") }
         )
     }
 }
