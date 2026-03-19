@@ -158,6 +158,12 @@ private func handleSpecial(
         return false
     }
     
+    if isFileExists(bindDb.substring) {
+        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
+        // No sense to update cachedWindows
+        return result == 0
+    }
+    
     return false
 }
 
