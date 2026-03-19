@@ -8,6 +8,7 @@ class BundleIds {
     static let Xcode = "com.apple.dt.Xcode"
     // JetBrains
     static let IntelliJ = "com.jetbrains.intellij"
+    static let PhpStorm = "com.jetbrains.PhpStorm"
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
     
@@ -16,6 +17,6 @@ class BundleIds {
     }
     
     static func isOpenByShellWithNewWindow(_ bundle: String) -> Bool {
-        [IntelliJ].contains(bundle)
+        [IntelliJ, PhpStorm].contains(bundle)
     }
 }
