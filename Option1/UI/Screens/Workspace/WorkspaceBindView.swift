@@ -106,57 +106,59 @@ struct WorkspaceBindView: View {
                         .autocorrectionDisabled()
                         .frame(width: 180)
                     
-                    Button(
-                        action: {
-                            isAnyFilePickerInfoPresented = true
-                        },
-                        label: {
-                            Image(systemName: "folder")
-                                .font(.system(size: fontSize, weight: .regular))
-                                .foregroundColor(.secondary)
-                        },
-                    )
-                    .buttonStyle(.borderless)
-                    .padding(.leading, 12)
-                    .confirmationDialog(
-                        "",
-                        isPresented: $isAnyFilePickerInfoPresented,
-                    ) {
-                        Button("Select File or Folder") {
-                            isAnyFilePickerPresented = true
-                        }
-                        .keyboardShortcut(.defaultAction)
-                        
-                        Button("Cancel", role: .cancel) {
-                        }
-                    } message: {
-                        Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.\n\nIf the file doesn't open properly, please contact me. I'll research this app.")
-                    }
-                    .fileImporter(
-                        isPresented: $isAnyFilePickerPresented,
-                        allowedContentTypes: [.data, .directory],
-                        onCompletion: { result in
-                            switch result {
-                            case .success(let url):
-                                formUi.substring = url.relativePath
-                            case .failure:
-                                break
+                    if !isScreenshotsMode {
+                        Button(
+                            action: {
+                                isAnyFilePickerInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "folder")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                        .padding(.leading, 12)
+                        .confirmationDialog(
+                            "",
+                            isPresented: $isAnyFilePickerInfoPresented,
+                        ) {
+                            Button("Select File or Folder") {
+                                isAnyFilePickerPresented = true
                             }
+                            .keyboardShortcut(.defaultAction)
+                            
+                            Button("Cancel", role: .cancel) {
+                            }
+                        } message: {
+                            Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.\n\nIf the file doesn't open properly, please contact me. I'll research this app.")
                         }
-                    )
-
-                    Button(
-                        action: {
-                            isTitleInfoPresented = true
-                        },
-                        label: {
-                            Image(systemName: "info.circle")
-                                .font(.system(size: fontSize, weight: .regular))
-                                .foregroundColor(.secondary)
-                        },
-                    )
-                    .buttonStyle(.borderless)
-                    .padding(.leading, 8)
+                        .fileImporter(
+                            isPresented: $isAnyFilePickerPresented,
+                            allowedContentTypes: [.data, .directory],
+                            onCompletion: { result in
+                                switch result {
+                                case .success(let url):
+                                    formUi.substring = url.relativePath
+                                case .failure:
+                                    break
+                                }
+                            }
+                        )
+                        
+                        Button(
+                            action: {
+                                isTitleInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "info.circle")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                        .padding(.leading, 8)
+                    }
                 }
             } else if let sharedOverride = sharedOverride {
                 HStack(spacing: 0) {
