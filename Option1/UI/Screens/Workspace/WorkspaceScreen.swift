@@ -23,21 +23,23 @@ struct WorkspaceScreen: View {
                 .padding(.top, key == .one ? 8 : 0)
             }
             
-            Divider()
-                .padding()
-            
-            Text("Window Titles")
-                .font(.system(size: 20, weight: .semibold))
-                .padding(.horizontal)
-                .textAlign(.leading)
-            
-            VStack(spacing: 12) {
-                ForEach(activeAppsUi, id: \.app) { activeAppUi in
-                    ActiveAppView(activeAppUi: activeAppUi)
+            if !isScreenshotsMode {
+                Divider()
+                    .padding()
+                
+                Text("Window Titles")
+                    .font(.system(size: 20, weight: .semibold))
+                    .padding(.horizontal)
+                    .textAlign(.leading)
+                
+                VStack(spacing: 12) {
+                    ForEach(activeAppsUi, id: \.app) { activeAppUi in
+                        ActiveAppView(activeAppUi: activeAppUi)
+                    }
                 }
+                .padding(.top, 1)
+                .padding(.bottom, 24)
             }
-            .padding(.top, 1)
-            .padding(.bottom, 24)
         }
         .onReceive(updateActiveAppsUiTimer) { _ in
             updateActiveAppsUi()
