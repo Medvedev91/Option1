@@ -12,6 +12,15 @@ struct WorkspaceBindView: View {
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
+    @State private var isTitleInfoPresented = false
+    
+    private var selectedAppName: String? {
+        appsUi.first(where: { $0.bundle == formUi.bundle })?.title
+    }
+    
+    @State private var isAnyFilePickerPresented = false
+    @State private var isAnyFilePickerInfoPresented = false
+    
     // Т.к. одновременно данное View отображается 10 раз а в формировании
     // списка много внутренней логики нужно давать хотябы 2 секунды.
     private let updateAppsUiTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
@@ -56,7 +65,7 @@ struct WorkspaceBindView: View {
             if formUi.bundle != nil {
                 
                 if formUi.bundle == BundleIds.Xcode {
-                    ProjectPickerView(
+                    FileTypeView(
                         path: formUi.substring,
                         pickerButtonText: "Select Xcode Project File or Folder",
                         fileTypes: [.data, .directory],
@@ -65,7 +74,7 @@ struct WorkspaceBindView: View {
                         },
                     )
                 } else if formUi.bundle == BundleIds.IntelliJ {
-                    ProjectPickerView(
+                    FileTypeView(
                         path: formUi.substring,
                         pickerButtonText: "Select IDEA Project Folder",
                         fileTypes: [.directory],
@@ -73,10 +82,81 @@ struct WorkspaceBindView: View {
                             formUi.substring = path
                         },
                     )
+                } else if formUi.bundle == BundleIds.MicrosoftWord {
+                    FileTypeView(
+                        path: formUi.substring,
+                        pickerButtonText: "Select Word Document",
+                        fileTypes: [.data],
+                        onPathChanged: { path in
+                            formUi.substring = path
+                        },
+                    )
+                } else if isFileExists(formUi.substring) {
+                    FileTypeView(
+                        path: formUi.substring,
+                        pickerButtonText: "---", // Impossible to show because of .isFileExists()
+                        fileTypes: [.data, .directory],
+                        onPathChanged: { path in
+                            formUi.substring = path
+                        },
+                    )
                 } else {
-                    TextField("Part of title (optional)", text: $formUi.substring)
+                    
+                    TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
-                        .frame(width: 200)
+                        .frame(width: 180)
+                    
+                    Button(
+                        action: {
+                            isAnyFilePickerInfoPresented = true
+                        },
+                        label: {
+                            Image(systemName: "folder")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .buttonStyle(.borderless)
+                    .padding(.leading, 12)
+                    .confirmationDialog(
+                        "",
+                        isPresented: $isAnyFilePickerInfoPresented,
+                    ) {
+                        Button("Select File or Folder") {
+                            isAnyFilePickerPresented = true
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        
+                        Button("Cancel", role: .cancel) {
+                        }
+                    } message: {
+                        Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.\n\nIf the file doesn't open properly, please contact me. I'll research this app.")
+                    }
+                    .fileImporter(
+                        isPresented: $isAnyFilePickerPresented,
+                        allowedContentTypes: [.data, .directory],
+                        onCompletion: { result in
+                            switch result {
+                            case .success(let url):
+                                formUi.substring = url.relativePath
+                            case .failure:
+                                break
+                            }
+                        }
+                    )
+
+                    Button(
+                        action: {
+                            isTitleInfoPresented = true
+                        },
+                        label: {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .buttonStyle(.borderless)
+                    .padding(.leading, 8)
                 }
             } else if let sharedOverride = sharedOverride {
                 HStack(spacing: 0) {
@@ -120,10 +200,18 @@ struct WorkspaceBindView: View {
                 }
             }
         }
+        .alert(
+            "",
+            isPresented: $isTitleInfoPresented,
+            actions: {},
+            message: { Text("If you have multiple \(selectedAppName ?? "app") windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well.") }
+        )
     }
 }
 
-private struct ProjectPickerView: View {
+private let userRelativePathRegex = /^\/Users\/(.*?)\/\b/
+
+private struct FileTypeView: View {
     
     let path: String
     let pickerButtonText: String
@@ -133,6 +221,10 @@ private struct ProjectPickerView: View {
     ///
     
     @State private var isFilePickerPresented = false
+    
+    private var validatedPath: String {
+        path.replacing(userRelativePathRegex, with: "~/")
+    }
     
     var body: some View {
         HStack(spacing: 4) {
@@ -146,9 +238,9 @@ private struct ProjectPickerView: View {
                     },
                 )
             } else {
-                Text(path)
+                Text(validatedPath)
                     .padding(.vertical, 8)
-                    .foregroundColor(.green)
+                    .foregroundColor(.blue)
                     .font(.system(size: fontSize, weight: .regular))
                     .onTapGesture {
                         isFilePickerPresented = true
@@ -160,7 +252,7 @@ private struct ProjectPickerView: View {
                     },
                     label: {
                         Image(systemName: "xmark.circle")
-                            .font(.system(size: fontSize, weight: .medium))
+                            .font(.system(size: fontSize, weight: .regular))
                     },
                 )
                 .buttonStyle(.borderless)

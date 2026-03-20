@@ -102,19 +102,30 @@ private func handleSpecial(
         return false
     }
     
-    if bindDb.bundle == BundleIds.IntelliJ {
+    if BundleIds.isOpenByShellNoNewWindow(bindDb.bundle) {
         let bundle = bindDb.bundle
-        let fileManager = FileManager.default
-        let project = bindDb.substring
-        if project.first == "/",
-           fileManager.fileExists(atPath: project) {
+        let path = bindDb.substring
+        if isFileExists(path) {
+            let result = shell("open", "-b", bundle, path)
+            // No sense to update cachedWindows
+            return result == 0
+        }
+        return false
+    }
+    
+    if BundleIds.isOpenByShellWithNewWindow(bindDb.bundle) {
+        let bundle = bindDb.bundle
+        let path = bindDb.substring
+        if isFileExists(path) {
             
             // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
             // macOS начинает анимацию запуска приложения в Dock, хотя по факту открывается еще
             // одно окно а не всё приложение. Каждый раз смотреть эти подпрыгивания не охото,
-            // по этому если уже есть окно с этим ideaProject - то его запуск.
+            // по этому если уже есть окно с этим путем - то его запуск.
             CachedWindow.cleanClosed__slow()
-            if let cachedProject = cachedWindows.first(where: { $0.value.ideaProject == project }) {
+            if let cachedProject = cachedWindows.first(
+                where: { $0.value.appBundle == bundle && $0.value.shellWithNewWindow == path }
+            ) {
                 try? focusAxuiElement(cachedProject.value.axuiElement)
                 return true
             }
@@ -123,7 +134,7 @@ private func handleSpecial(
                 return false
             }
             let configuration = NSWorkspace.OpenConfiguration()
-            configuration.arguments = [project]
+            configuration.arguments = [path]
             configuration.createsNewApplicationInstance = true
             NSWorkspace.shared.openApplication(at: url, configuration: configuration, completionHandler: { _, _ in
                 // Почему-то у объекта приложения из completionHandler .bundleIdentifier всегда nil,
@@ -134,17 +145,25 @@ private func handleSpecial(
                     reportApi("handleSpecial() no app: \(bindDb.bundle)")
                     return
                 }
-                if let focused = try? WindowsManager.getFocusedWindowOrNil() {
+                if let focused = try? WindowsManager.getFocusedWindowOrNil(),
+                   let pid = try? focused.pid(),
+                   nsApp.processIdentifier == pid {
                     try? CachedWindow.addByAxuiElement(
                         nsRunningApplication: nsApp,
                         axuiElement: focused,
-                        ideaProject: project,
+                        shellWithNewWindow: path,
                     )
                 }
             })
             return true
         }
         return false
+    }
+    
+    if isFileExists(bindDb.substring) {
+        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
+        // No sense to update cachedWindows
+        return result == 0
     }
     
     return false
