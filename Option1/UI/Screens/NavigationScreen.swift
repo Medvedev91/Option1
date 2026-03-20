@@ -95,15 +95,17 @@ struct NavigationScreen: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItemGroup(placement: .primaryAction) {
-                        if #available(macOS 26.0, *), case .workspace = tab {
-                            Button("How to Use") {
-                                tab = .main
+                    if !isScreenshotsMode {
+                        ToolbarItemGroup(placement: .primaryAction) {
+                            if #available(macOS 26.0, *), case .workspace = tab {
+                                Button("How to Use") {
+                                    tab = .main
+                                }
+                            } else {
                             }
-                        } else {
-                        }
-                        Button("Hide") {
-                            closeWindow()
+                            Button("Hide") {
+                                closeWindow()
+                            }
                         }
                     }
                 }
