@@ -145,7 +145,9 @@ private func handleSpecial(
                     reportApi("handleSpecial() no app: \(bindDb.bundle)")
                     return
                 }
-                if let focused = try? WindowsManager.getFocusedWindowOrNil() {
+                if let focused = try? WindowsManager.getFocusedWindowOrNil(),
+                   let pid = try? focused.pid(),
+                   nsApp.processIdentifier == pid {
                     try? CachedWindow.addByAxuiElement(
                         nsRunningApplication: nsApp,
                         axuiElement: focused,
