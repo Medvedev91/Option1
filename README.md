@@ -18,7 +18,7 @@ Open files, projects, folders.
   <img width="512" src="/Misc/Readme_02/examples.png">
 </p>
 
-Set up workspaces
+Set up workspaces.
 
 <p align="left">
   <img width="700" src="/Misc/Readme_02/workspaces.png">
