@@ -12,13 +12,13 @@ Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
   <img width="512" src="/Misc/Readme_02/basics.png">
 </p>
 
-## Open Files, Projects, Folders
+Open files, projects, folders.
 
 <p align="left">
   <img width="512" src="/Misc/Readme_02/examples.png">
 </p>
 
-## Workspaces
+Set up workspaces
 
 <p align="left">
   <img width="700" src="/Misc/Readme_02/workspaces.png">
