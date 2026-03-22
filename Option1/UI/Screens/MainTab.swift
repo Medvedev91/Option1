@@ -6,50 +6,28 @@ struct MainTab: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 
-                AppText("The idea - binding shortcuts like **`⌥-1`**, **`⌥-2`** to windows you need.")
+                AppText("Bind shortcuts like **`⌥-1`**, **`⌥-2`** to windows you need.")
                 
                 AppText("Press **`⌥-1`** to open Safari, **`⌥-2`** to open Calendar. Customize it.")
                 
                 Image("readme_basics")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 480)
+                    .frame(width: 500)
                 
-                MyTitle("Windows")
-                    .font(.largeTitle)
+                AppText("Open files, projects, folders.")
                 
-                AppText("Manage apps with multiple open windows. Like multiple open Word documents or Xcode projects.")
-                    .padding(.top, 4)
-                
-                AppText("Let's say we have two windows for one app, like two Xcode projects. We cannot open the window we need with built-in **`⌘-Tab`** because macOS opens apps, not windows. Let's solve it.")
-                
-                AppText("Look at the screenshot:\n• **`⌥-3`** binds **Xcode** with **Option1** title substring,\n• **`⌥-4`** binds **Xcode** with **timeto.me** title substring.")
-                
-                AppText("This means **`⌥-3`** opens **Xcode** window with **Option1** in the title, and **`⌥-4`** with **timeto.me**. Solved!")
-                
-                Image("readme_windows")
+                Image("readme_examples")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 800)
-                    .padding(.top, 12)
+                    .frame(width: 500)
                 
-                MyTitle("Workspaces")
-                    .font(.largeTitle)
-                    .padding(.top, 30)
-                
-                AppText("Set up sets of shortcuts for different projects.")
-                    .padding(.top, 4)
-                
-                AppText("I work on two projects: **Option1** and **timeto.me**. I got used to press **`⌥-3`** to open **Xcode**. This means when I work on **Option1** I want **`⌥-3`** opens **Xcode - Option1**, but when I work on **timeto.me** the same **`⌥-3`** should open **Xcode - timeto.me**.")
-                
-                AppText("The same way, depending on the project I'm working on, **`⌥-4`** should open the right **IntelliJ IDEA** window.")
-                
-                AppText("This is how I set up two workspaces:")
-                
+                AppText("Set up workspaces.")
+
                 Image("readme_workspaces")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 600)
+                    .frame(width: 640)
                 
                 AppText("To switch between workspaces, use menu bar:")
                 
@@ -65,7 +43,7 @@ struct MainTab: View {
                 
                 AppText("I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management:\n• supports multiple displays ✅\n• supports built-in macOS desktops ✅\n• supports full-screen windows ✅")
                 
-                AppText("Best regards,\nIvan")
+                AppText("Best regards,\n[Ivan](https://github.com/Medvedev91)")
                 
                 HStack {
                     Spacer()
