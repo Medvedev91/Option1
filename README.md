@@ -1,52 +1,33 @@
 <p align="center">
-  <img width="200" src="/Misc/Readme_01/AppIcon1024.png">
+  <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
 </p>
 
 # Option1 - Pragmatic Window Manager for macOS
 
-The idea - binding shortcuts like `⌥-1`, `⌥-2` to windows you need.
+Bind shortcuts like `⌥-1`, `⌥-2` to windows you need.
 
 Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
 
 <p align="left">
-  <img width="512" src="/Misc/Readme_01/basics.png">
+  <img width="512" src="/Misc/Readme_02/basics.png">
 </p>
 
-## Windows
-
-Manage apps with multiple open windows. Like multiple open Word documents or Xcode projects.
-
-Let's say we have two windows for one app, like two Xcode projects. We cannot open the window we need with built-in `⌘-Tab` because macOS opens apps, not windows. Let's solve it.
-
-Look at the screenshot:
-
-- `⌥-3` binds `Xcode` with `Option1` title substring,
-- `⌥-4` binds `Xcode` with `timeto.me` title substring.
-
-This means `⌥-3` opens `Xcode` window with `Option1` in the title, and `⌥-4` with `timeto.me`. Solved!
+Open files, projects, folders.
 
 <p align="left">
-  <img width="1024" src="/Misc/Readme_01/windows.png">
+  <img width="512" src="/Misc/Readme_02/examples.png.png">
 </p>
 
-## Workspaces
-
-Set up sets of shortcuts for different projects.
-
-I work on two projects: `Option1` and `timeto.me`. I got used to press `⌥-3` to open `Xcode`. This means when I work on `Option1` I want `⌥-3` opens `Xcode - Option1`, but when I work on `timeto.me` the same `⌥-3` should open `Xcode - timeto.me`.
-
-The same way, depending on the project I'm working on, `⌥-4` should open the right `IntelliJ IDEA` window.
-
-This is how I set up two workspaces:
+Set up workspaces.
 
 <p align="left">
-  <img width="700" src="/Misc/Readme_01/workspaces.png">
+  <img width="700" src="/Misc/Readme_02/workspaces.png">
 </p>
 
 To switch between workspaces, use menu bar:
 
 <p align="left">
-  <img width="512" src="/Misc/Readme_01/menu.png">
+  <img width="512" src="/Misc/Readme_02/menu.png">
 </p>
 
 ## P.S.
@@ -56,11 +37,6 @@ I call it pragmatic because I focus on the features I miss in macOS. It is not a
 - supports multiple displays ✅
 - supports built-in macOS desktops ✅
 - supports full-screen windows ✅
-
-<!--
-Best regards,
-Ivan
--->
 
 ## Download
 
