@@ -24,11 +24,13 @@ struct NavigationScreen: View {
                         Label("Option1", systemImage: "option")
                             .tag(Tab.main)
                         
-                        Label("Settings", systemImage: "gearshape")
-                            .tag(Tab.settings)
-                        
-                        Label("Donations", systemImage: "heart")
-                            .tag(Tab.donations)
+                        if !isScreenshotsMode {
+                            Label("Settings", systemImage: "gearshape")
+                                .tag(Tab.settings)
+                            
+                            Label("Donations", systemImage: "heart")
+                                .tag(Tab.donations)
+                        }
                         
                         Section("Workspaces") {
                             
