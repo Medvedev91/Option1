@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/AppIcon1024.png">
+  <img width="200" src="/Misc/Readme_01/AppIcon1024.png">
 </p>
 
 # Option1 - Pragmatic Window Manager for macOS
@@ -9,7 +9,7 @@ The idea - binding shortcuts like `⌥-1`, `⌥-2` to windows you need.
 Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
 
 <p align="left">
-  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/basics.png">
+  <img width="512" src="/Misc/Readme_01/basics.png">
 </p>
 
 ## Windows
@@ -26,7 +26,7 @@ Look at the screenshot:
 This means `⌥-3` opens `Xcode` window with `Option1` in the title, and `⌥-4` with `timeto.me`. Solved!
 
 <p align="left">
-  <img width="1024" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/windows.png">
+  <img width="1024" src="/Misc/Readme_01/windows.png">
 </p>
 
 ## Workspaces
@@ -40,13 +40,13 @@ The same way, depending on the project I'm working on, `⌥-4` should open the r
 This is how I set up two workspaces:
 
 <p align="left">
-  <img width="700" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/workspaces.png">
+  <img width="700" src="/Misc/Readme_01/workspaces.png">
 </p>
 
 To switch between workspaces, use menu bar:
 
 <p align="left">
-  <img width="512" src="https://raw.githubusercontent.com/Medvedev91/Option1/refs/heads/main/Misc/Readme/menu.png">
+  <img width="512" src="/Misc/Readme_01/menu.png">
 </p>
 
 ## P.S.
