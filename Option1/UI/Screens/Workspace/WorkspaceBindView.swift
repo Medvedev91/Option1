@@ -217,6 +217,7 @@ struct FileTypeData {
             // Apple
         case BundleIds.Finder: Self(path, "Select Folder", [.directory])
         case BundleIds.TextEdit: Self(path, "Select Document", [.data])
+        case BundleIds.Pages: Self(path, "Select Document", [.data])
         case BundleIds.Xcode: Self(path, "Select Xcode Project File or Folder", [.data, .directory])
             // JetBrains
         case BundleIds.IntelliJ: Self(path, "Select IDEA Project Folder", [.directory])
