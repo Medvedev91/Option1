@@ -223,6 +223,7 @@ struct FileTypeData {
             // Microsoft
         case BundleIds.MicrosoftWord: Self(path, "Select Word Document", [.data])
         case BundleIds.MicrosoftExcel: Self(path, "Select Excel Document", [.data])
+        case BundleIds.MicrosoftPowerPoint: Self(path, "Select PowerPoint Document", [.data])
         default: nil
         }
     }

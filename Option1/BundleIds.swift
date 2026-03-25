@@ -15,6 +15,7 @@ class BundleIds {
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
     static let MicrosoftExcel = "com.microsoft.Excel"
+    static let MicrosoftPowerPoint = "com.microsoft.Powerpoint"
     
     static func isOpenByShellWithNewWindow(_ bundle: String) -> Bool {
         [
