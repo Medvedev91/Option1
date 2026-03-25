@@ -1,3 +1,4 @@
+// todo Apple Pages, Tables...
 // todo Jetbrain IDE's
 // todo Text Edit
 // todo Visual Studio
@@ -6,7 +7,9 @@
 //
 class BundleIds {
     
+    // Apple
     static let Finder = "com.apple.finder"
+    static let TextEdit = "com.apple.TextEdit"
     static let Xcode = "com.apple.dt.Xcode"
     // JetBrains
     static let IntelliJ = "com.jetbrains.intellij"
