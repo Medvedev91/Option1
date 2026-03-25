@@ -1,5 +1,6 @@
 // todo Jetbrain IDE's
 // todo Text Edit
+// todo Visual Studio
 //
 // При добавлении учитывать UI в WorkspaceBindView.swift
 //
@@ -10,6 +11,7 @@ class BundleIds {
     // JetBrains
     static let IntelliJ = "com.jetbrains.intellij"
     static let PhpStorm = "com.jetbrains.PhpStorm"
+    static let PyCharm = "com.jetbrains.pycharm"
     static let AndroidStudio = "com.google.android.studio"
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
@@ -21,6 +23,7 @@ class BundleIds {
             // JetBrains
             IntelliJ,
             PhpStorm,
+            PyCharm,
             AndroidStudio,
         ].contains(bundle)
     }
