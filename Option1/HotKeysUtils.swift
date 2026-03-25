@@ -103,14 +103,9 @@ private func handleSpecial(
     }
     
     if BundleIds.isOpenByShellNoNewWindow(bindDb.bundle) {
-        let bundle = bindDb.bundle
-        let path = bindDb.substring
-        if isFileExists(path) {
-            let result = shell("open", "-b", bundle, path)
-            // No sense to update cachedWindows
-            return result == 0
-        }
-        return false
+        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
+        // No sense to update cachedWindows
+        return result == 0
     }
     
     if BundleIds.isOpenByShellWithNewWindow(bindDb.bundle) {
