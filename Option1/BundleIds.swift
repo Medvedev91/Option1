@@ -13,6 +13,7 @@ class BundleIds {
     static let PhpStorm = "com.jetbrains.PhpStorm"
     static let PyCharm = "com.jetbrains.pycharm"
     static let RustRover = "com.jetbrains.rustrover"
+    static let GoLand = "com.jetbrains.goland"
     static let AndroidStudio = "com.google.android.studio"
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
@@ -26,6 +27,7 @@ class BundleIds {
             PhpStorm,
             PyCharm,
             RustRover,
+            GoLand,
             AndroidStudio,
         ].contains(bundle)
     }

@@ -221,6 +221,7 @@ struct FileTypeData {
         case BundleIds.PhpStorm: Self(path, "Select PhpStorm Project Folder", [.directory])
         case BundleIds.PyCharm: Self(path, "Select PyCharm Project Folder", [.directory])
         case BundleIds.RustRover: Self(path, "Select RustRover Project Folder", [.directory])
+        case BundleIds.GoLand: Self(path, "Select GoLand Project Folder", [.directory])
         case BundleIds.AndroidStudio: Self(path, "Select Android Project Folder", [.directory])
             // Microsoft
         case BundleIds.MicrosoftWord: Self(path, "Select Word Document", [.data])
