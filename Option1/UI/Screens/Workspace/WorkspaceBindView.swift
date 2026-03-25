@@ -8,7 +8,7 @@ struct WorkspaceBindView: View {
     
     private let key: Key
     private let workspaceDb: WorkspaceDb?
-
+    
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
@@ -62,31 +62,13 @@ struct WorkspaceBindView: View {
             .padding(.leading, 2)
             .padding(.trailing, 12)
             
-            if formUi.bundle != nil {
+            if let bundle = formUi.bundle {
                 
-                if formUi.bundle == BundleIds.Xcode {
+                if let fileTypeData = FileTypeData.buildOrNil(bundle: bundle, path: formUi.substring) {
                     FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select Xcode Project File or Folder",
-                        fileTypes: [.data, .directory],
-                        onPathChanged: { path in
-                            formUi.substring = path
-                        },
-                    )
-                } else if formUi.bundle == BundleIds.IntelliJ {
-                    FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select IDEA Project Folder",
-                        fileTypes: [.directory],
-                        onPathChanged: { path in
-                            formUi.substring = path
-                        },
-                    )
-                } else if formUi.bundle == BundleIds.MicrosoftWord {
-                    FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select Word Document",
-                        fileTypes: [.data],
+                        path: fileTypeData.path,
+                        pickerButtonText: fileTypeData.pickerButtonText,
+                        fileTypes: fileTypeData.fileTypes,
                         onPathChanged: { path in
                             formUi.substring = path
                         },
@@ -208,6 +190,39 @@ struct WorkspaceBindView: View {
             actions: {},
             message: { Text("If you have multiple \(selectedAppName ?? "app") windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well.") }
         )
+    }
+}
+
+struct FileTypeData {
+    
+    let path: String
+    let pickerButtonText: String
+    let fileTypes: [UTType]
+    
+    init(
+        _ path: String,
+        _ pickerButtonText: String,
+        _ fileTypes: [UTType],
+    ) {
+        self.path = path
+        self.pickerButtonText = pickerButtonText
+        self.fileTypes = fileTypes
+    }
+    
+    static func buildOrNil(
+        bundle: String,
+        path: String,
+    ) -> Self? {
+        switch bundle {
+        case BundleIds.Finder: Self(path, "Select Folder", [.directory])
+        case BundleIds.Xcode: Self(path, "Select Xcode Project File or Folder", [.data, .directory])
+            // JetBrains
+        case BundleIds.IntelliJ: Self(path, "Select IDEA Project Folder", [.directory])
+        case BundleIds.PhpStorm: Self(path, "Select PhpStorm Project Folder", [.directory])
+            // Microsoft
+        case BundleIds.MicrosoftWord: Self(path, "Select Word Document", [.data])
+        default: nil
+        }
     }
 }
 
