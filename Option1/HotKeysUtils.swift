@@ -102,12 +102,6 @@ private func handleSpecial(
         return false
     }
     
-    if BundleIds.isOpenByShellNoNewWindow(bindDb.bundle) {
-        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
-        // No sense to update cachedWindows
-        return result == 0
-    }
-    
     if BundleIds.isOpenByShellWithNewWindow(bindDb.bundle) {
         let bundle = bindDb.bundle
         let path = bindDb.substring
