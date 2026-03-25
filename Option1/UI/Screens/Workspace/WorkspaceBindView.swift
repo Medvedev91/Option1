@@ -222,6 +222,7 @@ struct FileTypeData {
         case BundleIds.AndroidStudio: Self(path, "Select Android Project Folder", [.directory])
             // Microsoft
         case BundleIds.MicrosoftWord: Self(path, "Select Word Document", [.data])
+        case BundleIds.MicrosoftExcel: Self(path, "Select Excel Document", [.data])
         default: nil
         }
     }

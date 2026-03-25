@@ -14,12 +14,14 @@ class BundleIds {
     static let AndroidStudio = "com.google.android.studio"
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
-    
-    static func isOpenByShellNoNewWindow(_ bundle: String) -> Bool {
-        [Finder, MicrosoftWord].contains(bundle)
-    }
+    static let MicrosoftExcel = "com.microsoft.Excel"
     
     static func isOpenByShellWithNewWindow(_ bundle: String) -> Bool {
-        [IntelliJ, PhpStorm].contains(bundle)
+        [
+            // JetBrains
+            IntelliJ,
+            PhpStorm,
+            AndroidStudio,
+        ].contains(bundle)
     }
 }
