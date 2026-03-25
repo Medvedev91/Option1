@@ -1,4 +1,3 @@
-// todo Android Studio
 // todo Jetbrain IDE's
 // todo Microsoft Office Products: Word, Excel, ...
 // todo Text Edit
@@ -12,6 +11,7 @@ class BundleIds {
     // JetBrains
     static let IntelliJ = "com.jetbrains.intellij"
     static let PhpStorm = "com.jetbrains.PhpStorm"
+    static let AndroidStudio = "com.google.android.studio"
     // Microsoft
     static let MicrosoftWord = "com.microsoft.Word"
     
