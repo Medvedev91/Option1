@@ -1,5 +1,4 @@
 // todo Jetbrain IDE's
-// todo Microsoft Office Products: Word, Excel, ...
 // todo Text Edit
 //
 // При добавлении учитывать UI в WorkspaceBindView.swift
