@@ -1,4 +1,3 @@
-// todo Apple Pages, Tables...
 // todo Visual Studio
 //
 // При добавлении учитывать UI в WorkspaceBindView.swift
@@ -9,6 +8,7 @@ class BundleIds {
     static let Finder = "com.apple.finder"
     static let TextEdit = "com.apple.TextEdit"
     static let Pages = "com.apple.Pages"
+    static let Numbers = "com.apple.Numbers"
     static let Xcode = "com.apple.dt.Xcode"
     // JetBrains
     static let IntelliJ = "com.jetbrains.intellij"
