@@ -4,6 +4,11 @@ struct SettingsTab: View {
     
     let onDonationsClick: () -> Void
     
+    ///
+    
+    @State private var isBackupAlertPresented = false
+    @State private var backupAlertText = ""
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -25,16 +30,54 @@ struct SettingsTab: View {
                 .onTapGesture {
                     onDonationsClick()
                 }
-
+                
                 HStack {
                     SparkleButtonView()
                     Text("v\(SystemInfo.getAppVersionOrNil().map { "\($0)" } ?? "unknown").\(SystemInfo.getBuildOrNil().map { "\($0)" } ?? "unknown")")
                     Spacer()
                 }
                 .padding(.top, 2)
+                
+                HStack {
+                    Button("Backup") {
+                        backupAlertText = saveBackup(Backup.prepareBackup()) ? "Backup Created" : "Error"
+                        isBackupAlertPresented = true
+                    }
+                    Button("Restore") {
+                    }
+                }
             }
             .padding()
         }
         .navigationTitle("Settings")
+        .alert(
+            "",
+            isPresented: $isBackupAlertPresented,
+            actions: {},
+            message: { Text(backupAlertText) },
+        )
+    }
+}
+
+private func saveBackup(_ fileContent: String) -> Bool {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd"
+    
+    let savePanel = NSSavePanel()
+    savePanel.allowedContentTypes = [.json]
+    savePanel.isExtensionHidden = false
+    savePanel.title = "Backup"
+    savePanel.nameFieldLabel = "File Name:"
+    savePanel.nameFieldStringValue = "Option1-Backup-\(dateFormatter.string(from: Date.now))"
+    let response = savePanel.runModal()
+    guard response == .OK, let url: URL = savePanel.url else {
+        return false
+    }
+    
+    do {
+        try fileContent.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+        return true
+    } catch {
+        return false
     }
 }
