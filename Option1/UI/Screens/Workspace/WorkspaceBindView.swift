@@ -182,6 +182,7 @@ struct WorkspaceBindView: View {
                 if let bindDb = bindDb {
                     bindDb.delete()
                 }
+                formUi.substring = ""
             }
         }
         .alert(
