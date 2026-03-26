@@ -19,6 +19,8 @@ class AppDb {
         DB.save()
     }
     
+    ///
+    
     @MainActor
     static func selectAll() -> [AppDb] {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<AppDb>())
