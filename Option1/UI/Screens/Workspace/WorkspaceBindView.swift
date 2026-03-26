@@ -8,7 +8,7 @@ struct WorkspaceBindView: View {
     
     private let key: Key
     private let workspaceDb: WorkspaceDb?
-
+    
     @State private var appsUi: [AppUi]
     @State private var formUi: FormUi
     
@@ -62,31 +62,13 @@ struct WorkspaceBindView: View {
             .padding(.leading, 2)
             .padding(.trailing, 12)
             
-            if formUi.bundle != nil {
+            if let bundle = formUi.bundle {
                 
-                if formUi.bundle == BundleIds.Xcode {
+                if let fileTypeData = FileTypeData.buildOrNil(bundle: bundle, path: formUi.substring) {
                     FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select Xcode Project File or Folder",
-                        fileTypes: [.data, .directory],
-                        onPathChanged: { path in
-                            formUi.substring = path
-                        },
-                    )
-                } else if formUi.bundle == BundleIds.IntelliJ {
-                    FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select IDEA Project Folder",
-                        fileTypes: [.directory],
-                        onPathChanged: { path in
-                            formUi.substring = path
-                        },
-                    )
-                } else if formUi.bundle == BundleIds.MicrosoftWord {
-                    FileTypeView(
-                        path: formUi.substring,
-                        pickerButtonText: "Select Word Document",
-                        fileTypes: [.data],
+                        path: fileTypeData.path,
+                        pickerButtonText: fileTypeData.pickerButtonText,
+                        fileTypes: fileTypeData.fileTypes,
                         onPathChanged: { path in
                             formUi.substring = path
                         },
@@ -131,7 +113,7 @@ struct WorkspaceBindView: View {
                             Button("Cancel", role: .cancel) {
                             }
                         } message: {
-                            Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.\n\nIf the file doesn't open properly, please contact me. I'll research this app.")
+                            Text("If \(selectedAppName ?? "the app") supports opening files or folders, select the one you want to open.\n\nIf it doesn't open properly, please contact me. I'll research this app.")
                         }
                         .fileImporter(
                             isPresented: $isAnyFilePickerPresented,
@@ -200,6 +182,7 @@ struct WorkspaceBindView: View {
                 if let bindDb = bindDb {
                     bindDb.delete()
                 }
+                formUi.substring = ""
             }
         }
         .alert(
@@ -208,6 +191,62 @@ struct WorkspaceBindView: View {
             actions: {},
             message: { Text("If you have multiple \(selectedAppName ?? "app") windows open, enter the window title for window you want to open.\n\nYou can enter part of title as well.") }
         )
+    }
+}
+
+struct FileTypeData {
+    
+    let path: String
+    let pickerButtonText: String
+    let fileTypes: [UTType]
+    
+    init(
+        _ path: String,
+        _ pickerButtonText: String,
+        _ fileTypes: [UTType],
+    ) {
+        self.path = path
+        self.pickerButtonText = pickerButtonText
+        self.fileTypes = fileTypes
+    }
+    
+    static func buildOrNil(
+        bundle: String,
+        path: String,
+    ) -> Self? {
+        switch bundle {
+            // Apple
+        case BundleIds.Finder: Self(path, "Select Folder", [.directory])
+        case BundleIds.TextEdit: Self(path, "Select Document", [.data])
+        case BundleIds.Pages: Self(path, "Select Document", [.data])
+        case BundleIds.Numbers: Self(path, "Select Document", [.data])
+        case BundleIds.Xcode: Self(path, "Select Xcode Project File or Folder", [.data, .directory])
+            // JetBrains
+        case BundleIds.IntelliJ: Self(path, "Select IDEA Project Folder", [.directory])
+        case BundleIds.PhpStorm: Self(path, "Select PhpStorm Project Folder", [.directory])
+        case BundleIds.WebStorm: Self(path, "Select WebStorm Project Folder", [.directory])
+        case BundleIds.PyCharm: Self(path, "Select PyCharm Project Folder", [.directory])
+        case BundleIds.RustRover: Self(path, "Select RustRover Project Folder", [.directory])
+        case BundleIds.GoLand: Self(path, "Select GoLand Project Folder", [.directory])
+        case BundleIds.dotMemory: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.dotTrace: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.DataSpell: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.DataGrip: Self(path, "Select DataGrip Project Folder", [.directory])
+        case BundleIds.CLion: Self(path, "Select CLion Project Folder", [.directory])
+        case BundleIds.Rider: Self(path, "Select Rider Project Folder", [.directory])
+        case BundleIds.RubyMine: Self(path, "Select RubyMine Project Folder", [.directory])
+        case BundleIds.SpaceDesktop: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.MPS: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.Gateway: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.Air: Self(path, "Select Project Folder", [.directory])
+        case BundleIds.AndroidStudio: Self(path, "Select Android Project Folder", [.directory])
+            // Microsoft
+        case BundleIds.MicrosoftWord: Self(path, "Select Word Document", [.data])
+        case BundleIds.MicrosoftExcel: Self(path, "Select Excel Document", [.data])
+        case BundleIds.MicrosoftPowerPoint: Self(path, "Select PowerPoint Document", [.data])
+        case BundleIds.VSCode: Self(path, "Select Project Folder or File", [.data, .directory])
+        default: nil
+        }
     }
 }
 
