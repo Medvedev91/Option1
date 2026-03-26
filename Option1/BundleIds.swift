@@ -1,4 +1,3 @@
-// todo Visual Studio
 //
 // При добавлении учитывать UI в WorkspaceBindView.swift
 //
@@ -33,6 +32,7 @@ class BundleIds {
     static let MicrosoftWord = "com.microsoft.Word"
     static let MicrosoftExcel = "com.microsoft.Excel"
     static let MicrosoftPowerPoint = "com.microsoft.Powerpoint"
+    static let VSCode = "com.microsoft.VSCode"
     
     static func isOpenByShellWithNewWindow(_ bundle: String) -> Bool {
         [
