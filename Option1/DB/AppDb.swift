@@ -14,6 +14,12 @@ class AppDb {
     }
     
     @MainActor
+    func delete() {
+        DB.modelContainer.mainContext.delete(self)
+        DB.save()
+    }
+    
+    @MainActor
     static func selectAll() -> [AppDb] {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<AppDb>())
     }
@@ -53,5 +59,15 @@ class AppDb {
         appDb.name = name
         DB.save()
         reportLog("AppDb.upsertRaw() update: \(bundle) \(name)")
+    }
+    
+    @MainActor
+    static func cleanRemoved() {
+        selectAll().forEach { appDb in
+            if NSWorkspace.shared.urlForApplication(withBundleIdentifier: appDb.bundle) == nil {
+                reportLog("Deletion \(appDb.name)")
+                appDb.delete()
+            }
+        }
     }
 }
