@@ -9,6 +9,8 @@ struct SettingsTab: View {
     @State private var isBackupAlertPresented = false
     @State private var backupAlertText = ""
     
+    @State private var isRestorePickerPresented = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -40,11 +42,39 @@ struct SettingsTab: View {
                 
                 HStack {
                     Button("Backup") {
-                        backupAlertText = saveBackup(Backup.prepareBackup()) ? "Backup Created" : "Error"
-                        isBackupAlertPresented = true
+                        Task { @MainActor in
+                            do {
+                                try saveBackup(Backup.prepareBackup())
+                                showBackupAlert("Backup saved!")
+                            } catch AppError.simple(let message) {
+                                showBackupAlert(message)
+                            }
+                        }
                     }
                     Button("Restore") {
+                        isRestorePickerPresented = true
                     }
+                    .fileImporter(
+                        isPresented: $isRestorePickerPresented,
+                        allowedContentTypes: [.data],
+                        onCompletion: { result in
+                            switch result {
+                            case .success(let url):
+                                do {
+                                    let jString: String = try String(contentsOfFile: url.path, encoding: .utf8)
+                                    try Backup.restore(jString: jString)
+                                    showBackupAlert("Restored")
+                                } catch AppError.simple(let message) {
+                                    showBackupAlert(message)
+                                } catch {
+                                    showBackupAlert("Error")
+                                }
+                            case .failure:
+                                showBackupAlert("Error!")
+                                break
+                            }
+                        }
+                    )
                 }
             }
             .padding()
@@ -57,9 +87,14 @@ struct SettingsTab: View {
             message: { Text(backupAlertText) },
         )
     }
+    
+    private func showBackupAlert(_ text: String) {
+        backupAlertText = text
+        isBackupAlertPresented = true
+    }
 }
 
-private func saveBackup(_ fileContent: String) -> Bool {
+private func saveBackup(_ fileContent: String) throws(AppError) {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd"
     
@@ -71,13 +106,12 @@ private func saveBackup(_ fileContent: String) -> Bool {
     savePanel.nameFieldStringValue = "Option1-Backup-\(dateFormatter.string(from: Date.now))"
     let response = savePanel.runModal()
     guard response == .OK, let url: URL = savePanel.url else {
-        return false
+        throw AppError.simple("Error! Backup canceled!")
     }
     
     do {
         try fileContent.write(to: url, atomically: true, encoding: String.Encoding.utf8)
-        return true
     } catch {
-        return false
+        throw AppError.simple("Error! Backup failed!")
     }
 }
