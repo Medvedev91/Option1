@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import HotKey
 
 private let statusBar: NSStatusBar = NSStatusBar.system
 private let statusItem: NSStatusItem = statusBar.statusItem(
@@ -20,17 +21,21 @@ class MenuManager: ObservableObject {
     
     @Published var workspaceDb: WorkspaceDb?
     @Published var workspacesDb: [WorkspaceDb] = []
+    @Published var bindsDb: [BindDb] = []
     
+    @MainActor
     func setup() {
         statusItem.menu = statusMenu
         updateUi()
     }
     
+    @MainActor
     func setWorkspaceDb(_ workspaceDb: WorkspaceDb?) {
         self.workspaceDb = workspaceDb
         updateUi()
     }
     
+    @MainActor
     func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
         // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
         self.workspacesDb = workspacesDb
@@ -42,8 +47,16 @@ class MenuManager: ObservableObject {
         updateUi()
     }
     
+    @MainActor
+    func setBindsDb(_ bindsDb: [BindDb]) {
+        // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
+        self.bindsDb = bindsDb
+        updateUi()
+    }
+    
     ///
 
+    @MainActor
     private func updateUi() {
         
         //
@@ -79,6 +92,31 @@ class MenuManager: ObservableObject {
         }
         
         //
+        // Binds
+        
+        statusMenu.addItem(NSMenuItem.separator())
+        statusMenu.addItem(NSMenuItem.sectionHeader(title: self.workspaceDb?.name ?? "Shared"))
+        for key in HotKeysUtils.keys {
+            let keyString = key.description
+            guard let bindDb: BindDb =
+                    bindsDb.first (where: { $0.key == keyString && $0.workspaceId == self.workspaceDb?.id }) ??
+                    bindsDb.first(where: { $0.key == keyString && $0.workspaceId == nil }) else {
+                continue
+            }
+            let bindItem = NSMenuItem(
+                title: bindDb.selectAppNameOrNil() ?? bindDb.bundle,
+                action: #selector(AppDelegate.runHotKey),
+                keyEquivalent: ""
+            )
+            bindItem.representedObject = key
+            if !bindDb.substring.isEmpty {
+                bindItem.subtitle = userRelativePath(bindDb.substring)
+            }
+            bindItem.badge = .init(string: "⌥\(keyString)")
+            statusMenu.addItem(bindItem)
+        }
+        
+        //
         // Settings
         
         statusMenu.addItem(NSMenuItem.separator())
@@ -96,8 +134,17 @@ private extension AppDelegate {
         WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
     }
     
+    @MainActor
     @objc func setWorkspace(_ menuItem: NSMenuItem) {
         let workspaceDb: WorkspaceDb? = menuItem.representedObject as? WorkspaceDb
         MenuManager.instance.setWorkspaceDb(workspaceDb)
+    }
+    
+    @MainActor
+    @objc func runHotKey(_ menuItem: NSMenuItem) {
+        guard let key: Key = menuItem.representedObject as? Key else {
+            return
+        }
+        HotKeysUtils.handleRun(key: key)
     }
 }

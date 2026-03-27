@@ -250,8 +250,6 @@ struct FileTypeData {
     }
 }
 
-private let userRelativePathRegex = /^\/Users\/(.*?)\/\b/
-
 private struct FileTypeView: View {
     
     let path: String
@@ -264,7 +262,7 @@ private struct FileTypeView: View {
     @State private var isFilePickerPresented = false
     
     private var validatedPath: String {
-        path.replacing(userRelativePathRegex, with: "~/")
+        userRelativePath(path)
     }
     
     var body: some View {
