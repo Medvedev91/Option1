@@ -45,6 +45,7 @@ struct WorkspaceScreen: View {
             updateActiveAppsUi()
         }
         .onAppear {
+            AppDb.cleanRemoved()
             updateActiveAppsUi()
         }
         .navigationTitle(workspaceDb?.name ?? "Shared")

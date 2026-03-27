@@ -28,4 +28,9 @@ struct DB {
     static func save() {
         try! modelContainer.mainContext.save()
     }
+    
+    @MainActor
+    static func rollback() {
+        modelContainer.mainContext.rollback()
+    }
 }
