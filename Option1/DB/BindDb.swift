@@ -31,6 +31,27 @@ class BindDb {
         DB.save()
     }
     
+    //
+    // For Transaction
+    
+    @MainActor
+    static func deleteAll_ForTransaction() {
+        selectAll().forEach {
+            DB.modelContainer.mainContext.delete($0)
+        }
+    }
+    
+    @MainActor
+    static func insert_ForTransaction(id: UUID, key: String, workspaceId: UUID?, bundle: String, substring: String) {
+        DB.modelContainer.mainContext.insert(BindDb(
+            id: id,
+            key: key,
+            workspaceId: workspaceId,
+            bundle: bundle,
+            substring: substring,
+        ))
+    }
+    
     ///
     
     @MainActor
