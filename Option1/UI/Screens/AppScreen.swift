@@ -12,6 +12,12 @@ struct AppScreen: View {
         return 1
     }
     
+    @Query(sort: \BindDb.key) private var bindsDb: [BindDb]
+    private var bindsObserver: Int {
+        MenuManager.instance.setBindsDb(bindsDb)
+        return 1
+    }
+    
     private let timer1s = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var isPermissionGranted = isAccessibilityGranted(showDialog: false)
     
@@ -29,6 +35,10 @@ struct AppScreen: View {
         .onChange(of: workspacesObserver) {
             // Not body needed. Just force workspacesObserver execution.
             // Just onChange(workspacesDb) ignores fields changes.
+        }
+        .onChange(of: bindsObserver) {
+            // Not body needed. Just force bindsObserver execution.
+            // Just onChange(bindsDb) ignores fields changes.
         }
         .onChange(of: isPermissionGranted, initial: true) { _, newValue in
             if newValue {

@@ -20,17 +20,21 @@ class MenuManager: ObservableObject {
     
     @Published var workspaceDb: WorkspaceDb?
     @Published var workspacesDb: [WorkspaceDb] = []
+    @Published var bindsDb: [BindDb] = []
     
+    @MainActor
     func setup() {
         statusItem.menu = statusMenu
         updateUi()
     }
     
+    @MainActor
     func setWorkspaceDb(_ workspaceDb: WorkspaceDb?) {
         self.workspaceDb = workspaceDb
         updateUi()
     }
     
+    @MainActor
     func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
         // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
         self.workspacesDb = workspacesDb
@@ -42,8 +46,16 @@ class MenuManager: ObservableObject {
         updateUi()
     }
     
+    @MainActor
+    func setBindsDb(_ bindsDb: [BindDb]) {
+        // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
+        self.bindsDb = bindsDb
+        updateUi()
+    }
+    
     ///
 
+    @MainActor
     private func updateUi() {
         
         //
