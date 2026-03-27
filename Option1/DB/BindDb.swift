@@ -19,6 +19,11 @@ class BindDb {
     }
     
     @MainActor
+    func selectAppNameOrNil() -> String? {
+        AppDb.selectAll().first(where: { $0.bundle == self.bundle })?.name
+    }
+    
+    @MainActor
     func updateBundleAndSubstring(bundle: String, substring: String) {
         self.bundle = bundle
         self.substring = substring
