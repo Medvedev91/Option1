@@ -6,7 +6,7 @@ private var keepHotKeyHandlers: [Any] = []
 class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
-
+    
     static func setup() {
         keys.forEach { key in
             keepHotKeyHandlers.append(
@@ -22,58 +22,58 @@ class HotKeysUtils {
             )
         }
     }
-}
-
-@MainActor
-private func handleRun(key: Key) {
-    ping()
-    _ = isAccessibilityGranted(showDialog: true)
     
-    if DonationsAlertUtils.checkUp() {
-        return
-    }
-    
-    let bindsDb = BindDb.selectAll()
-    
-    guard let bindDb: BindDb = {
-        let bindsDbForKey = bindsDb.filter { $0.key == key.description }
-        let sharedBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == nil }
-        guard let workspaceId: UUID = MenuManager.instance.workspaceDb?.id else {
-            return sharedBindDb
+    @MainActor
+    static func handleRun(key: Key) {
+        ping()
+        _ = isAccessibilityGranted(showDialog: true)
+        
+        if DonationsAlertUtils.checkUp() {
+            return
         }
-        let workspaceBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == workspaceId }
-        return workspaceBindDb ?? sharedBindDb
-    }() else { return }
-    
-    if bindDb.substring.isEmpty {
-        WindowsManager.openApplicationByBundle(bindDb.bundle)
-        return
-    }
-    
-    if handleSpecial(bindDb: bindDb) {
-        return
-    }
-    
-    // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
-    if NSWorkspace.shared.runningApplications.first(where: {
-        $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
-    }) == nil {
-        WindowsManager.openApplicationByBundle(bindDb.bundle)
-        return
-    }
-    
-    do {
-        CachedWindow.cleanClosed__slow()
         
-        let windows: [CachedWindow] = cachedWindows.map { $0.value }
-        guard let window: CachedWindow = windows.first(where: {
-            $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
-            $0.appBundle == bindDb.bundle
-        }) else { return }
+        let bindsDb = BindDb.selectAll()
         
-        try focusAxuiElement(window.axuiElement)
-    } catch {
-        reportApi("handleRun() error:\(error.localizedDescription)")
+        guard let bindDb: BindDb = {
+            let bindsDbForKey = bindsDb.filter { $0.key == key.description }
+            let sharedBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == nil }
+            guard let workspaceId: UUID = MenuManager.instance.workspaceDb?.id else {
+                return sharedBindDb
+            }
+            let workspaceBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == workspaceId }
+            return workspaceBindDb ?? sharedBindDb
+        }() else { return }
+        
+        if bindDb.substring.isEmpty {
+            WindowsManager.openApplicationByBundle(bindDb.bundle)
+            return
+        }
+        
+        if handleSpecial(bindDb: bindDb) {
+            return
+        }
+        
+        // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
+        if NSWorkspace.shared.runningApplications.first(where: {
+            $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+        }) == nil {
+            WindowsManager.openApplicationByBundle(bindDb.bundle)
+            return
+        }
+        
+        do {
+            CachedWindow.cleanClosed__slow()
+            
+            let windows: [CachedWindow] = cachedWindows.map { $0.value }
+            guard let window: CachedWindow = windows.first(where: {
+                $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
+                $0.appBundle == bindDb.bundle
+            }) else { return }
+            
+            try focusAxuiElement(window.axuiElement)
+        } catch {
+            reportApi("handleRun() error:\(error.localizedDescription)")
+        }
     }
 }
 
