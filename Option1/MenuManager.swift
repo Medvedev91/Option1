@@ -95,7 +95,6 @@ class MenuManager: ObservableObject {
         // Binds
         
         statusMenu.addItem(NSMenuItem.separator())
-        statusMenu.addItem(NSMenuItem.sectionHeader(title: self.workspaceDb?.name ?? "Shared"))
         for key in HotKeysUtils.keys {
             let keyString = key.description
             guard let bindDb: BindDb =
