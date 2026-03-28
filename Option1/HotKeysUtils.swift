@@ -21,6 +21,41 @@ class HotKeysUtils {
                 )
             )
         }
+        
+        //
+        // Option - Tab
+        
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .escape,
+                modifiers: [.option],
+                keyDownHandler: {
+                    OptionTabManager.instance.closeWindow()
+                },
+            )
+        )
+        
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .tab,
+                modifiers: [.option],
+                keyDownHandler: {
+                    OptionTabManager.instance.onOptionTabPressed()
+                },
+            )
+        )
+        
+        NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
+            if !event.modifierFlags.contains(.option) {
+                OptionTabManager.instance.onOptionKeyUp()
+            }
+            return event
+        }
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
+            if !event.modifierFlags.contains(.option) {
+                OptionTabManager.instance.onOptionKeyUp()
+            }
+        }
     }
     
     @MainActor
