@@ -5,7 +5,7 @@ private let fontSize = 14.0
 
 struct OptionTabView: View {
     
-    static let fullWidth: CGFloat = 800.0
+    static let fullWidth: CGFloat = 820.0
     static let windowsWidth: CGFloat = 600.0
     static let menuWidth: CGFloat = fullWidth - windowsWidth
     
@@ -16,11 +16,12 @@ struct OptionTabView: View {
     static let menuIconWidth: CGFloat = 12.0
     static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
-    static let menuItemOuterTrailingPadding: CGFloat = 12
+    static let menuItemOuterTrailingPadding: CGFloat = 8
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
+    let closeWindow: () -> Void
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -68,32 +69,40 @@ struct OptionTabView: View {
                     .padding(.trailing)
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
-                    HStack(spacing: 0) {
-                        VStack(spacing: 0) {
-                            Text(bindUi.title)
-                                .textAlign(.leading)
-                                .font(.system(size: fontSize, weight: .regular))
-                                .lineLimit(1)
-                            if let subtitle = bindUi.subtitle {
-                                Text(subtitle)
-                                    .textAlign(.leading)
-                                    .foregroundColor(.secondary)
-                                    .font(.system(size: 11, weight: .regular))
-                                    .lineLimit(1)
-                                    .padding(.top, 1)
-                                    .padding(.bottom, 2)
+                    MenuItemView(
+                        onClick: {
+                            closeWindow()
+                            HotKeysUtils.handleRun(key: bindUi.key)
+                        },
+                        content: {
+                            HStack(spacing: 0) {
+                                VStack(spacing: 0) {
+                                    Text(bindUi.title)
+                                        .textAlign(.leading)
+                                        .font(.system(size: fontSize, weight: .regular))
+                                        .lineLimit(1)
+                                    if let subtitle = bindUi.subtitle {
+                                        Text(subtitle)
+                                            .textAlign(.leading)
+                                            .foregroundColor(.secondary)
+                                            .font(.system(size: 11, weight: .regular))
+                                            .lineLimit(1)
+                                            .padding(.top, 1)
+                                            .padding(.bottom, 2)
+                                    }
+                                }
+                                Spacer()
+                                Text(bindUi.badge)
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 6)
+                                    .background(RoundedRectangle(cornerRadius: 999, style: .circular).fill(.ultraThinMaterial))
                             }
-                        }
-                        Spacer()
-                        Text(bindUi.badge)
-                            .font(.system(size: 11, weight: .semibold))
-                            .padding(.vertical, 2)
-                            .padding(.horizontal, 6)
-                            .background(RoundedRectangle(cornerRadius: 999, style: .circular).fill(.ultraThinMaterial))
-                    }
-                    .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
-                    .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing, Self.menuItemOuterTrailingPadding)
+                            .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
+                            .padding(.leading, Self.menuIconWidth)
+                            .padding(.trailing, 6)
+                        },
+                    )
                 }
                 
                 Divider()
@@ -101,11 +110,19 @@ struct OptionTabView: View {
                     .padding(.leading, Self.menuSeparatorLeadingPadding)
                     .padding(.trailing)
                 
-                Text("Settings")
-                    .textAlign(.leading)
-                    .font(.system(size: fontSize, weight: .regular))
-                    .frame(height: Self.itemHeight)
-                    .padding(.leading, Self.menuIconWidth)
+                MenuItemView(
+                    onClick: {
+                        closeWindow()
+                        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                    },
+                    content: {
+                        Text("Settings")
+                            .textAlign(.leading)
+                            .font(.system(size: fontSize, weight: .regular))
+                            .frame(height: Self.itemHeight)
+                            .padding(.leading, Self.menuIconWidth)
+                    },
+                )
             }
             .padding(.top, Self.itemHeaderPadding)
             .frame(width: Self.menuWidth)
@@ -201,5 +218,47 @@ private struct CachedWindowView: View {
             }
         }
         .padding(.horizontal, 12)
+    }
+}
+
+private struct MenuItemView<Content: View>: View {
+    
+    let onClick: () -> Void
+    @ViewBuilder let content: Content
+    
+    ///
+    
+    @State private var isFirstHover: Bool = true
+    @State private var isHover: Bool = false
+
+    var body: some View {
+        Button(
+            action: {
+                onClick()
+            },
+            label: {
+                content
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .circular)
+                            .fill(isHover ? .blue : .clear)
+                    )
+                    .animation(.linear(duration: 0.05), value: isHover)
+                    .padding(.trailing, OptionTabView.menuItemOuterTrailingPadding)
+            },
+        )
+        .buttonStyle(.plain)
+        .contentShape(Rectangle()) // Tap area
+        .onContinuousHover { hoverPhase in
+            switch hoverPhase {
+            case .active:
+                if !isFirstHover {
+                    isHover = true
+                }
+                isFirstHover = false
+            case .ended:
+                isFirstHover = true
+                isHover = false
+            }
+        }
     }
 }

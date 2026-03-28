@@ -101,6 +101,9 @@ class OptionTabManager {
             onCachedWindowFocus: { cachedWindow in
                 self.focusCachedWindow(cachedWindow)
             },
+            closeWindow: {
+                self.closeWindow()
+            },
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
