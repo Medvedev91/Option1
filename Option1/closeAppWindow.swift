@@ -1,5 +1,5 @@
 import AppKit
 
-func closeWindow() {
+func closeAppWindow() {
     NSApplication.shared.keyWindow?.close()
 }

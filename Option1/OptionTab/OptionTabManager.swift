@@ -65,6 +65,10 @@ class OptionTabManager {
     }
     
     private func showWindow() {
+        // Если открыто окно приложение Option1 (не Option-Tab),
+        // то при нажатии на Option-Tab происходит фокус на Option1.
+        closeAppWindow()
+        
         let optionTabData = OptionTabData(
             selectedCachedWindow: AppObserver.previousFocusedCachedWindow,
         )

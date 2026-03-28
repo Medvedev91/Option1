@@ -106,7 +106,7 @@ struct NavigationScreen: View {
                             } else {
                             }
                             Button("Hide") {
-                                closeWindow()
+                                closeAppWindow()
                             }
                         }
                     }
