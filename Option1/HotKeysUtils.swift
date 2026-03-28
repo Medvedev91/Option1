@@ -45,6 +45,16 @@ class HotKeysUtils {
             )
         )
         
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .tab,
+                modifiers: [.option, .shift],
+                keyDownHandler: {
+                    OptionTabManager.instance.onOptionShiftTabPressed()
+                },
+            )
+        )
+        
         NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             if !event.modifierFlags.contains(.option) {
                 OptionTabManager.instance.onOptionKeyUp()

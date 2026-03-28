@@ -27,6 +27,23 @@ class OptionTabManager {
         showWindow()
     }
     
+    func onOptionShiftTabPressed() {
+        if let optionTabView = optionTabView {
+            let allCachedWindows: [CachedWindow] = optionTabView.data.appsUi.flatMap { $0.cachedWindows }
+            if let selectedCachedWindow = optionTabView.data.selectedCachedWindow,
+               let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
+                if curIndex > 0 {
+                    optionTabView.data.selectedCachedWindow = allCachedWindows[curIndex - 1]
+                } else {
+                    optionTabView.data.selectedCachedWindow = allCachedWindows.last
+                }
+            } else {
+                optionTabView.data.selectedCachedWindow = allCachedWindows.last
+            }
+            return
+        }
+    }
+    
     func onOptionKeyUp() {
         guard let selectedCachedWindow = optionTabView?.data.selectedCachedWindow else {
             closeWindow()
