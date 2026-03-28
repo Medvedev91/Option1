@@ -65,6 +65,7 @@ private struct AppView: View {
                         RoundedRectangle(cornerRadius: 8, style: .circular)
                             .fill(isSelected ? .blue : .clear)
                     )
+                    .contentShape(Rectangle()) // Tap area
                     .onTapGesture {
                         onCachedWindowFocus(cachedWindow)
                     }
