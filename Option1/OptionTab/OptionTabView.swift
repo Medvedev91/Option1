@@ -5,27 +5,102 @@ private let fontSize = 14.0
 
 struct OptionTabView: View {
     
+    static let fullWidth: CGFloat = 800.0
+    static let windowsWidth: CGFloat = 600.0
+    static let menuWidth: CGFloat = fullWidth - windowsWidth
+    
     static let itemHeight = 24.0
+    static let itemTwoLinesHeight = 40.0
     static let itemHeaderPadding = itemHeight / 1.62
+    
+    static let menuIconWidth: CGFloat = 12.0
+    static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
+    static let menuSeparatorHeight: CGFloat = itemHeaderPadding
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
-
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                ForEach(data.appsUi, id: \.app) { appUi in
-                    AppView(
-                        appUi: appUi,
-                        selectedCachedWindow: data.selectedCachedWindow,
-                        onCachedWindowHover: { cachedWindow in
-                            data.selectedCachedWindow = cachedWindow
-                        },
-                        onCachedWindowFocus: onCachedWindowFocus,
-                    )
+        HStack(alignment: .top, spacing: 0) {
+            
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(data.appsUi, id: \.app) { appUi in
+                        AppView(
+                            appUi: appUi,
+                            selectedCachedWindow: data.selectedCachedWindow,
+                            onCachedWindowHover: { cachedWindow in
+                                data.selectedCachedWindow = cachedWindow
+                            },
+                            onCachedWindowFocus: onCachedWindowFocus,
+                        )
+                    }
                 }
+                .frame(width: Self.windowsWidth)
             }
+            
+            VStack(spacing: 0) {
+                
+                ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
+                    HStack(spacing: 0) {
+                        HStack {
+                            if workspaceUi.isSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            Spacer()
+                        }
+                        .frame(width: Self.menuIconWidth)
+                        
+                        Text(workspaceUi.workspaceDb?.name ?? "Shared")
+                            .textAlign(.leading)
+                            .font(.system(size: fontSize, weight: .regular))
+                            .lineLimit(1)
+                    }
+                    .frame(height: Self.itemHeight)
+                }
+                
+                Divider()
+                    .frame(height: Self.menuSeparatorHeight)
+                    .padding(.leading, Self.menuSeparatorLeadingPadding)
+                    .padding(.trailing)
+                
+                ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
+                    HStack {
+                        VStack(spacing: 0) {
+                            Text(bindUi.title)
+                                .textAlign(.leading)
+                                .font(.system(size: fontSize, weight: .regular))
+                                .lineLimit(1)
+                            if let subtitle = bindUi.subtitle {
+                                Text(subtitle)
+                                    .textAlign(.leading)
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 11, weight: .regular))
+                                    .lineLimit(1)
+                                    .padding(.top, 1)
+                                    .padding(.bottom, 2)
+                            }
+                        }
+                    }
+                    .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
+                    .padding(.leading, Self.menuIconWidth)
+                }
+                
+                Divider()
+                    .frame(height: Self.menuSeparatorHeight)
+                    .padding(.leading, Self.menuSeparatorLeadingPadding)
+                    .padding(.trailing)
+                
+                Text("Settings")
+                    .textAlign(.leading)
+                    .font(.system(size: fontSize, weight: .regular))
+                    .frame(height: Self.itemHeight)
+                    .padding(.leading, Self.menuIconWidth)
+            }
+            .padding(.top, Self.itemHeaderPadding)
+            .frame(width: Self.menuWidth)
         }
         .fillMaxSize()
         .background(
