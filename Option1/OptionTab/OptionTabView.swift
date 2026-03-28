@@ -47,19 +47,25 @@ private struct AppView: View {
                 .font(.system(size: fontSize, weight: .heavy))
                 .lineLimit(1)
                 .frame(height: OptionTabView.itemHeight)
-                .padding(.horizontal)
+                .padding(.horizontal, 20)
             
             ForEach(appUi.cachedWindows, id: \.self) { cachedWindow in
+                let isSelected: Bool = cachedWindow == selectedCachedWindow
                 Text(cachedWindow.title)
                     .textAlign(.leading)
                     .font(.system(size: fontSize, weight: .regular))
                     .lineLimit(1)
                     .frame(height: OptionTabView.itemHeight)
-                    .padding(.horizontal)
-                    .foregroundColor(cachedWindow == selectedCachedWindow ? .red : .primary)
+                    .padding(.horizontal, 8)
+                    .foregroundColor(isSelected ? .white : .primary)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .circular)
+                            .fill(isSelected ? .blue : .clear)
+                    )
                     .onTapGesture {
                         try? WindowsManager.focusWindow(axuiElement: cachedWindow.axuiElement)
                     }
+                    .padding(.horizontal, 12)
             }
         }
     }
