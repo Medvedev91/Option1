@@ -110,7 +110,7 @@ class HotKeysUtils {
         guard let bindDb: BindDb = {
             let bindsDbForKey = bindsDb.filter { $0.key == key.description }
             let sharedBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == nil }
-            guard let workspaceId: UUID = MenuManager.instance.workspaceDb?.id else {
+            guard let workspaceId: UUID = MenuBarManager.instance.workspaceDb?.id else {
                 return sharedBindDb
             }
             let workspaceBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == workspaceId }

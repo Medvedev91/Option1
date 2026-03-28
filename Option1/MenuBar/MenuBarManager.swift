@@ -15,9 +15,9 @@ private let statusItem: NSStatusItem = statusBar.statusItem(
 )
 private let statusMenu = NSMenu(title: "Option1")
 
-class MenuManager: ObservableObject {
+class MenuBarManager: ObservableObject {
     
-    static let instance = MenuManager()
+    static let instance = MenuBarManager()
     
     @Published var workspaceDb: WorkspaceDb?
     @Published var workspacesDb: [WorkspaceDb] = []
@@ -136,7 +136,7 @@ private extension AppDelegate {
     @MainActor
     @objc func setWorkspace(_ menuItem: NSMenuItem) {
         let workspaceDb: WorkspaceDb? = menuItem.representedObject as? WorkspaceDb
-        MenuManager.instance.setWorkspaceDb(workspaceDb)
+        MenuBarManager.instance.setWorkspaceDb(workspaceDb)
     }
     
     @MainActor

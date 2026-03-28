@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         initData()
         HotKeysUtils.setup()
-        MenuManager.instance.setup()
+        MenuBarManager.instance.setup()
         ping()
     }
 }

@@ -10,7 +10,7 @@ struct NavigationScreen: View {
     @State private var isNewWorkspacePresented = false
     @State private var newWorkspaceName: String = ""
     
-    @StateObject private var menuManager = MenuManager.instance
+    @StateObject private var menuBarManager = MenuBarManager.instance
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
     
     var body: some View {
@@ -34,7 +34,7 @@ struct NavigationScreen: View {
                         
                         Section("Workspaces") {
                             
-                            Label("Shared", systemImage: menuManager.workspaceDb == nil ? "inset.filled.circle" : "circle")
+                            Label("Shared", systemImage: menuBarManager.workspaceDb == nil ? "inset.filled.circle" : "circle")
                                 .tag(Tab.workspace(workspaceDb: nil))
                             
                             ForEach(workspacesDb) { workspaceDb in
@@ -115,7 +115,7 @@ struct NavigationScreen: View {
         )
         .onChange(of: tab, initial: true) { _, newTab in
             if case let .workspace(workspaceDb) = newTab {
-                menuManager.setWorkspaceDb(workspaceDb)
+                menuBarManager.setWorkspaceDb(workspaceDb)
             }
         }
         .onReceive(DonationsAlertUtils.instance.$needToShow) { needToShow in
@@ -186,7 +186,7 @@ private struct WorkspaceItemView: View {
     
     ///
     
-    @StateObject private var menuManager = MenuManager.instance
+    @StateObject private var menuBarManager = MenuBarManager.instance
     
     @State private var isDeleteConfirmationPresented = false
     
@@ -198,7 +198,7 @@ private struct WorkspaceItemView: View {
 
     var body: some View {
         
-        Label(workspaceDb.name, systemImage: menuManager.workspaceDb?.id == workspaceDb.id ? "inset.filled.circle" : "circle")
+        Label(workspaceDb.name, systemImage: menuBarManager.workspaceDb?.id == workspaceDb.id ? "inset.filled.circle" : "circle")
             .id(uuid)
             .tag(Tab.workspace(workspaceDb: workspaceDb))
             .contextMenu {
