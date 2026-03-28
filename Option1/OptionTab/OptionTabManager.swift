@@ -32,8 +32,7 @@ class OptionTabManager {
             closeWindow()
             return
         }
-        try? WindowsManager.focusWindow(axuiElement: selectedCachedWindow.axuiElement)
-        closeWindow()
+        focusCachedWindow(selectedCachedWindow)
     }
     
     func closeWindow() {
@@ -43,8 +42,15 @@ class OptionTabManager {
     
     ///
     
+    private func focusCachedWindow(_ cachedWindow: CachedWindow) {
+        try? WindowsManager.focusWindow(axuiElement: cachedWindow.axuiElement)
+        closeWindow()
+    }
+    
     private func showWindow() {
-        let optionTabData = OptionTabData()
+        let optionTabData = OptionTabData(
+            selectedCachedWindow: AppObserver.previousFocusedCachedWindow,
+        )
         
         let contentHeight: Int = {
             let headersHeight: Int = optionTabData.appsUi.count * Int(OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)
@@ -73,6 +79,9 @@ class OptionTabManager {
         let optionTabView = OptionTabView(
             window: window,
             data: optionTabData,
+            onCachedWindowFocus: { cachedWindow in
+                self.focusCachedWindow(cachedWindow)
+            },
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
@@ -82,8 +91,7 @@ class OptionTabManager {
         // Fix crash on close https://stackoverflow.com/a/78684365
         window.isReleasedWhenClosed = false
         window.isOpaque = false
-        // Alpha 0.01 иначе курсор реагирует на содержимое под окном.
-        window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.01)
+        window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0)
         
         self.optionTabView = optionTabView
     }
