@@ -10,7 +10,8 @@ struct OptionTabView: View {
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
-    
+    let onCachedWindowFocus: (CachedWindow) -> Void
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -18,6 +19,7 @@ struct OptionTabView: View {
                     AppView(
                         appUi: appUi,
                         selectedCachedWindow: data.selectedCachedWindow,
+                        onCachedWindowFocus: onCachedWindowFocus,
                     )
                 }
             }
@@ -34,6 +36,7 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let selectedCachedWindow: CachedWindow?
+    let onCachedWindowFocus: (CachedWindow) -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -63,7 +66,7 @@ private struct AppView: View {
                             .fill(isSelected ? .blue : .clear)
                     )
                     .onTapGesture {
-                        try? WindowsManager.focusWindow(axuiElement: cachedWindow.axuiElement)
+                        onCachedWindowFocus(cachedWindow)
                     }
                     .padding(.horizontal, 12)
             }
