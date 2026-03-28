@@ -24,6 +24,7 @@ class MenuBarManager: ObservableObject {
     @Published var bindsDb: [BindDb] = []
     
     var workspacesUi: [MenuBarWorkspaceUi] = []
+    var bindsUi: [MenuBarBindUi] = []
     
     @MainActor
     func setup() {
@@ -61,6 +62,7 @@ class MenuBarManager: ObservableObject {
     @MainActor
     private func updateUi() {
         syncWorkspacesUi()
+        syncBindsUi()
         
         //
         // Menu
@@ -86,23 +88,15 @@ class MenuBarManager: ObservableObject {
         // Binds
         
         statusMenu.addItem(NSMenuItem.separator())
-        for key in HotKeysUtils.keys {
-            let keyString = key.description
-            guard let bindDb: BindDb =
-                    bindsDb.first (where: { $0.key == keyString && $0.workspaceId == self.workspaceDb?.id }) ??
-                    bindsDb.first(where: { $0.key == keyString && $0.workspaceId == nil }) else {
-                continue
-            }
+        bindsUi.forEach { bindUi in
             let bindItem = NSMenuItem(
-                title: bindDb.selectAppNameOrNil() ?? bindDb.bundle,
+                title: bindUi.title,
                 action: #selector(AppDelegate.runHotKey),
                 keyEquivalent: ""
             )
-            bindItem.representedObject = key
-            if !bindDb.substring.isEmpty {
-                bindItem.subtitle = userRelativePath(bindDb.substring)
-            }
-            bindItem.badge = .init(string: "⌥\(keyString)")
+            bindItem.representedObject = bindUi.key
+            bindItem.subtitle = bindUi.subtitle
+            bindItem.badge = .init(string: bindUi.badge)
             statusMenu.addItem(bindItem)
         }
         
@@ -134,6 +128,29 @@ class MenuBarManager: ObservableObject {
             )
         }
         self.workspacesUi = workspacesUi
+    }
+    
+    @MainActor
+    private func syncBindsUi() {
+        var bindsUi: [MenuBarBindUi] = []
+        for key in HotKeysUtils.keys {
+            let keyString = key.description
+            guard let bindDb: BindDb =
+                    bindsDb.first (where: { $0.key == keyString && $0.workspaceId == self.workspaceDb?.id }) ??
+                    bindsDb.first(where: { $0.key == keyString && $0.workspaceId == nil }) else {
+                continue
+            }
+            bindsUi.append(
+                MenuBarBindUi(
+                    bindDb: bindDb,
+                    title: bindDb.selectAppNameOrNil() ?? bindDb.bundle,
+                    subtitle: bindDb.substring.isEmpty ? nil : userRelativePath(bindDb.substring),
+                    key: key,
+                    badge: "⌥\(keyString)",
+                )
+            )
+        }
+        self.bindsUi = bindsUi
     }
 }
 
