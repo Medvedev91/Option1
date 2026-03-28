@@ -100,6 +100,7 @@ private struct CachedWindowView: View {
                         RoundedRectangle(cornerRadius: 8, style: .circular)
                             .fill(isSelected ? .blue : .clear)
                     )
+                    .animation(.linear(duration: 0.05), value: isSelected)
             }
         )
         .buttonStyle(.plain)
