@@ -3,9 +3,11 @@ import AppKit
 class OptionTabData: ObservableObject {
     
     let appsUi: [OptionTabAppUi]
-    @Published var selectedCachedWindow: CachedWindow? = nil
+    @Published var selectedCachedWindow: CachedWindow?
 
-    init() {
+    init(
+        selectedCachedWindow: CachedWindow?,
+    ) {
         CachedWindow.cleanClosed__slow(reportIfSlow: false)
         
         // Running Apps
@@ -31,5 +33,6 @@ class OptionTabData: ObservableObject {
         }
         
         self.appsUi = appsUi.sorted { ($0.app?.localizedName ?? "") < ($1.app?.localizedName ?? "") }
+        self.selectedCachedWindow = selectedCachedWindow
     }
 }
