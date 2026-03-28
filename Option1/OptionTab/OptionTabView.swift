@@ -19,7 +19,7 @@ struct OptionTabView: View {
                     AppView(
                         appUi: appUi,
                         selectedCachedWindow: data.selectedCachedWindow,
-                        onCachedWindowSelected: { cachedWindow in
+                        onCachedWindowHover: { cachedWindow in
                             data.selectedCachedWindow = cachedWindow
                         },
                         onCachedWindowFocus: onCachedWindowFocus,
@@ -39,7 +39,7 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let selectedCachedWindow: CachedWindow?
-    let onCachedWindowSelected: (CachedWindow?) -> Void
+    let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
     var body: some View {
@@ -60,8 +60,8 @@ private struct AppView: View {
                 CachedWindowView(
                     cachedWindow: cachedWindow,
                     isSelected: cachedWindow == selectedCachedWindow,
-                    onCachedWindowSelected: { isHover in
-                        onCachedWindowSelected(isHover ? cachedWindow : nil)
+                    onCachedWindowHover: { isHover in
+                        onCachedWindowHover(isHover ? cachedWindow : nil)
                     },
                     onCachedWindowFocus: {
                         onCachedWindowFocus(cachedWindow)
@@ -76,8 +76,12 @@ private struct CachedWindowView: View {
     
     let cachedWindow: CachedWindow
     let isSelected: Bool
-    let onCachedWindowSelected: (Bool) -> Void
+    let onCachedWindowHover: (Bool) -> Void
     let onCachedWindowFocus: () -> Void
+    
+    ///
+    
+    @State private var isFirstHover = true
 
     var body: some View {
         Button(
@@ -100,8 +104,17 @@ private struct CachedWindowView: View {
         )
         .buttonStyle(.plain)
         .contentShape(Rectangle()) // Tap area
-        .onHover { isHover in
-            onCachedWindowSelected(isHover)
+        .onContinuousHover { hoverPhase in
+            switch hoverPhase {
+            case .active:
+                if !isFirstHover {
+                    onCachedWindowHover(true)
+                }
+                isFirstHover = false
+            case .ended:
+                isFirstHover = true
+                onCachedWindowHover(false)
+            }
         }
         .padding(.horizontal, 12)
     }
