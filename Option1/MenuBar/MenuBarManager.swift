@@ -23,6 +23,8 @@ class MenuBarManager: ObservableObject {
     @Published var workspacesDb: [WorkspaceDb] = []
     @Published var bindsDb: [BindDb] = []
     
+    var workspacesUi: [MenuBarWorkspaceUi] = []
+    
     @MainActor
     func setup() {
         statusItem.menu = statusMenu
@@ -58,37 +60,26 @@ class MenuBarManager: ObservableObject {
 
     @MainActor
     private func updateUi() {
+        syncWorkspacesUi()
         
         //
         // Menu
         
         statusItem.button?.title = workspaceDb?.name ?? "Shared"
-        
-        //
-        // Items
-        
         statusMenu.items.removeAll()
-        
-        let sharedItem = statusMenu.addItem(
-            withTitle: "Shared",
-            action: #selector(AppDelegate.setWorkspace),
-            keyEquivalent: ""
-        )
-        if workspaceDb == nil {
-            sharedItem.state = .on
-        }
 
-        for workspaceDb in workspacesDb {
+        //
+        // Workspaces
+        
+        self.workspacesUi.forEach { workspaceUi in
             let workspaceItem = NSMenuItem(
-                title: workspaceDb.name,
+                title: workspaceUi.workspaceDb?.name ?? "Shared",
                 action: #selector(AppDelegate.setWorkspace),
                 keyEquivalent: ""
             )
-            workspaceItem.representedObject = workspaceDb
+            workspaceItem.state = workspaceUi.isSelected ? .on : .off
+            workspaceItem.representedObject = workspaceUi.workspaceDb
             statusMenu.addItem(workspaceItem)
-            if self.workspaceDb?.id == workspaceDb.id {
-                workspaceItem.state = .on
-            }
         }
         
         //
@@ -124,6 +115,25 @@ class MenuBarManager: ObservableObject {
             action: #selector(AppDelegate.openSettings),
             keyEquivalent: ""
         )
+    }
+    
+    private func syncWorkspacesUi() {
+        var workspacesUi: [MenuBarWorkspaceUi] = []
+        workspacesUi.append(
+            MenuBarWorkspaceUi(
+                workspaceDb: nil,
+                isSelected: self.workspaceDb == nil,
+            )
+        )
+        for workspaceDb in workspacesDb {
+            workspacesUi.append(
+                MenuBarWorkspaceUi(
+                    workspaceDb: workspaceDb,
+                    isSelected: self.workspaceDb?.id == workspaceDb.id,
+                )
+            )
+        }
+        self.workspacesUi = workspacesUi
     }
 }
 
