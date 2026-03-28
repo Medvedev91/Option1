@@ -87,12 +87,16 @@ class OptionTabManager {
         window.contentView = NSHostingView(rootView: optionTabView)
         window.center()
         window.level = .mainMenu + 1
-        window.makeKeyAndOrderFront(nil)
         // Fix crash on close https://stackoverflow.com/a/78684365
         window.isReleasedWhenClosed = false
         window.isOpaque = false
         window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0)
         
+        Task { @MainActor in
+            try await Task.sleep(nanoseconds: 80_000_000)
+            self.optionTabView?.window.makeKeyAndOrderFront(nil)
+        }
+
         self.optionTabView = optionTabView
     }
 }
