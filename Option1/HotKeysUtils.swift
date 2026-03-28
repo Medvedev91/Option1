@@ -20,6 +20,7 @@ class HotKeysUtils {
                     modifiers: [.option],
                     keyDownHandler: {
                         Task { @MainActor in
+                            OptionTabManager.instance.closeWindow()
                             handleRun(key: key)
                         }
                     },
