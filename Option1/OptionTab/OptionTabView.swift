@@ -19,6 +19,9 @@ struct OptionTabView: View {
                     AppView(
                         appUi: appUi,
                         selectedCachedWindow: data.selectedCachedWindow,
+                        onCachedWindowSelected: { cachedWindow in
+                            data.selectedCachedWindow = cachedWindow
+                        },
                         onCachedWindowFocus: onCachedWindowFocus,
                     )
                 }
@@ -36,6 +39,7 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let selectedCachedWindow: CachedWindow?
+    let onCachedWindowSelected: (CachedWindow) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
     var body: some View {
@@ -53,7 +57,34 @@ private struct AppView: View {
                 .padding(.horizontal, 20)
             
             ForEach(appUi.cachedWindows, id: \.self) { cachedWindow in
-                let isSelected: Bool = cachedWindow == selectedCachedWindow
+                CachedWindowView(
+                    cachedWindow: cachedWindow,
+                    isSelected: cachedWindow == selectedCachedWindow,
+                    onCachedWindowSelected: {
+                        onCachedWindowSelected(cachedWindow)
+                    },
+                    onCachedWindowFocus: {
+                        onCachedWindowFocus(cachedWindow)
+                    },
+                )
+            }
+        }
+    }
+}
+
+private struct CachedWindowView: View {
+    
+    let cachedWindow: CachedWindow
+    let isSelected: Bool
+    let onCachedWindowSelected: () -> Void
+    let onCachedWindowFocus: () -> Void
+
+    var body: some View {
+        Button(
+            action: {
+                onCachedWindowFocus()
+            },
+            label: {
                 Text(cachedWindow.title)
                     .textAlign(.leading)
                     .font(.system(size: fontSize, weight: .regular))
@@ -65,12 +96,15 @@ private struct AppView: View {
                         RoundedRectangle(cornerRadius: 8, style: .circular)
                             .fill(isSelected ? .blue : .clear)
                     )
-                    .contentShape(Rectangle()) // Tap area
-                    .onTapGesture {
-                        onCachedWindowFocus(cachedWindow)
-                    }
-                    .padding(.horizontal, 12)
+            }
+        )
+        .buttonStyle(.plain)
+        .contentShape(Rectangle()) // Tap area
+        .onHover { isHover in
+            if isHover {
+                onCachedWindowSelected()
             }
         }
+        .padding(.horizontal, 12)
     }
 }
