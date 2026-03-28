@@ -39,7 +39,7 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let selectedCachedWindow: CachedWindow?
-    let onCachedWindowSelected: (CachedWindow) -> Void
+    let onCachedWindowSelected: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
     var body: some View {
@@ -60,8 +60,8 @@ private struct AppView: View {
                 CachedWindowView(
                     cachedWindow: cachedWindow,
                     isSelected: cachedWindow == selectedCachedWindow,
-                    onCachedWindowSelected: {
-                        onCachedWindowSelected(cachedWindow)
+                    onCachedWindowSelected: { isHover in
+                        onCachedWindowSelected(isHover ? cachedWindow : nil)
                     },
                     onCachedWindowFocus: {
                         onCachedWindowFocus(cachedWindow)
@@ -76,7 +76,7 @@ private struct CachedWindowView: View {
     
     let cachedWindow: CachedWindow
     let isSelected: Bool
-    let onCachedWindowSelected: () -> Void
+    let onCachedWindowSelected: (Bool) -> Void
     let onCachedWindowFocus: () -> Void
 
     var body: some View {
@@ -101,9 +101,7 @@ private struct CachedWindowView: View {
         .buttonStyle(.plain)
         .contentShape(Rectangle()) // Tap area
         .onHover { isHover in
-            if isHover {
-                onCachedWindowSelected()
-            }
+            onCachedWindowSelected(isHover)
         }
         .padding(.horizontal, 12)
     }
