@@ -16,6 +16,7 @@ struct OptionTabView: View {
     static let menuIconWidth: CGFloat = 12.0
     static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
+    static let menuItemOuterTrailingPadding: CGFloat = 12
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
@@ -67,7 +68,7 @@ struct OptionTabView: View {
                     .padding(.trailing)
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
-                    HStack {
+                    HStack(spacing: 0) {
                         VStack(spacing: 0) {
                             Text(bindUi.title)
                                 .textAlign(.leading)
@@ -83,9 +84,16 @@ struct OptionTabView: View {
                                     .padding(.bottom, 2)
                             }
                         }
+                        Spacer()
+                        Text(bindUi.badge)
+                            .font(.system(size: 11, weight: .semibold))
+                            .padding(.vertical, 2)
+                            .padding(.horizontal, 6)
+                            .background(RoundedRectangle(cornerRadius: 999, style: .circular).fill(.ultraThinMaterial))
                     }
                     .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
                     .padding(.leading, Self.menuIconWidth)
+                    .padding(.trailing, Self.menuItemOuterTrailingPadding)
                 }
                 
                 Divider()
