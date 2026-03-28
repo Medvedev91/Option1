@@ -74,12 +74,10 @@ class OptionTabManager {
         )
         
         let contentHeight: Int = {
-            let headersHeight: Int = optionTabData.appsUi.count * Int(OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)
+            let headersHeight: Int = Int((Double(optionTabData.appsUi.count) * (OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)).rounded(.up))
             let itemsHeight: Int = optionTabData.appsUi.flatMap(\.cachedWindows).count * Int(OptionTabView.itemHeight)
-            let bottomPadding = Int(OptionTabView.itemHeaderPadding) + 2
-            // Не знаю почему, но итоговый блок чуть выше чем рачеты
-            let extraHeight: Int = 8
-            return headersHeight + itemsHeight + bottomPadding + extraHeight
+            let bottomPadding = Int(OptionTabView.itemHeaderPadding)
+            return headersHeight + itemsHeight + bottomPadding
         }()
         
         let screenHeight: Int? = NSScreen.main.map { Int($0.visibleFrame.size.height) }
@@ -117,7 +115,7 @@ class OptionTabManager {
             try await Task.sleep(nanoseconds: 80_000_000)
             self.optionTabView?.window.makeKeyAndOrderFront(nil)
         }
-
+        
         self.optionTabView = optionTabView
     }
 }
