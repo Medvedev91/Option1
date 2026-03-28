@@ -17,7 +17,7 @@ class OptionTabData: ObservableObject {
             let appCachedWindows: [CachedWindow] = cachedWindows
                 .map { $0.value }
                 .filter { $0.appBundle == bundle }
-                .sorted { $0.title < $1.title }
+                .sorted { $0.title.lowercased() < $1.title.lowercased() }
             guard !appCachedWindows.isEmpty else { return }
             let activeAppUi = OptionTabAppUi(app: app, cachedWindows: appCachedWindows)
             appsUi.append(activeAppUi)
