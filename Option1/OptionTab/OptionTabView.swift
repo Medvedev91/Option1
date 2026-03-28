@@ -13,7 +13,7 @@ struct OptionTabView: View {
     static let itemTwoLinesHeight = 40.0
     static let itemHeaderPadding = itemHeight / 1.62
     
-    static let menuIconWidth: CGFloat = 12.0
+    static let menuIconWidth: CGFloat = 16.0
     static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 8
@@ -45,22 +45,31 @@ struct OptionTabView: View {
             VStack(spacing: 0) {
                 
                 ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
-                    HStack(spacing: 0) {
-                        HStack {
-                            if workspaceUi.isSelected {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 11, weight: .semibold))
+                    MenuItemView(
+                        onClick: {
+                            closeWindow()
+                            MenuBarManager.instance.setWorkspaceDb(workspaceUi.workspaceDb)
+                        },
+                        content: {
+                            HStack(spacing: 0) {
+                                HStack(spacing: 0) {
+                                    if workspaceUi.isSelected {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .padding(.leading, 1)
+                                    }
+                                    Spacer(minLength: 0)
+                                }
+                                .frame(width: Self.menuIconWidth)
+                                
+                                Text(workspaceUi.workspaceDb?.name ?? "Shared")
+                                    .textAlign(.leading)
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .lineLimit(1)
                             }
-                            Spacer()
-                        }
-                        .frame(width: Self.menuIconWidth)
-                        
-                        Text(workspaceUi.workspaceDb?.name ?? "Shared")
-                            .textAlign(.leading)
-                            .font(.system(size: fontSize, weight: .regular))
-                            .lineLimit(1)
-                    }
-                    .frame(height: Self.itemHeight)
+                            .frame(height: Self.itemHeight)
+                        },
+                    )
                 }
                 
                 Divider()
