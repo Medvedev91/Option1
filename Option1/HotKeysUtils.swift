@@ -3,6 +3,11 @@ import HotKey
 
 private var keepHotKeyHandlers: [Any] = []
 
+private let onOptionTabLongPressFirstDelay: UInt64 = 400_000_000
+private let onOptionTabLongPressRepeatDelay: UInt64 = 75_000_000
+private var onOptionTabPressedTask: Task<(), Error>? = nil
+private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
+
 class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
@@ -41,6 +46,17 @@ class HotKeysUtils {
                 modifiers: [.option],
                 keyDownHandler: {
                     OptionTabManager.instance.onOptionTabPressed()
+                    onOptionTabPressedTask = Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+                        while onOptionTabPressedTask != nil {
+                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+                            OptionTabManager.instance.onOptionTabPressed()
+                        }
+                    }
+                },
+                keyUpHandler: {
+                    onOptionTabPressedTask?.cancel()
+                    onOptionTabPressedTask = nil
                 },
             )
         )
@@ -51,6 +67,17 @@ class HotKeysUtils {
                 modifiers: [.option, .shift],
                 keyDownHandler: {
                     OptionTabManager.instance.onOptionShiftTabPressed()
+                    onOptionShiftTabPressedTask = Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+                        while onOptionShiftTabPressedTask != nil {
+                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+                            OptionTabManager.instance.onOptionShiftTabPressed()
+                        }
+                    }
+                },
+                keyUpHandler: {
+                    onOptionShiftTabPressedTask?.cancel()
+                    onOptionShiftTabPressedTask = nil
                 },
             )
         )
