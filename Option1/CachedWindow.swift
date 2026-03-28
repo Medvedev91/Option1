@@ -41,7 +41,7 @@ struct CachedWindow: Hashable {
     static func addByApp(_ app: NSRunningApplication) throws {
         let pid = app.processIdentifier
         try AXUIElementCreateApplication(pid).allWindows(pid).forEach { axuiElement in
-            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+            _ = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         }
     }
     
