@@ -34,13 +34,6 @@ struct SettingsTab: View {
                 }
                 
                 HStack {
-                    SparkleButtonView()
-                    Text("v\(SystemInfo.getAppVersionOrNil().map { "\($0)" } ?? "unknown").\(SystemInfo.getBuildOrNil().map { "\($0)" } ?? "unknown")")
-                    Spacer()
-                }
-                .padding(.top, 2)
-                
-                HStack {
                     Button(
                         action: {
                             Task { @MainActor in
@@ -94,6 +87,12 @@ struct SettingsTab: View {
                             }
                         }
                     )
+                }
+
+                HStack {
+                    SparkleButtonView()
+                    Text("v\(SystemInfo.getAppVersionOrNil().map { "\($0)" } ?? "unknown").\(SystemInfo.getBuildOrNil().map { "\($0)" } ?? "unknown")")
+                    Spacer()
                 }
             }
             .padding()
