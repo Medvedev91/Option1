@@ -111,7 +111,9 @@ class OptionTabManager {
             guard let screenHeight = screenHeight else {
                 return contentHeight
             }
-            return min(contentHeight, (screenHeight - 20))
+            // Не нужно вертикальных отступов для визуальной
+            // наглядности если списов не входит в экран.
+            return min(contentHeight, screenHeight)
         }()
         
         let window = NSWindow(
@@ -130,6 +132,7 @@ class OptionTabManager {
             closeWindow: {
                 self.closeWindow()
             },
+            isFullHeight: windowHeight == screenHeight,
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
