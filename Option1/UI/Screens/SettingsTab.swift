@@ -11,6 +11,7 @@ struct SettingsTab: View {
     
     @State private var isRestorePickerPresented = false
     
+    @State private var isDisplayInMenyBar: Bool = MenuBarManager.instance.isEnabled
     @State private var isOptionTabEnabled: Bool = OptionTabManager.instance.isEnabled
     
     var body: some View {
@@ -36,6 +37,13 @@ struct SettingsTab: View {
                 }
                 
                 Divider()
+                
+                Toggle(isOn: $isDisplayInMenyBar) {
+                    Text("Display in Menu Bar")
+                }
+                .onChange(of: isDisplayInMenyBar) { _, newValue in
+                    MenuBarManager.instance.setIsEnabled(newValue)
+                }
                 
                 Toggle(isOn: $isOptionTabEnabled) {
                     Text("Enable Option-Tab")
