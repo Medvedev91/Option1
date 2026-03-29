@@ -12,6 +12,7 @@ class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
     
+    @MainActor
     static func setup() {
         keys.forEach { key in
             keepHotKeyHandlers.append(
