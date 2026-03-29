@@ -1,10 +1,13 @@
 import SwiftUI
 
+@MainActor
 class OptionTabManager {
     
     static let instance = OptionTabManager()
     
     ///
+    
+    var isEnabled: Bool = KvDb.selectIsOptionTabEnabled()
     
     private var optionTabView: OptionTabView?
     
@@ -55,6 +58,11 @@ class OptionTabManager {
     func closeWindow() {
         self.optionTabView?.window.close()
         self.optionTabView = nil
+    }
+    
+    func setIsEnabled(_ isEnabled: Bool) {
+        self.isEnabled = isEnabled
+        KvDb.upsertIsOptionTabEnabled(isEnabled)
     }
     
     ///
