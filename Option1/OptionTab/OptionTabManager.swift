@@ -74,10 +74,10 @@ class OptionTabManager {
         )
         
         let contentHeight: Int = {
-            let headersHeight: Int = Int((Double(optionTabData.appsUi.count) * (OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)).rounded(.up))
-            let itemsHeight: Int = optionTabData.appsUi.flatMap(\.cachedWindows).count * Int(OptionTabView.itemHeight)
-            let bottomPadding = Int(OptionTabView.itemHeaderPadding)
-            return headersHeight + itemsHeight + bottomPadding
+            let headersHeight: CGFloat = Double(optionTabData.appsUi.count) * (OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)
+            let itemsHeight: CGFloat = Double(optionTabData.appsUi.flatMap(\.cachedWindows).count) * OptionTabView.itemHeight
+            let bottomPadding = OptionTabView.itemHeaderPadding
+            return Int((headersHeight + itemsHeight + bottomPadding).rounded(.up))
         }()
         
         let screenHeight: Int? = NSScreen.main.map { Int($0.visibleFrame.size.height) }
