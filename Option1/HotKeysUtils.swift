@@ -1,7 +1,7 @@
 import AppKit
 import HotKey
 
-private var keepHotKeyHandlers: [Any] = []
+private var keepHotKeyHandlers: [HotKey] = []
 
 private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
 private let onOptionTabLongPressRepeatDelay: UInt64 = 40_000_000
