@@ -63,6 +63,11 @@ class OptionTabManager {
     func setIsEnabled(_ isEnabled: Bool) {
         self.isEnabled = isEnabled
         KvDb.upsertIsOptionTabEnabled(isEnabled)
+        if isEnabled {
+            HotKeysUtils.enableOptionTab() 
+        } else {
+            HotKeysUtils.disableOptionTab()
+        }
     }
     
     ///
