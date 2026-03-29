@@ -41,19 +41,38 @@ struct SettingsTab: View {
                 .padding(.top, 2)
                 
                 HStack {
-                    Button("Backup") {
-                        Task { @MainActor in
-                            do {
-                                try saveBackup(Backup.prepareBackup())
-                                showBackupAlert("Backup saved!")
-                            } catch AppError.simple(let message) {
-                                showBackupAlert(message)
+                    Button(
+                        action: {
+                            Task { @MainActor in
+                                do {
+                                    try saveBackup(Backup.prepareBackup())
+                                    showBackupAlert("Backup saved!")
+                                } catch AppError.simple(let message) {
+                                    showBackupAlert(message)
+                                }
+                            }
+                        },
+                        label: {
+                            HStack {
+                                Image(systemName: "square.and.arrow.down")
+                                    .offset(y: -1)
+                                    .fontWeight(.semibold)
+                                Text("Backup")
+                            }
+                        },
+                    )
+                    Button(
+                        action: {
+                            isRestorePickerPresented = true
+                        },
+                        label: {
+                            HStack {
+                                Image(systemName: "arrow.up.right")
+                                    .fontWeight(.semibold)
+                                Text("Restore")
                             }
                         }
-                    }
-                    Button("Restore") {
-                        isRestorePickerPresented = true
-                    }
+                    )
                     .fileImporter(
                         isPresented: $isRestorePickerPresented,
                         allowedContentTypes: [.data],
