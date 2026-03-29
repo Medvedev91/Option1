@@ -73,12 +73,25 @@ class OptionTabManager {
             selectedCachedWindow: AppObserver.previousFocusedCachedWindow,
         )
         
-        let contentHeight: Int = {
+        let appsHeight: Int = {
             let headersHeight: CGFloat = Double(optionTabData.appsUi.count) * (OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)
             let itemsHeight: CGFloat = Double(optionTabData.appsUi.flatMap(\.cachedWindows).count) * OptionTabView.itemHeight
             let bottomPadding = OptionTabView.itemHeaderPadding
             return Int((headersHeight + itemsHeight + bottomPadding).rounded(.up))
         }()
+        
+        let menuHeight: Int = {
+            let separators: CGFloat = OptionTabView.menuSeparatorHeight * 2.0
+            let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
+            let settingsHeight: CGFloat = OptionTabView.itemHeight
+            let workspacesHeight: CGFloat = Double(MenuBarManager.instance.workspacesUi.count) * OptionTabView.itemHeight
+            let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
+                bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
+            }.reduce(0, +)
+            return Int((separators + vPaddings + settingsHeight + workspacesHeight + bindsHeight).rounded(.up))
+        }()
+        
+        let contentHeight: Int = max(appsHeight, menuHeight)
         
         let screenHeight: Int? = NSScreen.main.map { Int($0.visibleFrame.size.height) }
         let windowHeight: Int = {
@@ -89,7 +102,7 @@ class OptionTabManager {
         }()
         
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 800, height: windowHeight),
+            contentRect: NSRect(x: 0, y: 0, width: Int(OptionTabView.fullWidth), height: windowHeight),
             styleMask: [],
             backing: .buffered,
             defer: false,
