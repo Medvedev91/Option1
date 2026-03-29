@@ -1,17 +1,25 @@
 import AppKit
 import HotKey
 
-private var keepHotKeyHandlers: [Any] = []
+private var keepHotKeyHandlers: [HotKey] = []
+
+//
+// Option-Tab
 
 private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
 private let onOptionTabLongPressRepeatDelay: UInt64 = 40_000_000
 private var onOptionTabPressedTask: Task<(), Error>? = nil
 private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 
+private var optionTabHotKeyHandlers: [HotKey] = []
+private var optionTabLocalMonitorForEvents: Any?
+private var optionTabGlobalMonitorForEvents: Any?
+
 class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
     
+    @MainActor
     static func setup() {
         keys.forEach { key in
             keepHotKeyHandlers.append(
@@ -28,10 +36,14 @@ class HotKeysUtils {
             )
         }
         
-        //
-        // Option - Tab
-        
-        keepHotKeyHandlers.append(
+        if OptionTabManager.instance.isEnabled {
+            enableOptionTab()
+        }
+    }
+    
+    @MainActor
+    static func enableOptionTab() {
+        optionTabHotKeyHandlers.append(
             HotKey(
                 key: .escape,
                 modifiers: [.option],
@@ -41,7 +53,7 @@ class HotKeysUtils {
             )
         )
         
-        keepHotKeyHandlers.append(
+        optionTabHotKeyHandlers.append(
             HotKey(
                 key: .tab,
                 modifiers: [.option],
@@ -62,7 +74,7 @@ class HotKeysUtils {
             )
         )
         
-        keepHotKeyHandlers.append(
+        optionTabHotKeyHandlers.append(
             HotKey(
                 key: .tab,
                 modifiers: [.option, .shift],
@@ -83,16 +95,33 @@ class HotKeysUtils {
             )
         )
         
-        NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
+        optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             if !event.modifierFlags.contains(.option) {
                 OptionTabManager.instance.onOptionKeyUp()
             }
             return event
         }
-        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
+        optionTabGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
             if !event.modifierFlags.contains(.option) {
                 OptionTabManager.instance.onOptionKeyUp()
             }
+        }
+    }
+    
+    static func disableOptionTab() {
+        // Hot Keys
+        optionTabHotKeyHandlers.forEach { hotKey in
+            hotKey.isPaused = true
+        }
+        optionTabHotKeyHandlers.removeAll()
+        // Modifier Events
+        if let optionTabLocalMonitorForEventsLocal = optionTabLocalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabLocalMonitorForEventsLocal)
+            optionTabLocalMonitorForEvents = nil
+        }
+        if let optionTabGlobalMonitorForEventsLocal = optionTabGlobalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabGlobalMonitorForEventsLocal)
+            optionTabGlobalMonitorForEvents = nil
         }
     }
     
