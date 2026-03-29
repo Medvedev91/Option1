@@ -8,13 +8,13 @@ struct AppScreen: View {
     
     @Query(sort: \WorkspaceDb.sort) private var workspacesDb: [WorkspaceDb]
     private var workspacesObserver: Int {
-        MenuManager.instance.setWorkspacesDb(workspacesDb)
+        MenuBarManager.instance.setWorkspacesDb(workspacesDb)
         return 1
     }
     
     @Query(sort: \BindDb.key) private var bindsDb: [BindDb]
     private var bindsObserver: Int {
-        MenuManager.instance.setBindsDb(bindsDb)
+        MenuBarManager.instance.setBindsDb(bindsDb)
         return 1
     }
     

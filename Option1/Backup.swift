@@ -44,7 +44,7 @@ class Backup {
     
     @MainActor
     static func restore(jString: String) throws(AppError) {
-        MenuManager.instance.setWorkspaceDb(nil)
+        MenuBarManager.instance.setWorkspaceDb(nil)
         
         let j = JSON(parseJSON: jString)
         

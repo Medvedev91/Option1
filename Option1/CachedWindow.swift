@@ -15,7 +15,7 @@ struct CachedWindow: Hashable {
         nsRunningApplication: NSRunningApplication,
         axuiElement: AXUIElement,
         shellWithNewWindow: String? = nil,
-    ) throws {
+    ) throws -> CachedWindow? {
         if
             let pid = try axuiElement.pid(),
             let axuiElementId = axuiElement.id(),
@@ -23,7 +23,7 @@ struct CachedWindow: Hashable {
             let bundleIdentifier = nsRunningApplication.bundleIdentifier {
             
             let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
-            cachedWindows[axuiElement.hashValue] = CachedWindow(
+            let newCachedWindow = CachedWindow(
                 axuiElement: axuiElement,
                 pid: pid,
                 axuiElementId: axuiElementId,
@@ -31,14 +31,17 @@ struct CachedWindow: Hashable {
                 appBundle: bundleIdentifier,
                 shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
             )
+            cachedWindows[axuiElement.hashValue] = newCachedWindow
+            return newCachedWindow
         }
+        return nil
     }
     
     // ВНИМАНИЕ! SUPER SLOW `.allWindows()`
     static func addByApp(_ app: NSRunningApplication) throws {
         let pid = app.processIdentifier
         try AXUIElementCreateApplication(pid).allWindows(pid).forEach { axuiElement in
-            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+            _ = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         }
     }
     

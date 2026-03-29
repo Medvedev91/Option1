@@ -3,6 +3,11 @@ import HotKey
 
 private var keepHotKeyHandlers: [Any] = []
 
+private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
+private let onOptionTabLongPressRepeatDelay: UInt64 = 40_000_000
+private var onOptionTabPressedTask: Task<(), Error>? = nil
+private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
+
 class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
@@ -15,11 +20,79 @@ class HotKeysUtils {
                     modifiers: [.option],
                     keyDownHandler: {
                         Task { @MainActor in
+                            OptionTabManager.instance.closeWindow()
                             handleRun(key: key)
                         }
                     },
                 )
             )
+        }
+        
+        //
+        // Option - Tab
+        
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .escape,
+                modifiers: [.option],
+                keyDownHandler: {
+                    OptionTabManager.instance.closeWindow()
+                },
+            )
+        )
+        
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .tab,
+                modifiers: [.option],
+                keyDownHandler: {
+                    OptionTabManager.instance.onOptionTabPressed()
+                    onOptionTabPressedTask = Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+                        while onOptionTabPressedTask != nil {
+                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+                            OptionTabManager.instance.onOptionTabPressed()
+                        }
+                    }
+                },
+                keyUpHandler: {
+                    onOptionTabPressedTask?.cancel()
+                    onOptionTabPressedTask = nil
+                },
+            )
+        )
+        
+        keepHotKeyHandlers.append(
+            HotKey(
+                key: .tab,
+                modifiers: [.option, .shift],
+                keyDownHandler: {
+                    OptionTabManager.instance.onOptionShiftTabPressed()
+                    onOptionShiftTabPressedTask = Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+                        while onOptionShiftTabPressedTask != nil {
+                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+                            OptionTabManager.instance.onOptionShiftTabPressed()
+                        }
+                    }
+                },
+                keyUpHandler: {
+                    onOptionShiftTabPressedTask?.cancel()
+                    onOptionShiftTabPressedTask = nil
+                },
+            )
+        )
+        
+        NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
+            if !event.modifierFlags.contains(.option) {
+                OptionTabManager.instance.onOptionKeyUp()
+            }
+            return event
+        }
+        NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
+            if !event.modifierFlags.contains(.option) {
+                OptionTabManager.instance.onOptionKeyUp()
+            }
         }
     }
     
@@ -37,7 +110,7 @@ class HotKeysUtils {
         guard let bindDb: BindDb = {
             let bindsDbForKey = bindsDb.filter { $0.key == key.description }
             let sharedBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == nil }
-            guard let workspaceId: UUID = MenuManager.instance.workspaceDb?.id else {
+            guard let workspaceId: UUID = MenuBarManager.instance.workspaceDb?.id else {
                 return sharedBindDb
             }
             let workspaceBindDb: BindDb? = bindsDbForKey.first { $0.workspaceId == workspaceId }

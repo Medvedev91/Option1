@@ -15,13 +15,16 @@ private let statusItem: NSStatusItem = statusBar.statusItem(
 )
 private let statusMenu = NSMenu(title: "Option1")
 
-class MenuManager: ObservableObject {
+class MenuBarManager: ObservableObject {
     
-    static let instance = MenuManager()
+    static let instance = MenuBarManager()
     
     @Published var workspaceDb: WorkspaceDb?
     @Published var workspacesDb: [WorkspaceDb] = []
     @Published var bindsDb: [BindDb] = []
+    
+    var workspacesUi: [MenuBarWorkspaceUi] = []
+    var bindsUi: [MenuBarBindUi] = []
     
     @MainActor
     func setup() {
@@ -58,61 +61,42 @@ class MenuManager: ObservableObject {
 
     @MainActor
     private func updateUi() {
+        syncWorkspacesUi()
+        syncBindsUi()
         
         //
         // Menu
         
         statusItem.button?.title = workspaceDb?.name ?? "Shared"
-        
-        //
-        // Items
-        
         statusMenu.items.removeAll()
-        
-        let sharedItem = statusMenu.addItem(
-            withTitle: "Shared",
-            action: #selector(AppDelegate.setWorkspace),
-            keyEquivalent: ""
-        )
-        if workspaceDb == nil {
-            sharedItem.state = .on
-        }
 
-        for workspaceDb in workspacesDb {
+        //
+        // Workspaces
+        
+        self.workspacesUi.forEach { workspaceUi in
             let workspaceItem = NSMenuItem(
-                title: workspaceDb.name,
+                title: workspaceUi.workspaceDb?.name ?? "Shared",
                 action: #selector(AppDelegate.setWorkspace),
                 keyEquivalent: ""
             )
-            workspaceItem.representedObject = workspaceDb
+            workspaceItem.state = workspaceUi.isSelected ? .on : .off
+            workspaceItem.representedObject = workspaceUi.workspaceDb
             statusMenu.addItem(workspaceItem)
-            if self.workspaceDb?.id == workspaceDb.id {
-                workspaceItem.state = .on
-            }
         }
         
         //
         // Binds
         
         statusMenu.addItem(NSMenuItem.separator())
-        statusMenu.addItem(NSMenuItem.sectionHeader(title: self.workspaceDb?.name ?? "Shared"))
-        for key in HotKeysUtils.keys {
-            let keyString = key.description
-            guard let bindDb: BindDb =
-                    bindsDb.first (where: { $0.key == keyString && $0.workspaceId == self.workspaceDb?.id }) ??
-                    bindsDb.first(where: { $0.key == keyString && $0.workspaceId == nil }) else {
-                continue
-            }
+        bindsUi.forEach { bindUi in
             let bindItem = NSMenuItem(
-                title: bindDb.selectAppNameOrNil() ?? bindDb.bundle,
+                title: bindUi.title,
                 action: #selector(AppDelegate.runHotKey),
                 keyEquivalent: ""
             )
-            bindItem.representedObject = key
-            if !bindDb.substring.isEmpty {
-                bindItem.subtitle = userRelativePath(bindDb.substring)
-            }
-            bindItem.badge = .init(string: "⌥\(keyString)")
+            bindItem.representedObject = bindUi.key
+            bindItem.subtitle = bindUi.subtitle
+            bindItem.badge = .init(string: bindUi.badge)
             statusMenu.addItem(bindItem)
         }
         
@@ -126,6 +110,48 @@ class MenuManager: ObservableObject {
             keyEquivalent: ""
         )
     }
+    
+    private func syncWorkspacesUi() {
+        var workspacesUi: [MenuBarWorkspaceUi] = []
+        workspacesUi.append(
+            MenuBarWorkspaceUi(
+                workspaceDb: nil,
+                isSelected: self.workspaceDb == nil,
+            )
+        )
+        for workspaceDb in workspacesDb {
+            workspacesUi.append(
+                MenuBarWorkspaceUi(
+                    workspaceDb: workspaceDb,
+                    isSelected: self.workspaceDb?.id == workspaceDb.id,
+                )
+            )
+        }
+        self.workspacesUi = workspacesUi
+    }
+    
+    @MainActor
+    private func syncBindsUi() {
+        var bindsUi: [MenuBarBindUi] = []
+        for key in HotKeysUtils.keys {
+            let keyString = key.description
+            guard let bindDb: BindDb =
+                    bindsDb.first (where: { $0.key == keyString && $0.workspaceId == self.workspaceDb?.id }) ??
+                    bindsDb.first(where: { $0.key == keyString && $0.workspaceId == nil }) else {
+                continue
+            }
+            bindsUi.append(
+                MenuBarBindUi(
+                    bindDb: bindDb,
+                    title: bindDb.selectAppNameOrNil() ?? bindDb.bundle,
+                    subtitle: bindDb.substring.isEmpty ? nil : userRelativePath(bindDb.substring),
+                    key: key,
+                    badge: "⌥\(keyString)",
+                )
+            )
+        }
+        self.bindsUi = bindsUi
+    }
 }
 
 private extension AppDelegate {
@@ -137,7 +163,7 @@ private extension AppDelegate {
     @MainActor
     @objc func setWorkspace(_ menuItem: NSMenuItem) {
         let workspaceDb: WorkspaceDb? = menuItem.representedObject as? WorkspaceDb
-        MenuManager.instance.setWorkspaceDb(workspaceDb)
+        MenuBarManager.instance.setWorkspaceDb(workspaceDb)
     }
     
     @MainActor
