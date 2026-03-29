@@ -13,10 +13,10 @@ struct OptionTabView: View {
     static let itemTwoLinesHeight = 40.0
     static let itemHeaderPadding = itemHeight / 1.62
     
-    static let menuIconWidth: CGFloat = 16.0
+    static let menuIconWidth: CGFloat = 20.0
     static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
-    static let menuItemOuterTrailingPadding: CGFloat = 8
+    static let menuItemOuterTrailingPadding: CGFloat = 6
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
@@ -50,19 +50,21 @@ struct OptionTabView: View {
                             closeWindow()
                             MenuBarManager.instance.setWorkspaceDb(workspaceUi.workspaceDb)
                         },
-                        content: {
+                        content: { isHover in
                             HStack(spacing: 0) {
                                 HStack(spacing: 0) {
                                     if workspaceUi.isSelected {
                                         Image(systemName: "checkmark")
+                                            .foregroundColor(isHover ? .white : .primary)
                                             .font(.system(size: 11, weight: .semibold))
-                                            .padding(.leading, 1)
+                                            .padding(.leading, 4)
                                     }
                                     Spacer(minLength: 0)
                                 }
                                 .frame(width: Self.menuIconWidth)
                                 
                                 Text(workspaceUi.workspaceDb?.name ?? "Shared")
+                                    .foregroundColor(isHover ? .white : .primary)
                                     .textAlign(.leading)
                                     .font(.system(size: fontSize, weight: .regular))
                                     .lineLimit(1)
@@ -83,17 +85,18 @@ struct OptionTabView: View {
                             closeWindow()
                             HotKeysUtils.handleRun(key: bindUi.key)
                         },
-                        content: {
+                        content: { isHover in
                             HStack(spacing: 0) {
                                 VStack(spacing: 0) {
                                     Text(bindUi.title)
                                         .textAlign(.leading)
                                         .font(.system(size: fontSize, weight: .regular))
+                                        .foregroundColor(isHover ? .white : .primary)
                                         .lineLimit(1)
                                     if let subtitle = bindUi.subtitle {
                                         Text(subtitle)
                                             .textAlign(.leading)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(isHover ? .white : .secondary)
                                             .font(.system(size: 11, weight: .regular))
                                             .lineLimit(1)
                                             .padding(.top, 1)
@@ -102,6 +105,7 @@ struct OptionTabView: View {
                                 }
                                 Spacer()
                                 Text(bindUi.badge)
+                                    .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
                                     .padding(.vertical, 2)
                                     .padding(.horizontal, 6)
@@ -124,9 +128,10 @@ struct OptionTabView: View {
                         closeWindow()
                         WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                     },
-                    content: {
+                    content: { isHover in
                         Text("Settings")
                             .textAlign(.leading)
+                            .foregroundColor(isHover ? .white : .primary)
                             .font(.system(size: fontSize, weight: .regular))
                             .frame(height: Self.itemHeight)
                             .padding(.leading, Self.menuIconWidth)
@@ -233,7 +238,7 @@ private struct CachedWindowView: View {
 private struct MenuItemView<Content: View>: View {
     
     let onClick: () -> Void
-    @ViewBuilder let content: Content
+    @ViewBuilder let content: (_ isHover: Bool) -> Content
     
     ///
     
@@ -246,8 +251,7 @@ private struct MenuItemView<Content: View>: View {
                 onClick()
             },
             label: {
-                content
-                    .foregroundColor(isHover ? .white : .primary)
+                content(isHover)
                     .background(
                         RoundedRectangle(cornerRadius: 8, style: .circular)
                             .fill(isHover ? .blue : .clear)
