@@ -103,16 +103,11 @@ struct OptionTabView: View {
                                             .padding(.bottom, 2)
                                     }
                                 }
-                                Spacer()
+                                Spacer(minLength: 0)
                                 Text(bindUi.badge)
                                     .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
-                                    .padding(.vertical, 2)
-                                    .padding(.horizontal, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 999, style: .circular)
-                                            .fill(.ultraThinMaterial.opacity(isHover ? 0.0 : 0.5))
-                                    )
+                                    .padding(.horizontal, 4)
                             }
                             .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
                             .padding(.leading, Self.menuIconWidth)
