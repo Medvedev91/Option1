@@ -247,6 +247,7 @@ private struct MenuItemView<Content: View>: View {
             },
             label: {
                 content
+                    .foregroundColor(isHover ? .white : .primary)
                     .background(
                         RoundedRectangle(cornerRadius: 8, style: .circular)
                             .fill(isHover ? .blue : .clear)
