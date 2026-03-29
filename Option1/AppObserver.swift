@@ -88,7 +88,7 @@ class AppObserver {
     }
     
     static func upsertFocusedCachedWindow(_ cachedWindow: CachedWindow) {
-        if cachedWindow == Self.currentFocusedCachedWindow {
+        if cachedWindow.axuiElement.hashValue == Self.currentFocusedCachedWindow?.axuiElement.hashValue {
             return
         }
         Self.previousFocusedCachedWindow = Self.currentFocusedCachedWindow
