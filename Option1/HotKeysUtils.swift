@@ -7,7 +7,7 @@ private var keepHotKeyHandlers: [HotKey] = []
 // Option-Tab
 
 private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
-private let onOptionTabLongPressRepeatDelay: UInt64 = 40_000_000
+private let onOptionTabLongPressRepeatDelay: UInt64 = 35_000_000
 private var onOptionTabPressedTask: Task<(), Error>? = nil
 private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 
