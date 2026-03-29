@@ -19,6 +19,10 @@ class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
     
+    static var isOptionTabPressed: Bool {
+        onOptionTabPressedTask != nil || onOptionShiftTabPressedTask != nil
+    }
+    
     @MainActor
     static func setup() {
         keys.forEach { key in
@@ -239,7 +243,7 @@ private func handleSpecial(
                 if let focused = try? WindowsManager.getFocusedWindowOrNil(),
                    let pid = try? focused.pid(),
                    nsApp.processIdentifier == pid {
-                    try? CachedWindow.addByAxuiElement(
+                    _ = try? CachedWindow.addByAxuiElement(
                         nsRunningApplication: nsApp,
                         axuiElement: focused,
                         shellWithNewWindow: path,

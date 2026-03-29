@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 private let fontSize = 14.0
+private let windowsScrollTopId = "WINDOWS-SCROLL-TOP-ID"
 
 struct OptionTabView: View {
     
@@ -22,24 +23,44 @@ struct OptionTabView: View {
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
+    let isFullHeight: Bool
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(data.appsUi, id: \.app) { appUi in
-                        AppView(
-                            appUi: appUi,
-                            selectedCachedWindow: data.selectedCachedWindow,
-                            onCachedWindowHover: { cachedWindow in
-                                data.selectedCachedWindow = cachedWindow
-                            },
-                            onCachedWindowFocus: onCachedWindowFocus,
-                        )
+            ScrollView(showsIndicators: false) {
+                
+                ScrollViewReader { scroll in
+                    
+                    VStack(spacing: 0) {
+                        
+                        ZStack {}
+                            .id(windowsScrollTopId)
+                        
+                        ForEach(data.appsUi, id: \.app) { appUi in
+                            AppView(
+                                appUi: appUi,
+                                selectedCachedWindow: data.selectedCachedWindow,
+                                onCachedWindowHover: { cachedWindow in
+                                    data.selectedCachedWindow = cachedWindow
+                                },
+                                onCachedWindowFocus: onCachedWindowFocus,
+                            )
+                        }
+                    }
+                    .frame(width: Self.windowsWidth)
+                    .onChange(of: data.selectedCachedWindow) { _, new in
+                        if let new = new {
+                            if new == data.appsUi.flatMap(\.cachedWindows).first {
+                                // Для первого элемента нужно прокрутить в
+                                // самый верх чтобы был виден заголовок.
+                                scroll.scrollTo(windowsScrollTopId)
+                            } else {
+                                scroll.scrollTo(new.hashValue)
+                            }
+                        }
                     }
                 }
-                .frame(width: Self.windowsWidth)
             }
             
             VStack(spacing: 0) {
@@ -141,7 +162,9 @@ struct OptionTabView: View {
         }
         .fillMaxSize()
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            // Если все элементы не влазят в экран, углы лучше сделать прямоугольными,
+            // будет нагляднее что нужно докручивать вниз.
+            RoundedRectangle(cornerRadius: isFullHeight ? 0 : 16, style: .continuous)
                 .fill(.thinMaterial)
         )
     }
@@ -179,6 +202,7 @@ private struct AppView: View {
                         onCachedWindowFocus(cachedWindow)
                     },
                 )
+                .id(cachedWindow.hashValue)
             }
         }
     }
@@ -218,6 +242,13 @@ private struct CachedWindowView: View {
         .buttonStyle(.plain)
         .contentShape(Rectangle()) // Tap area
         .onContinuousHover { hoverPhase in
+            // Если список не входит в экран, а курсор в зоне прокрутки,
+            // при автоматической докрутке за выбранным элементом
+            // сработает данный метод и открутит экран назад.
+            if HotKeysUtils.isOptionTabPressed {
+                return
+            }
+            
             switch hoverPhase {
             case .active:
                 if !isFirstHover {
