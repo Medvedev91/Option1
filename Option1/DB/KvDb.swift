@@ -61,6 +61,19 @@ class KvDb {
     }
     
     //
+    // Is Option-Tab Enabled
+    
+    @MainActor
+    static func selectIsOptionTabEnabled() -> Bool {
+        selectByKeyOrNil(IS_OPTION_TAB_ENABLED_KEY).map { $0.value == "1" } ?? true
+    }
+    
+    @MainActor
+    static func upsertIsOptionTabEnabled(_ isEnabled: Bool) {
+        upsert(key: IS_OPTION_TAB_ENABLED_KEY, value: isEnabled ? "1" : "0")
+    }
+    
+    //
     // Donations Last Reponse Time
     
     @MainActor
@@ -104,3 +117,4 @@ private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
 private let ACTIVATION_EMAIL_KEY = "activation-email"
 private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"
+private let IS_OPTION_TAB_ENABLED_KEY = "is-option-tab-enabled"
