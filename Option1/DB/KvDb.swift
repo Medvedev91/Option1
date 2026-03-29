@@ -74,6 +74,19 @@ class KvDb {
     }
     
     //
+    // Is Display in Menu Bar
+    
+    @MainActor
+    static func selectIsDisplayInMenuBar() -> Bool {
+        selectByKeyOrNil(IS_DISPLAY_IN_MENU_BAR_KEY).map { $0.value == "1" } ?? true
+    }
+    
+    @MainActor
+    static func upsertIsDisplayInMenuBar(_ isEnabled: Bool) {
+        upsert(key: IS_DISPLAY_IN_MENU_BAR_KEY, value: isEnabled ? "1" : "0")
+    }
+    
+    //
     // Donations Last Reponse Time
     
     @MainActor
@@ -118,3 +131,4 @@ private let INIT_TIME_KEY = "init-time"
 private let ACTIVATION_EMAIL_KEY = "activation-email"
 private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"
 private let IS_OPTION_TAB_ENABLED_KEY = "is-option-tab-enabled"
+private let IS_DISPLAY_IN_MENU_BAR_KEY = "is-display-in-menu-bar"
