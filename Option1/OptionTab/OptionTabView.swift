@@ -242,6 +242,13 @@ private struct CachedWindowView: View {
         .buttonStyle(.plain)
         .contentShape(Rectangle()) // Tap area
         .onContinuousHover { hoverPhase in
+            // Если список не входит в экран, а курсор в зоне прокрутки,
+            // при автоматической докрутке за выбранным элементом
+            // сработает данный метод и открутит экран назад.
+            if HotKeysUtils.isOptionTabPressed {
+                return
+            }
+            
             switch hoverPhase {
             case .active:
                 if !isFirstHover {
