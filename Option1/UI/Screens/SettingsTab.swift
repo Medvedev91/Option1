@@ -10,7 +10,9 @@ struct SettingsTab: View {
     @State private var backupAlertText = ""
     
     @State private var isRestorePickerPresented = false
-
+    
+    @State private var isOptionTabEnabled: Bool = OptionTabManager.instance.isEnabled
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -32,6 +34,17 @@ struct SettingsTab: View {
                 .onTapGesture {
                     onDonationsClick()
                 }
+                
+                Divider()
+                
+                Toggle(isOn: $isOptionTabEnabled) {
+                    Text("Enable Option-Tab")
+                }
+                .onChange(of: isOptionTabEnabled) { _, newValue in
+                    OptionTabManager.instance.setIsEnabled(newValue)
+                }
+                
+                Divider()
                 
                 HStack {
                     Button(
@@ -88,6 +101,7 @@ struct SettingsTab: View {
                         }
                     )
                 }
+                .padding(.top, 1)
 
                 HStack {
                     SparkleButtonView()
