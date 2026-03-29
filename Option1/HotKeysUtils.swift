@@ -3,7 +3,7 @@ import HotKey
 
 private var keepHotKeyHandlers: [Any] = []
 
-private let onOptionTabLongPressFirstDelay: UInt64 = 200_000_000
+private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
 private let onOptionTabLongPressRepeatDelay: UInt64 = 40_000_000
 private var onOptionTabPressedTask: Task<(), Error>? = nil
 private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
