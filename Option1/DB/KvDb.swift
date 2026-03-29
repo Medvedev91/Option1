@@ -77,7 +77,6 @@ class KvDb {
     // Activation Email
     
     @MainActor
-    // todo
     static func selectActivationEmailOrNil() -> String? {
         selectByKeyOrNil(ACTIVATION_EMAIL_KEY)?.value
     }
