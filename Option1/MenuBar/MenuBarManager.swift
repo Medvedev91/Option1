@@ -10,14 +10,15 @@ import AppKit
 import HotKey
 
 private let statusBar: NSStatusBar = NSStatusBar.system
-private let statusItem: NSStatusItem = statusBar.statusItem(
-    withLength: NSStatusItem.variableLength
-)
+private var statusItem: NSStatusItem?
 private let statusMenu = NSMenu(title: "Option1")
 
+@MainActor
 class MenuBarManager: ObservableObject {
     
     static let instance = MenuBarManager()
+    
+    var isEnabled: Bool = KvDb.selectIsDisplayInMenuBar()
     
     @Published var workspaceDb: WorkspaceDb?
     @Published var workspacesDb: [WorkspaceDb] = []
@@ -26,19 +27,15 @@ class MenuBarManager: ObservableObject {
     var workspacesUi: [MenuBarWorkspaceUi] = []
     var bindsUi: [MenuBarBindUi] = []
     
-    @MainActor
     func setup() {
-        statusItem.menu = statusMenu
         updateUi()
     }
     
-    @MainActor
     func setWorkspaceDb(_ workspaceDb: WorkspaceDb?) {
         self.workspaceDb = workspaceDb
         updateUi()
     }
     
-    @MainActor
     func setWorkspacesDb(_ workspacesDb: [WorkspaceDb]) {
         // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
         self.workspacesDb = workspacesDb
@@ -50,24 +47,39 @@ class MenuBarManager: ObservableObject {
         updateUi()
     }
     
-    @MainActor
     func setBindsDb(_ bindsDb: [BindDb]) {
         // todo Publishing changes from within view updates is not allowed, this will cause undefined behavior.
         self.bindsDb = bindsDb
         updateUi()
     }
     
+    func setIsEnabled(_ isEnabled: Bool) {
+        self.isEnabled = isEnabled
+        KvDb.upsertIsDisplayInMenuBar(isEnabled)
+        updateUi()
+    }
+    
     ///
 
-    @MainActor
     private func updateUi() {
+        if !isEnabled {
+            if let statusItemLocal = statusItem {
+                statusBar.removeStatusItem(statusItemLocal)
+            }
+            statusItem = nil
+            return
+        }
+        let statusItemLocal = statusItem ?? statusBar.statusItem(withLength: NSStatusItem.variableLength)
+        statusItem = statusItemLocal
+        statusItemLocal.menu = statusMenu
+        
         syncWorkspacesUi()
         syncBindsUi()
         
         //
         // Menu
         
-        statusItem.button?.title = workspaceDb?.name ?? "Shared"
+        statusItemLocal.button?.title = workspaceDb?.name ?? "Shared"
         statusMenu.items.removeAll()
 
         //
@@ -130,7 +142,6 @@ class MenuBarManager: ObservableObject {
         self.workspacesUi = workspacesUi
     }
     
-    @MainActor
     private func syncBindsUi() {
         var bindsUi: [MenuBarBindUi] = []
         for key in HotKeysUtils.keys {
