@@ -31,7 +31,10 @@ struct CachedWindow: Hashable {
                 appBundle: bundleIdentifier,
                 shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
             )
-            cachedWindows[axuiElement.hashValue] = newCachedWindow
+            // Trial to fix floating crash on app starts
+            Task { @MainActor in
+                cachedWindows[axuiElement.hashValue] = newCachedWindow
+            }
             return newCachedWindow
         }
         return nil
