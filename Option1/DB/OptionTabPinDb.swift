@@ -17,6 +17,24 @@ class OptionTabPinDb {
         DB.save()
     }
     
+    //
+    // For Transaction
+    
+    @MainActor
+    static func deleteAll_ForTransaction() {
+        selectAll().forEach {
+            DB.modelContainer.mainContext.delete($0)
+        }
+    }
+    
+    @MainActor
+    static func insert_ForTransaction(bundle: String, sort: Int) {
+        DB.modelContainer.mainContext.insert(OptionTabPinDb(
+            bundle: bundle,
+            sort: sort,
+        ))
+    }
+    
     ///
     
     @MainActor
