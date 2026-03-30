@@ -58,12 +58,14 @@ struct OptionTabView: View {
                     }
                     .frame(width: Self.windowsWidth)
                     .onChange(of: data.selectedCachedWindow) { _, new in
-                        // Докручивать нужно только при скролле руками
-                        if !HotKeysUtils.isOptionTabPressed {
-                            return
-                        }
-                        
                         if let new = new {
+                            
+                            // Докручивать нужно только при скролле руками
+                            if !HotKeysUtils.isOptionTabPressed {
+                                scroll.scrollTo(new.hashValue)
+                                return
+                            }
+                            
                             let appsUi = data.appsUi.flatMap(\.cachedWindows)
                             if new == appsUi.first {
                                 // Для первого элемента нужно прокрутить в
