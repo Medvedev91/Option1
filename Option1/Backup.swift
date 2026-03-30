@@ -38,6 +38,12 @@ class Backup {
                     "substring": bindDb.substring,
                 ]
             },
+            "option-tab-pins": OptionTabPinDb.selectAll().map { optionTabPinDb in
+                [
+                    "bundle": optionTabPinDb.bundle,
+                    "sort": optionTabPinDb.sort,
+                ]
+            },
         ])
         return j.rawString(options: .withoutEscapingSlashes)!
     }
@@ -52,6 +58,7 @@ class Backup {
         guard let jKv = j["kv"].array else { throw AppError.simple("Json Error") }
         guard let jWorkspaces = j["workspaces"].array else { throw AppError.simple("Json Error") }
         guard let jBinds = j["binds"].array else { throw AppError.simple("Json Error") }
+        guard let jOptionTabPins = j["option-tab-pins"].array else { throw AppError.simple("Json Error") }
         
         for jApp in jApps {
             guard let bundle: String = jApp["bundle"].string else { throw AppError.simple("Json Error") }
@@ -99,6 +106,13 @@ class Backup {
                     bundle: bundle,
                     substring: substring,
                 )
+            }
+            // Option-Tab Pins
+            OptionTabPinDb.deleteAll_ForTransaction()
+            for jOptionTabPin in jOptionTabPins {
+                guard let bundle: String = jOptionTabPin["bundle"].string else { throw AppError.simple("Json Error") }
+                guard let sort: Int = jOptionTabPin["sort"].int else { throw AppError.simple("Json Error") }
+                OptionTabPinDb.insert_ForTransaction(bundle: bundle, sort: sort)
             }
             DB.save()
         } catch AppError.simple(let message) {
