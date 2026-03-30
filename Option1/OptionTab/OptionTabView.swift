@@ -16,7 +16,6 @@ struct OptionTabView: View {
     static let itemHeaderPadding = itemHeight / 1.62
     
     static let menuIconWidth: CGFloat = 20.0
-    static let menuSeparatorLeadingPadding: CGFloat = menuIconWidth / 2
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 6
     
@@ -101,7 +100,7 @@ struct OptionTabView: View {
                 
                 Divider()
                     .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuSeparatorLeadingPadding)
+                    .padding(.leading, Self.menuIconWidth)
                     .padding(.trailing)
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
@@ -143,7 +142,7 @@ struct OptionTabView: View {
                 
                 Divider()
                     .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuSeparatorLeadingPadding)
+                    .padding(.leading, Self.menuIconWidth)
                     .padding(.trailing)
                 
                 MenuItemView(
