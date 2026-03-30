@@ -21,16 +21,25 @@ class OptionTabPinDb {
     @MainActor
     static func upsertToTop(bundle: String) {
         let all: [OptionTabPinDb] = selectAll()
-        let minSort: Int = all.map(\.sort).min() ?? 0
+        let maxSort: Int = all.map(\.sort).max() ?? 0
         guard let pinDb = selectAll().first(where: { $0.bundle == bundle }) else {
-            DB.modelContainer.mainContext.insert(OptionTabPinDb(bundle: bundle, sort: minSort - 1))
+            DB.modelContainer.mainContext.insert(OptionTabPinDb(bundle: bundle, sort: maxSort + 1))
             DB.save()
             return
         }
-        if pinDb.sort == minSort {
+        if pinDb.sort == maxSort {
             return
         }
-        pinDb.sort = minSort - 1
+        pinDb.sort = maxSort + 1
+        DB.save()
+    }
+    
+    @MainActor
+    static func delete(bundle: String) {
+        guard let pinDb = selectAll().first(where: { $0.bundle == bundle }) else {
+            return
+        }
+        DB.modelContainer.mainContext.delete(pinDb)
         DB.save()
     }
 }
