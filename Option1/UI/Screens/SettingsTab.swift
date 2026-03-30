@@ -12,7 +12,6 @@ struct SettingsTab: View {
     @State private var isRestorePickerPresented = false
     
     @State private var isDisplayInMenyBar: Bool = MenuBarManager.instance.isEnabled
-    @State private var isOptionTabEnabled: Bool = OptionTabManager.instance.isEnabled
     
     var body: some View {
         ScrollView {
@@ -44,15 +43,6 @@ struct SettingsTab: View {
                 .onChange(of: isDisplayInMenyBar) { _, newValue in
                     MenuBarManager.instance.setIsEnabled(newValue)
                 }
-                
-                Toggle(isOn: $isOptionTabEnabled) {
-                    Text("Enable Option-Tab")
-                }
-                .onChange(of: isOptionTabEnabled) { _, newValue in
-                    OptionTabManager.instance.setIsEnabled(newValue)
-                }
-                
-                Divider()
                 
                 HStack {
                     Button(
@@ -109,8 +99,8 @@ struct SettingsTab: View {
                         }
                     )
                 }
-                .padding(.top, 1)
-
+                .padding(.top, 2)
+                
                 HStack {
                     SparkleButtonView()
                     Text("v\(SystemInfo.getAppVersionOrNil().map { "\($0)" } ?? "unknown").\(SystemInfo.getBuildOrNil().map { "\($0)" } ?? "unknown")")

@@ -21,10 +21,14 @@ struct NavigationScreen: View {
                     
                     List(selection: $tab) {
                         
-                        Label("Option1", systemImage: "info.circle")
+                        Label("How to Use", systemImage: "info.circle")
                             .tag(Tab.main)
                         
                         if !isScreenshotsMode {
+                            
+                            Label("Option-Tab", systemImage: "macwindow.stack")
+                                .tag(Tab.optionTab)
+                            
                             Label("Settings", systemImage: "gearshape")
                                 .tag(Tab.settings)
                             
@@ -89,6 +93,8 @@ struct NavigationScreen: View {
                                 tab = .donations
                             },
                         )
+                    case .optionTab:
+                        OptionTabTab()
                     case .donations:
                         DonationsTab()
                     case .workspace(let workspaceDb):
@@ -174,6 +180,7 @@ struct NavigationScreen: View {
 
 private enum Tab: Hashable {
     case main
+    case optionTab
     case settings
     case donations
     case workspace(workspaceDb: WorkspaceDb?)

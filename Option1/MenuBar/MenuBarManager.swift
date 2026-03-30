@@ -62,6 +62,12 @@ class MenuBarManager: ObservableObject {
     ///
 
     private func updateUi() {
+        
+        // Обязательно запускать т.к. данные
+        // используются в т.ч. в Option-Tab.
+        syncWorkspacesUi()
+        syncBindsUi()
+        
         if !isEnabled {
             if let statusItemLocal = statusItem {
                 statusBar.removeStatusItem(statusItemLocal)
@@ -72,9 +78,6 @@ class MenuBarManager: ObservableObject {
         let statusItemLocal = statusItem ?? statusBar.statusItem(withLength: NSStatusItem.variableLength)
         statusItem = statusItemLocal
         statusItemLocal.menu = statusMenu
-        
-        syncWorkspacesUi()
-        syncBindsUi()
         
         //
         // Menu
