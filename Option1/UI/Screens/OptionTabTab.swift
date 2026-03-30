@@ -19,12 +19,14 @@ struct OptionTabTab: View {
     }
     
     private var formAppsUi: [FormAppUi] {
-        appsDb.map { appDb in
-            FormAppUi(
-                title: appDb.name,
-                bundle: appDb.bundle,
-            )
-        }
+        appsDb
+            .sorted(by: { $0.name.lowercased() < $1.name.lowercased() })
+            .map { appDb in
+                FormAppUi(
+                    title: appDb.name,
+                    bundle: appDb.bundle,
+                )
+            }
     }
     
     @State private var formBundle: String? = nil
