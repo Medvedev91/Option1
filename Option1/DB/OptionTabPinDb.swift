@@ -11,6 +11,12 @@ class OptionTabPinDb {
         self.sort = sort
     }
     
+    @MainActor
+    func updateSort(_ newSort: Int) {
+        sort = newSort
+        DB.save()
+    }
+    
     ///
     
     @MainActor
