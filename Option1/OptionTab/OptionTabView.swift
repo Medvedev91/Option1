@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 
 private let fontSize = 14.0
+private let pinButtonWidth = 28.0
 private let windowsScrollTopId = "WINDOWS-SCROLL-TOP-ID"
 
 struct OptionTabView: View {
@@ -40,6 +41,9 @@ struct OptionTabView: View {
                         ForEach(data.appsUi, id: \.app) { appUi in
                             AppView(
                                 appUi: appUi,
+                                updateAppsUi: {
+                                    data.rebuildAppsUi()
+                                },
                                 selectedCachedWindow: data.selectedCachedWindow,
                                 onCachedWindowHover: { cachedWindow in
                                     data.selectedCachedWindow = cachedWindow
@@ -173,9 +177,16 @@ struct OptionTabView: View {
 private struct AppView: View {
     
     let appUi: OptionTabAppUi
+    let updateAppsUi: () -> Void
     let selectedCachedWindow: CachedWindow?
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
+    
+    ///
+    
+    private var isPinned: Bool {
+        appUi.sort != nil
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -184,12 +195,38 @@ private struct AppView: View {
             }
             .frame(height: OptionTabView.itemHeaderPadding)
             
-            Text(appUi.app?.localizedName ?? "Other")
-                .textAlign(.leading)
-                .font(.system(size: fontSize, weight: .heavy))
-                .lineLimit(1)
-                .frame(height: OptionTabView.itemHeight)
-                .padding(.horizontal, 20)
+            HStack(spacing: 0) {
+                
+                Button(
+                    action: {
+                        if let bundle = appUi.bundle {
+                            if isPinned {
+                                OptionTabPinDb.delete(bundle: bundle)
+                            } else {
+                                OptionTabPinDb.upsertToTop(bundle: bundle)
+                            }
+                            withAnimation {
+                                updateAppsUi()
+                            }
+                        }
+                    },
+                    label: {
+                        Image(systemName: isPinned ? "arrow.down" : "arrow.up")
+                            .font(.system(size: 11, weight: .light))
+                            .foregroundColor(.secondary)
+                            .frame(width: pinButtonWidth)
+                            .contentShape(Rectangle()) // Tap area
+                    },
+                )
+                .buttonStyle(.plain)
+
+                Text(appUi.app?.localizedName ?? "Other")
+                    .font(.system(size: fontSize, weight: .heavy))
+                    .lineLimit(1)
+                
+                Spacer()
+            }
+            .frame(height: OptionTabView.itemHeight)
             
             ForEach(appUi.cachedWindows, id: \.self) { cachedWindow in
                 CachedWindowView(
@@ -218,6 +255,7 @@ private struct CachedWindowView: View {
     ///
     
     @State private var isFirstHover = true
+    private let innerPadding = 8.0
 
     var body: some View {
         Button(
@@ -230,7 +268,7 @@ private struct CachedWindowView: View {
                     .font(.system(size: fontSize, weight: .regular))
                     .lineLimit(1)
                     .frame(height: OptionTabView.itemHeight)
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, innerPadding)
                     .foregroundColor(isSelected ? .white : .primary)
                     .background(
                         RoundedRectangle(cornerRadius: 8, style: .circular)
@@ -260,7 +298,7 @@ private struct CachedWindowView: View {
                 onCachedWindowHover(false)
             }
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, pinButtonWidth - innerPadding)
     }
 }
 
