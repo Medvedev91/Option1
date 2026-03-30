@@ -39,6 +39,7 @@ private func buildAppsUi() -> [OptionTabAppUi] {
             app: app,
             bundle: bundle,
             sort: sortMap[bundle],
+            icon: app.icon,
             cachedWindows: appCachedWindows,
         )
         appsUi.append(activeAppUi)
@@ -54,6 +55,7 @@ private func buildAppsUi() -> [OptionTabAppUi] {
             app: nil,
             bundle: nil,
             sort: nil,
+            icon: nil,
             cachedWindows: otherCachedWindows,
         ))
     }

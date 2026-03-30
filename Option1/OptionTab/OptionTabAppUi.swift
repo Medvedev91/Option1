@@ -4,5 +4,6 @@ struct OptionTabAppUi: Hashable {
     let app: NSRunningApplication? // nil means unknown app
     let bundle: String?
     let sort: Int?
+    let icon: NSImage?
     let cachedWindows: [CachedWindow]
 }

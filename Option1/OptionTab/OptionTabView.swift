@@ -2,12 +2,12 @@ import AppKit
 import SwiftUI
 
 private let fontSize = 14.0
-private let pinButtonWidth = 28.0
+private let leadingBarWidth = 52.0
 private let windowsScrollTopId = "WINDOWS-SCROLL-TOP-ID"
 
 struct OptionTabView: View {
     
-    static let fullWidth: CGFloat = 820.0
+    static let fullWidth: CGFloat = 840.0
     static let windowsWidth: CGFloat = 600.0
     static let menuWidth: CGFloat = fullWidth - windowsWidth
     
@@ -17,7 +17,7 @@ struct OptionTabView: View {
     
     static let menuIconWidth: CGFloat = 20.0
     static let menuSeparatorHeight: CGFloat = itemHeaderPadding
-    static let menuItemOuterTrailingPadding: CGFloat = 6
+    static let menuItemOuterTrailingPadding: CGFloat = 12
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
@@ -65,6 +65,9 @@ struct OptionTabView: View {
                     }
                 }
             }
+            // Добавляет отстув снизу если окно во весь экран
+            // и отступ снизу при автоматической докрутке.
+            .contentMargins(.bottom, isFullHeight ? 160 : 0, for: .scrollContent)
             
             VStack(spacing: 0) {
                 
@@ -101,7 +104,7 @@ struct OptionTabView: View {
                 Divider()
                     .frame(height: Self.menuSeparatorHeight)
                     .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing)
+                    .padding(.trailing, 24)
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
                     MenuItemView(
@@ -131,7 +134,7 @@ struct OptionTabView: View {
                                 Text(bindUi.badge)
                                     .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
-                                    .padding(.horizontal, 4)
+                                    .padding(.trailing, 6)
                             }
                             .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
                             .padding(.leading, Self.menuIconWidth)
@@ -143,7 +146,7 @@ struct OptionTabView: View {
                 Divider()
                     .frame(height: Self.menuSeparatorHeight)
                     .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing)
+                    .padding(.trailing, 24)
                 
                 MenuItemView(
                     onClick: {
@@ -183,10 +186,6 @@ private struct AppView: View {
     
     ///
     
-    private var isPinned: Bool {
-        appUi.sort != nil
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
             
@@ -196,29 +195,15 @@ private struct AppView: View {
             
             HStack(spacing: 0) {
                 
-                Button(
-                    action: {
-                        if let bundle = appUi.bundle {
-                            if isPinned {
-                                OptionTabPinDb.delete(bundle: bundle)
-                            } else {
-                                OptionTabPinDb.upsertToTop(bundle: bundle)
-                            }
-                            withAnimation {
-                                updateAppsUi()
-                            }
-                        }
-                    },
-                    label: {
-                        Image(systemName: isPinned ? "arrow.down" : "arrow.up")
-                            .font(.system(size: 11, weight: .light))
-                            .foregroundColor(.secondary)
-                            .frame(width: pinButtonWidth)
-                            .contentShape(Rectangle()) // Tap area
-                    },
-                )
-                .buttonStyle(.plain)
-
+                ZStack {
+                    if let icon = appUi.icon {
+                        Image(nsImage: icon)
+                            .resizable()
+                            .frame(width: 22, height: 22)
+                    }
+                }
+                .frame(width: leadingBarWidth)
+                
                 Text(appUi.app?.localizedName ?? "Other")
                     .font(.system(size: fontSize, weight: .heavy))
                     .lineLimit(1)
@@ -227,10 +212,13 @@ private struct AppView: View {
             }
             .frame(height: OptionTabView.itemHeight)
             
-            ForEach(appUi.cachedWindows, id: \.self) { cachedWindow in
+            let cachedWindows = appUi.cachedWindows
+            ForEach(cachedWindows, id: \.self) { cachedWindow in
                 CachedWindowView(
                     cachedWindow: cachedWindow,
                     isSelected: cachedWindow == selectedCachedWindow,
+                    appUiForPinButton: cachedWindows.first == cachedWindow ? appUi : nil,
+                    updateAppsUi: updateAppsUi,
                     onCachedWindowHover: { isHover in
                         onCachedWindowHover(isHover ? cachedWindow : nil)
                     },
@@ -248,6 +236,8 @@ private struct CachedWindowView: View {
     
     let cachedWindow: CachedWindow
     let isSelected: Bool
+    let appUiForPinButton: OptionTabAppUi?
+    let updateAppsUi: () -> Void
     let onCachedWindowHover: (Bool) -> Void
     let onCachedWindowFocus: () -> Void
     
@@ -255,49 +245,81 @@ private struct CachedWindowView: View {
     
     @State private var isFirstHover = true
     private let innerPadding = 8.0
-
+    
     var body: some View {
-        Button(
-            action: {
-                onCachedWindowFocus()
-            },
-            label: {
-                Text(cachedWindow.title)
-                    .textAlign(.leading)
-                    .font(.system(size: fontSize, weight: .regular))
-                    .lineLimit(1)
-                    .frame(height: OptionTabView.itemHeight)
-                    .padding(.horizontal, innerPadding)
-                    .foregroundColor(isSelected ? .white : .primary)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8, style: .circular)
-                            .fill(isSelected ? .blue : .clear)
-                    )
-                    // .animation(.linear(duration: 0.05), value: isSelected)
-            }
-        )
-        .buttonStyle(.plain)
-        .contentShape(Rectangle()) // Tap area
-        .onContinuousHover { hoverPhase in
-            // Если список не входит в экран, а курсор в зоне прокрутки,
-            // при автоматической докрутке за выбранным элементом
-            // сработает данный метод и открутит экран назад.
-            if HotKeysUtils.isOptionTabPressed {
-                return
-            }
+        HStack(spacing: 0) {
             
-            switch hoverPhase {
-            case .active:
-                if !isFirstHover {
-                    onCachedWindowHover(true)
+            HStack(spacing: 0) {
+                if let appUiForPinButton = appUiForPinButton {
+                    let isPinned = appUiForPinButton.sort != nil
+                    Button(
+                        action: {
+                            if let bundle = appUiForPinButton.bundle {
+                                if isPinned {
+                                    OptionTabPinDb.delete(bundle: bundle)
+                                } else {
+                                    OptionTabPinDb.upsertToTop(bundle: bundle)
+                                }
+                                withAnimation {
+                                    updateAppsUi()
+                                }
+                            }
+                        },
+                        label: {
+                            Image(systemName: isPinned ? "pin.fill" : "pin")
+                                .font(.system(size: 12, weight: .light))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 8)
+                                .padding(.top, 1)
+                                .contentShape(Rectangle()) // Tap area
+                        },
+                    )
+                    .buttonStyle(.plain)
                 }
-                isFirstHover = false
-            case .ended:
-                isFirstHover = true
-                onCachedWindowHover(false)
+            }
+            .frame(width: leadingBarWidth - innerPadding)
+
+            Button(
+                action: {
+                    onCachedWindowFocus()
+                },
+                label: {
+                    Text(cachedWindow.title)
+                        .textAlign(.leading)
+                        .font(.system(size: fontSize, weight: .regular))
+                        .lineLimit(1)
+                        .frame(height: OptionTabView.itemHeight)
+                        .padding(.horizontal, innerPadding)
+                        .foregroundColor(isSelected ? .white : .primary)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .circular)
+                                .fill(isSelected ? .blue : .clear)
+                        )
+                    // .animation(.linear(duration: 0.05), value: isSelected)
+                }
+            )
+            .buttonStyle(.plain)
+            .contentShape(Rectangle()) // Tap area
+            .onContinuousHover { hoverPhase in
+                // Если список не входит в экран, а курсор в зоне прокрутки,
+                // при автоматической докрутке за выбранным элементом
+                // сработает данный метод и открутит экран назад.
+                if HotKeysUtils.isOptionTabPressed {
+                    return
+                }
+                
+                switch hoverPhase {
+                case .active:
+                    if !isFirstHover {
+                        onCachedWindowHover(true)
+                    }
+                    isFirstHover = false
+                case .ended:
+                    isFirstHover = true
+                    onCachedWindowHover(false)
+                }
             }
         }
-        .padding(.horizontal, pinButtonWidth - innerPadding)
     }
 }
 
