@@ -18,6 +18,17 @@ struct OptionTabTab: View {
         }
     }
     
+    private var formAppsUi: [FormAppUi] {
+        appsDb.map { appDb in
+            FormAppUi(
+                title: appDb.name,
+                bundle: appDb.bundle,
+            )
+        }
+    }
+    
+    @State private var formBundle: String? = nil
+    
     var body: some View {
         VStack {
             
@@ -29,6 +40,25 @@ struct OptionTabTab: View {
                 .onChange(of: isOptionTabEnabled) { _, newValue in
                     OptionTabManager.instance.setIsEnabled(newValue)
                 }
+                
+                Picker("", selection: $formBundle) {
+                    Text("")
+                        .tag(nil as String?)
+                    Section("Open Apps") {
+                        ForEach(formAppsUi, id: \.self) { appUi in
+                            Text(appUi.title).tag(appUi.bundle)
+                        }
+                    }
+                }
+                .padding(.leading, 20)
+                
+                Button("Pin to Top") {
+                    if let formBundle = formBundle {
+                        OptionTabPinDb.upsertToTop(bundle: formBundle)
+                        self.formBundle = nil
+                    }
+                }
+                .disabled(formBundle == nil)
                 
                 Spacer()
             }
@@ -86,4 +116,9 @@ private struct PinUi: Hashable {
     var bundle: String {
         pinDb.bundle
     }
+}
+
+private struct FormAppUi: Hashable {
+    let title: String
+    let bundle: String
 }
