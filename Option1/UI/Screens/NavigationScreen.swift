@@ -31,7 +31,7 @@ struct NavigationScreen: View {
                             
                             Label("Settings", systemImage: "gearshape")
                                 .tag(Tab.settings)
-
+                            
                             Label("Donations", systemImage: "heart")
                                 .tag(Tab.donations)
                         }
