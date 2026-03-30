@@ -94,7 +94,7 @@ struct NavigationScreen: View {
                             },
                         )
                     case .optionTab:
-                        Text("todo")
+                        OptionTabTab()
                     case .donations:
                         DonationsTab()
                     case .workspace(let workspaceDb):
