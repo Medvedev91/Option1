@@ -61,7 +61,7 @@ struct OptionTabView: View {
                         if let new = new {
                             
                             // При скролле мышью докручивать только до ближайшего
-                            if !HotKeysUtils.isOptionTabAnyDirectionPressed {
+                            guard let isOptionTabPressedUpOrDown = HotKeysUtils.isOptionTabPressedUpOrDownOrNil else {
                                 scroll.scrollTo(new.hashValue)
                                 return
                             }
@@ -77,11 +77,20 @@ struct OptionTabView: View {
                             } else {
                                 // Прокрутка вперед актуальна если окно не влезает в высоту
                                 if let idx = appsUi.firstIndex(of: new) {
-                                    let overScrollSize = 3
-                                    if (appsUi.count - idx) <= overScrollSize {
-                                        scroll.scrollTo(windowsScrollBottomId)
+                                    if isOptionTabPressedUpOrDown {
+                                        let overScrollSize = 4
+                                        if idx <= overScrollSize {
+                                            scroll.scrollTo(windowsScrollTopId)
+                                        } else {
+                                            scroll.scrollTo(appsUi[idx - overScrollSize].hashValue)
+                                        }
                                     } else {
-                                        scroll.scrollTo(appsUi[idx + overScrollSize].hashValue)
+                                        let overScrollSize = 3
+                                        if (appsUi.count - idx) <= overScrollSize {
+                                            scroll.scrollTo(windowsScrollBottomId)
+                                        } else {
+                                            scroll.scrollTo(appsUi[idx + overScrollSize].hashValue)
+                                        }
                                     }
                                 } else {
                                     scroll.scrollTo(new.hashValue)
@@ -327,7 +336,7 @@ private struct CachedWindowView: View {
                 // Если список не входит в экран, а курсор в зоне прокрутки,
                 // при автоматической докрутке за выбранным элементом
                 // сработает данный метод и открутит экран назад.
-                if HotKeysUtils.isOptionTabAnyDirectionPressed {
+                if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
                     return
                 }
                 
