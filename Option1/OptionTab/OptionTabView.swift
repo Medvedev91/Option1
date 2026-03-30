@@ -219,7 +219,7 @@ private struct AppView: View {
                     if let icon = appUi.icon {
                         Image(nsImage: icon)
                             .resizable()
-                            .frame(width: 22, height: 22)
+                            .frame(width: 24, height: 24)
                     }
                 }
                 .frame(width: leadingBarWidth)
