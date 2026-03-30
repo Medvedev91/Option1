@@ -57,7 +57,7 @@ struct OptionTabView: View {
                             .frame(height: Self.itemHeaderPadding)
                     }
                     .frame(width: Self.windowsWidth)
-                    .onChange(of: data.selectedCachedWindow) { _, new in
+                    .onChange(of: data.selectedCachedWindow, initial: true) { _, new in
                         if let new = new {
                             
                             // При скролле мышью докручивать только до ближайшего
@@ -77,7 +77,7 @@ struct OptionTabView: View {
                             } else {
                                 // Прокрутка вперед актуальна если окно не влезает в высоту
                                 if let idx = appsUi.firstIndex(of: new) {
-                                    let overScrollSize = 4
+                                    let overScrollSize = 3
                                     if (appsUi.count - idx) <= overScrollSize {
                                         scroll.scrollTo(windowsScrollBottomId)
                                     } else {
