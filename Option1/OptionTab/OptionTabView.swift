@@ -4,6 +4,7 @@ import SwiftUI
 private let fontSize = 14.0
 private let leadingBarWidth = 52.0
 private let windowsScrollTopId = "WINDOWS-SCROLL-TOP-ID"
+private let windowsScrollBottomId = "WINDOWS-SCROLL-BOTTOM-ID"
 
 struct OptionTabView: View {
     
@@ -50,25 +51,42 @@ struct OptionTabView: View {
                                 onCachedWindowFocus: onCachedWindowFocus,
                             )
                         }
+                        
+                        ZStack {}
+                            .id(windowsScrollBottomId)
+                            .frame(height: Self.itemHeaderPadding)
                     }
                     .frame(width: Self.windowsWidth)
                     .onChange(of: data.selectedCachedWindow) { _, new in
+                        // Докручивать нужно только при скролле руками
+                        if !HotKeysUtils.isOptionTabPressed {
+                            return
+                        }
+                        
                         if let new = new {
-                            if new == data.appsUi.flatMap(\.cachedWindows).first {
+                            let appsUi = data.appsUi.flatMap(\.cachedWindows)
+                            if new == appsUi.first {
                                 // Для первого элемента нужно прокрутить в
                                 // самый верх чтобы был виден заголовок.
                                 scroll.scrollTo(windowsScrollTopId)
+                            } else if new == appsUi.last {
+                                // Для последнего надо докрутить в самый низ для отступа.
+                                scroll.scrollTo(windowsScrollBottomId)
                             } else {
-                                scroll.scrollTo(new.hashValue)
+                                // Прокрутка вперед актуальна если окно не влезает в высоту
+                                if let idx = appsUi.firstIndex(of: new), (idx + 2) < appsUi.count {
+                                    scroll.scrollTo(appsUi[idx + 2].hashValue)
+                                } else if let idx = appsUi.firstIndex(of: new), (idx + 1) < appsUi.count {
+                                    scroll.scrollTo(appsUi[idx + 1].hashValue)
+                                } else {
+                                    scroll.scrollTo(new.hashValue)
+                                }
                             }
                         }
                     }
                 }
             }
-            // Добавляет отстув снизу если окно во весь экран
-            // и отступ снизу при автоматической докрутке.
-            .contentMargins(.bottom, isFullHeight ? 160 : 0, for: .scrollContent)
-            
+
             VStack(spacing: 0) {
                 
                 ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
