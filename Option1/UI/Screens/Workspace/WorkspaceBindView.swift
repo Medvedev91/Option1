@@ -316,8 +316,8 @@ private struct FileTypeView: View {
 ///
 
 private struct AppUi: Hashable {
-    var title: String
-    var bundle: String
+    let title: String
+    let bundle: String
 }
 
 private struct FormUi: Hashable {
