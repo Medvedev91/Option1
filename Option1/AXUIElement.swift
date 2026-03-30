@@ -153,7 +153,7 @@ extension AXUIElement {
         return try value(kAXSizeAttribute, CGSize.zero, .cgSize)
     }
     
-    // Option 1 Implementation
+    // Option1 Implementation
     func isElementExists() -> Bool {
         guard let subrole = try? subrole() else {
             return false
