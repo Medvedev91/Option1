@@ -61,7 +61,7 @@ struct OptionTabView: View {
                         if let new = new {
                             
                             // При скролле мышью докручивать только до ближайшего
-                            if !HotKeysUtils.isOptionTabPressed {
+                            if !HotKeysUtils.isOptionTabAnyDirectionPressed {
                                 scroll.scrollTo(new.hashValue)
                                 return
                             }
@@ -327,7 +327,7 @@ private struct CachedWindowView: View {
                 // Если список не входит в экран, а курсор в зоне прокрутки,
                 // при автоматической докрутке за выбранным элементом
                 // сработает данный метод и открутит экран назад.
-                if HotKeysUtils.isOptionTabPressed {
+                if HotKeysUtils.isOptionTabAnyDirectionPressed {
                     return
                 }
                 
