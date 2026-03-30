@@ -60,7 +60,7 @@ struct OptionTabView: View {
                     .onChange(of: data.selectedCachedWindow) { _, new in
                         if let new = new {
                             
-                            // Докручивать нужно только при скролле руками
+                            // При скролле мышью докручивать только до ближайшего
                             if !HotKeysUtils.isOptionTabPressed {
                                 scroll.scrollTo(new.hashValue)
                                 return
@@ -76,10 +76,13 @@ struct OptionTabView: View {
                                 scroll.scrollTo(windowsScrollBottomId)
                             } else {
                                 // Прокрутка вперед актуальна если окно не влезает в высоту
-                                if let idx = appsUi.firstIndex(of: new), (idx + 2) < appsUi.count {
-                                    scroll.scrollTo(appsUi[idx + 2].hashValue)
-                                } else if let idx = appsUi.firstIndex(of: new), (idx + 1) < appsUi.count {
-                                    scroll.scrollTo(appsUi[idx + 1].hashValue)
+                                if let idx = appsUi.firstIndex(of: new) {
+                                    let overScrollSize = 4
+                                    if (appsUi.count - idx) <= overScrollSize {
+                                        scroll.scrollTo(windowsScrollBottomId)
+                                    } else {
+                                        scroll.scrollTo(appsUi[idx + overScrollSize].hashValue)
+                                    }
                                 } else {
                                     scroll.scrollTo(new.hashValue)
                                 }
