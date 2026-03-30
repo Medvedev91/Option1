@@ -21,7 +21,7 @@ struct NavigationScreen: View {
                     
                     List(selection: $tab) {
                         
-                        Label("Option1", systemImage: "option")
+                        Label("Option1", systemImage: "info.circle")
                             .tag(Tab.main)
                         
                         if !isScreenshotsMode {
