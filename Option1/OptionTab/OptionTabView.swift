@@ -398,3 +398,34 @@ private struct MenuItemView<Content: View>: View {
         }
     }
 }
+
+private struct WindowsListItemButton: View {
+    
+    let text: String
+    let fontWeight: Font.Weight
+    let isSelected: Bool
+    let onClick: () -> Void
+    
+    var body: some View {
+        Button(
+            action: {
+                onClick()
+            },
+            label: {
+                Text(text)
+                    .textAlign(.leading)
+                    .font(.system(size: fontSize, weight: fontWeight))
+                    .lineLimit(1)
+                    .frame(height: OptionTabView.itemHeight)
+                    .padding(.horizontal, windowsListItemInnerPadding)
+                    .foregroundColor(isSelected ? .white : .primary)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .circular)
+                            .fill(isSelected ? .blue : .clear)
+                    )
+            }
+        )
+        .buttonStyle(.plain)
+        .contentShape(Rectangle()) // Tap area
+    }
+}
