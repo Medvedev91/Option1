@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 private let fontSize = 14.0
-private let leadingBarWidth = 52.0
+private let windowsListItemInnerPadding = 8.0
 private let windowsScrollTopId = "WINDOWS-SCROLL-TOP-ID"
 private let windowsScrollBottomId = "WINDOWS-SCROLL-BOTTOM-ID"
 
@@ -220,75 +220,27 @@ private struct AppView: View {
     
     ///
     
+    @State private var isFirstHeaderHover = true
+    
     var body: some View {
-        VStack(spacing: 0) {
+        HStack(alignment: .top, spacing: 0) {
             
-            HStack {
-            }
-            .frame(height: OptionTabView.itemHeaderPadding)
-            
-            HStack(spacing: 0) {
+            VStack(spacing: 0) {
+                
+                if let icon = appUi.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
+                        .onTapGesture {
+                            openApp()
+                        }
+                }
                 
                 ZStack {
-                    if let icon = appUi.icon {
-                        Image(nsImage: icon)
-                            .resizable()
-                            .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
-                    }
-                }
-                .frame(width: leadingBarWidth)
-                
-                Text(appUi.app?.localizedName ?? "Other")
-                    .font(.system(size: fontSize, weight: .heavy))
-                    .lineLimit(1)
-                
-                Spacer()
-            }
-            .frame(height: OptionTabView.itemHeight)
-            
-            let cachedWindows = appUi.cachedWindows
-            ForEach(cachedWindows, id: \.self) { cachedWindow in
-                CachedWindowView(
-                    cachedWindow: cachedWindow,
-                    isSelected: cachedWindow == selectedCachedWindow,
-                    appUiForPinButton: cachedWindows.first == cachedWindow ? appUi : nil,
-                    updateAppsUi: updateAppsUi,
-                    onCachedWindowHover: { isHover in
-                        onCachedWindowHover(isHover ? cachedWindow : nil)
-                    },
-                    onCachedWindowFocus: {
-                        onCachedWindowFocus(cachedWindow)
-                    },
-                )
-                .id(cachedWindow.hashValue)
-            }
-        }
-    }
-}
-
-private struct CachedWindowView: View {
-    
-    let cachedWindow: CachedWindow
-    let isSelected: Bool
-    let appUiForPinButton: OptionTabAppUi?
-    let updateAppsUi: () -> Void
-    let onCachedWindowHover: (Bool) -> Void
-    let onCachedWindowFocus: () -> Void
-    
-    ///
-    
-    @State private var isFirstHover = true
-    private let innerPadding = 8.0
-    
-    var body: some View {
-        HStack(spacing: 0) {
-            
-            HStack(spacing: 0) {
-                if let appUiForPinButton = appUiForPinButton {
-                    let isPinned = appUiForPinButton.sort != nil
+                    let isPinned = appUi.sort != nil
                     Button(
                         action: {
-                            if let bundle = appUiForPinButton.bundle {
+                            if let bundle = appUi.bundle {
                                 if isPinned {
                                     OptionTabPinDb.delete(bundle: bundle)
                                 } else {
@@ -303,55 +255,110 @@ private struct CachedWindowView: View {
                             Image(systemName: isPinned ? "pin.fill" : "pin")
                                 .font(.system(size: 12, weight: .light))
                                 .foregroundColor(.secondary)
-                                .padding(.leading, 8)
                                 .padding(.top, 1)
                                 .contentShape(Rectangle()) // Tap area
                         },
                     )
                     .buttonStyle(.plain)
                 }
+                .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
             }
-            .frame(width: leadingBarWidth - innerPadding)
-
-            Button(
-                action: {
-                    onCachedWindowFocus()
-                },
-                label: {
-                    Text(cachedWindow.title)
-                        .textAlign(.leading)
-                        .font(.system(size: fontSize, weight: .regular))
-                        .lineLimit(1)
-                        .frame(height: OptionTabView.itemHeight)
-                        .padding(.horizontal, innerPadding)
-                        .foregroundColor(isSelected ? .white : .primary)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8, style: .circular)
-                                .fill(isSelected ? .blue : .clear)
-                        )
-                    // .animation(.linear(duration: 0.05), value: isSelected)
-                }
-            )
-            .buttonStyle(.plain)
-            .contentShape(Rectangle()) // Tap area
-            .onContinuousHover { hoverPhase in
-                // Если список не входит в экран, а курсор в зоне прокрутки,
-                // при автоматической докрутке за выбранным элементом
-                // сработает данный метод и открутит экран назад.
-                if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
-                    return
+            .frame(width: OptionTabView.itemHeight)
+            .padding(.leading, 14)
+            
+            VStack(spacing: 0) {
+                
+                WindowsListItemButton(
+                    text: appUi.app?.localizedName ?? "Other",
+                    fontWeight: .heavy,
+                    isSelected: !isFirstHeaderHover && selectedCachedWindow == nil,
+                    onClick: {
+                        openApp()
+                    },
+                )
+                .onContinuousHover { hoverPhase in
+                    // Если список не входит в экран, а курсор в зоне прокрутки,
+                    // при автоматической докрутке за выбранным элементом
+                    // сработает данный метод и открутит экран назад.
+                    if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
+                        return
+                    }
+                    
+                    switch hoverPhase {
+                    case .active:
+                        if !isFirstHeaderHover {
+                            onCachedWindowHover(nil)
+                        }
+                        isFirstHeaderHover = false
+                    case .ended:
+                        isFirstHeaderHover = true
+                    }
                 }
                 
-                switch hoverPhase {
-                case .active:
-                    if !isFirstHover {
-                        onCachedWindowHover(true)
-                    }
-                    isFirstHover = false
-                case .ended:
-                    isFirstHover = true
-                    onCachedWindowHover(false)
+                let cachedWindows = appUi.cachedWindows
+                ForEach(cachedWindows, id: \.self) { cachedWindow in
+                    CachedWindowView(
+                        cachedWindow: cachedWindow,
+                        isSelected: cachedWindow == selectedCachedWindow,
+                        onCachedWindowHover: { isHover in
+                            onCachedWindowHover(isHover ? cachedWindow : nil)
+                        },
+                        onCachedWindowFocus: {
+                            onCachedWindowFocus(cachedWindow)
+                        },
+                    )
+                    .id(cachedWindow.hashValue)
                 }
+            }
+        }
+        .padding(.top, OptionTabView.itemHeaderPadding)
+    }
+    
+    private func openApp() {
+        if let bundle = appUi.bundle {
+            WindowsManager.openApplicationByBundle(bundle)
+            closeWindow()
+        }
+    }
+}
+
+private struct CachedWindowView: View {
+    
+    let cachedWindow: CachedWindow
+    let isSelected: Bool
+    let onCachedWindowHover: (Bool) -> Void
+    let onCachedWindowFocus: () -> Void
+    
+    ///
+    
+    @State private var isFirstHover = true
+    
+    var body: some View {
+        WindowsListItemButton(
+            text: cachedWindow.title,
+            fontWeight: .regular,
+            isSelected: isSelected,
+            onClick: {
+                onCachedWindowFocus()
+            },
+        )
+        .onContinuousHover { hoverPhase in
+            // Если список не входит в экран, а курсор в зоне прокрутки,
+            // при автоматической докрутке за выбранным элементом
+            // сработает данный метод и открутит экран назад.
+            if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
+                return
+            }
+            
+            switch hoverPhase {
+            case .active:
+                if !isFirstHover {
+                    onCachedWindowHover(true)
+                }
+                isFirstHover = false
+            case .ended:
+                isFirstHover = true
+                onCachedWindowHover(false)
             }
         }
     }
