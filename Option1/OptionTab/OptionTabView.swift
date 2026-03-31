@@ -44,7 +44,6 @@ struct OptionTabView: View {
                                 updateAppsUi: {
                                     data.rebuildAppsUi()
                                 },
-                                closeWindow: closeWindow,
                                 selectedCachedWindow: data.selectedCachedWindow,
                                 onCachedWindowHover: { cachedWindow in
                                     data.selectedCachedWindow = cachedWindow
@@ -213,7 +212,6 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let updateAppsUi: () -> Void
-    let closeWindow: () -> Void
     let selectedCachedWindow: CachedWindow?
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
@@ -318,9 +316,8 @@ private struct AppView: View {
     }
     
     private func openApp() {
-        if let bundle = appUi.bundle {
-            WindowsManager.openApplicationByBundle(bundle)
-            closeWindow()
+        if let cachedWindow = appUi.cachedWindows.first {
+            onCachedWindowFocus(cachedWindow)
         }
     }
 }
