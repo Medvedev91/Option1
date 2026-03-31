@@ -19,8 +19,10 @@ class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
     
-    static var isOptionTabPressed: Bool {
-        onOptionTabPressedTask != nil || onOptionShiftTabPressedTask != nil
+    static var isOptionTabPressedUpOrDownOrNil: Bool? {
+        if onOptionTabPressedTask != nil { return false }
+        if onOptionShiftTabPressedTask != nil { return true }
+        return nil
     }
     
     @MainActor
