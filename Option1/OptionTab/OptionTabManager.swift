@@ -83,7 +83,9 @@ class OptionTabManager {
         closeAppWindow()
         
         let optionTabData = OptionTabData(
-            selectedCachedWindow: AppObserver.previousFocusedCachedWindow,
+            selectedCachedWindow: AppObserver.getFromStackByIdxOrNil(1).map { previousHash in
+                cachedWindows.first { $0.value.axuiElement.hashValue == previousHash }?.value
+            } ?? nil,
         )
         
         let appsHeight: Int = {
