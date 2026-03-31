@@ -44,6 +44,7 @@ struct OptionTabView: View {
                                 updateAppsUi: {
                                     data.rebuildAppsUi()
                                 },
+                                closeWindow: closeWindow,
                                 selectedCachedWindow: data.selectedCachedWindow,
                                 onCachedWindowHover: { cachedWindow in
                                     data.selectedCachedWindow = cachedWindow
@@ -212,6 +213,7 @@ private struct AppView: View {
     
     let appUi: OptionTabAppUi
     let updateAppsUi: () -> Void
+    let closeWindow: () -> Void
     let selectedCachedWindow: CachedWindow?
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
