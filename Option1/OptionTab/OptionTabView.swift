@@ -221,6 +221,7 @@ private struct AppView: View {
     ///
     
     @State private var isFirstHeaderHover = true
+    @State private var isHeaderHover = false
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -271,7 +272,7 @@ private struct AppView: View {
                 WindowsListItemButton(
                     text: appUi.app?.localizedName ?? "Other",
                     fontWeight: .heavy,
-                    isSelected: !isFirstHeaderHover && selectedCachedWindow == nil,
+                    isSelected: isHeaderHover && selectedCachedWindow == nil,
                     onClick: {
                         openApp()
                     },
@@ -288,10 +289,12 @@ private struct AppView: View {
                     case .active:
                         if !isFirstHeaderHover {
                             onCachedWindowHover(nil)
+                            isHeaderHover = true
                         }
                         isFirstHeaderHover = false
                     case .ended:
                         isFirstHeaderHover = true
+                        isHeaderHover = false
                     }
                 }
                 
