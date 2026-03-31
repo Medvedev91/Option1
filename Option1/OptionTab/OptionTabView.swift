@@ -263,7 +263,8 @@ private struct AppView: View {
                 .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
             }
             .frame(width: OptionTabView.itemHeight)
-            .padding(.leading, 14)
+            .padding(.leading, 12)
+            .padding(.trailing, 2)
             
             VStack(spacing: 0) {
                 
