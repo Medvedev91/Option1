@@ -89,16 +89,6 @@ class AppObserver {
     //
     // Stack
     
-    static func getCachedWindowFromStackByIdxOrNil(_ idx: Int) -> CachedWindow? {
-        if (idx + 1) > stackAxuiHashes.count {
-            return nil
-        }
-        let hash: Int = stackAxuiHashes[idx]
-        return cachedWindows.first { $0.value.axuiElement.hashValue == hash }?.value
-    }
-    
-    ///
-    
     fileprivate static func upsertStack(_ axuiElement: AXUIElement) {
         let hash: Int = axuiElement.hashValue
         stackAxuiHashes.removeAll { $0 == hash }
