@@ -435,3 +435,91 @@ private struct WindowsListItemButton: View {
         .contentShape(Rectangle()) // Tap area
     }
 }
+
+private struct HistoryItemView: View {
+    
+    let cachedWindow: CachedWindow
+    let selectedCachedWindow: CachedWindow?
+    let onCachedWindowHover: (CachedWindow?) -> Void
+    let onCachedWindowFocus: (CachedWindow) -> Void
+    
+    ///
+    
+    private let imageSize = OptionTabView.itemHeight
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            
+            ZStack {
+                if let icon = cachedWindow.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: imageSize, height: imageSize)
+                        .onTapGesture {
+                            onCachedWindowFocus(cachedWindow)
+                        }
+                }
+            }
+            .frame(width: imageSize)
+            .padding(.leading, 16)
+            .padding(.trailing, 8)
+            
+            CachedWindowView(
+                cachedWindow: cachedWindow,
+                isSelected: cachedWindow == selectedCachedWindow,
+                onCachedWindowHover: { isHover in
+                    onCachedWindowHover(isHover ? cachedWindow : nil)
+                },
+                onCachedWindowFocus: {
+                    onCachedWindowFocus(cachedWindow)
+                },
+            )
+            .id(cachedWindow.hashValue)
+        }
+    }
+}
+
+private struct MenuDivider: View {
+    
+    var body: some View {
+        Divider()
+            .frame(height: OptionTabView.menuDividerHeight)
+            .padding(.leading, OptionTabView.menuIconWidth)
+            .padding(.trailing, 24)
+    }
+}
+
+private struct DbModeButton: View {
+    
+    let dbMode: OptionTabDbMode
+    @Binding var stateUiMode: OptionTabUiMode
+    @Binding var stateDbMode: OptionTabDbMode
+    
+    ///
+
+    private var text: String {
+        switch dbMode {
+        case .apps:
+            "Apps"
+        case .history:
+            "History"
+        case .jk:
+            "JK"
+        }
+    }
+    
+    var body: some View {
+        Button(text) {
+            stateUiMode = switch dbMode {
+            case .apps: .apps
+            case .history: .history
+            case .jk: stateUiMode
+            }
+            stateDbMode = dbMode
+            KvDb.upsertOptionTabDbMode(dbMode)
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(stateDbMode == dbMode ? .primary : .secondary)
+        .font(.system(size: fontSize))
+    }
+}
