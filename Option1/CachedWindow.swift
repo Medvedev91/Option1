@@ -9,6 +9,7 @@ struct CachedWindow: Hashable {
     let axuiElementId: AXUIElementID
     let title: String
     let appBundle: String
+    let icon: NSImage?
     let shellWithNewWindow: String?
     
     static func addByAxuiElement(
@@ -29,6 +30,7 @@ struct CachedWindow: Hashable {
                 axuiElementId: axuiElementId,
                 title: title,
                 appBundle: bundleIdentifier,
+                icon: nsRunningApplication.icon,
                 shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
             )
             // Trial to fix floating crash on app starts
