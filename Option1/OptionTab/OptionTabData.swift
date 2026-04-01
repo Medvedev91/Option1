@@ -54,10 +54,25 @@ class OptionTabData: ObservableObject {
     }
     
     init(
-        selectedCachedWindow: CachedWindow?,
+        uiMode: OptionTabUiMode,
     ) {
-        self.appsUi = buildAppsUi()
-        self.selectedCachedWindow = selectedCachedWindow
+        self.uiMode = uiMode
+        
+        // Clean closed only once
+        self.appsUi = buildAppsUi(doCleanClosed: true)
+        self.history = buildHistory(doCleanClosed: false)
+        
+        self.selectedCachedWindow = {
+            if let w = (AppObserver.getCachedWindowFromStackByIdxOrNil(1) ?? AppObserver.getCachedWindowFromStackByIdxOrNil(0)) {
+                return w
+            }
+            return switch uiMode {
+            case .apps:
+                appsUi.first?.cachedWindows.first
+            case .history:
+                history.first
+            }
+        }()
     }
     
     func rebuildAppsUi() {
