@@ -14,13 +14,15 @@ class OptionTabData: ObservableObject {
     }
     
     func rebuildAppsUi() {
-        self.appsUi = buildAppsUi()
+        self.appsUi = buildAppsUi(doCleanClosed: true)
     }
 }
 
 @MainActor
-private func buildAppsUi() -> [OptionTabAppUi] {
-    CachedWindow.cleanClosed__slow(reportIfSlow: false)
+private func buildAppsUi(doCleanClosed: Bool) -> [OptionTabAppUi] {
+    if doCleanClosed {
+        CachedWindow.cleanClosed__slow(reportIfSlow: false)
+    }
     
     let sortMap: [String: Int] = Dictionary(
         uniqueKeysWithValues: OptionTabPinDb.selectAll().map { ($0.bundle, $0.sort) }
@@ -68,7 +70,7 @@ private func buildAppsUi() -> [OptionTabAppUi] {
     }
 }
 
-private func buildStack(doCleanClosed: Bool) -> [CachedWindow] {
+private func buildHistory(doCleanClosed: Bool) -> [CachedWindow] {
     if doCleanClosed {
         CachedWindow.cleanClosed__slow(reportIfSlow: false)
     }
