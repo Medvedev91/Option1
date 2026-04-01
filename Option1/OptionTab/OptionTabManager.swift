@@ -11,40 +11,75 @@ class OptionTabManager {
     
     private var optionTabView: OptionTabView?
     
-    func onOptionTabPressed() {
+    func onOptionTabPressed(fromJk: Bool) {
         if let optionTabView = optionTabView {
-            let allCachedWindows: [CachedWindow] = optionTabView.data.appsUi.flatMap { $0.cachedWindows }
-            if let selectedCachedWindow = optionTabView.data.selectedCachedWindow,
-               let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                let nextIndex = curIndex + 1
-                if (nextIndex + 1) > allCachedWindows.count {
-                    optionTabView.data.selectedCachedWindow = allCachedWindows.first
+            let data = optionTabView.data
+            switch data.uiMode {
+            case.apps:
+                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
+                if let selectedCachedWindow = data.selectedCachedWindow,
+                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
+                    let nextIndex = curIndex + 1
+                    if nextIndex >= allCachedWindows.count {
+                        data.selectedCachedWindow = allCachedWindows.first
+                    } else {
+                        data.selectedCachedWindow = allCachedWindows[nextIndex]
+                    }
                 } else {
-                    optionTabView.data.selectedCachedWindow = allCachedWindows[nextIndex]
+                    data.selectedCachedWindow = allCachedWindows.first
                 }
-            } else {
-                optionTabView.data.selectedCachedWindow = allCachedWindows.first
+            case.history:
+                let history = data.history
+                if let selectedCachedWindow = data.selectedCachedWindow,
+                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
+                    let nextIndex = curIndex + 1
+                    if nextIndex >= history.count {
+                        data.selectedCachedWindow = history.first
+                    } else {
+                        data.selectedCachedWindow = history[nextIndex]
+                    }
+                } else {
+                    data.selectedCachedWindow = history.first
+                }
+                break
             }
             return
         }
-        showWindow()
+        buildWindow(fromJk: fromJk)
     }
     
-    func onOptionShiftTabPressed() {
+    func onOptionShiftTabPressed(fromJk: Bool) {
         if let optionTabView = optionTabView {
-            let allCachedWindows: [CachedWindow] = optionTabView.data.appsUi.flatMap { $0.cachedWindows }
-            if let selectedCachedWindow = optionTabView.data.selectedCachedWindow,
-               let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                if curIndex > 0 {
-                    optionTabView.data.selectedCachedWindow = allCachedWindows[curIndex - 1]
+            let data = optionTabView.data
+            switch data.uiMode {
+            case .apps:
+                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
+                if let selectedCachedWindow = data.selectedCachedWindow,
+                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
+                    if curIndex > 0 {
+                        data.selectedCachedWindow = allCachedWindows[curIndex - 1]
+                    } else {
+                        data.selectedCachedWindow = allCachedWindows.last
+                    }
                 } else {
-                    optionTabView.data.selectedCachedWindow = allCachedWindows.last
+                    data.selectedCachedWindow = allCachedWindows.last
                 }
-            } else {
-                optionTabView.data.selectedCachedWindow = allCachedWindows.last
+            case .history:
+                let history = data.history
+                if let selectedCachedWindow = data.selectedCachedWindow,
+                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
+                    if curIndex > 0 {
+                        data.selectedCachedWindow = history[curIndex - 1]
+                    } else {
+                        data.selectedCachedWindow = history.last
+                    }
+                } else {
+                    optionTabView.data.selectedCachedWindow = history.last
+                }
             }
             return
         }
+        buildWindow(fromJk: fromJk)
     }
     
     func onOptionKeyUp() {
@@ -77,49 +112,22 @@ class OptionTabManager {
         closeWindow()
     }
     
-    private func showWindow() {
+    private func buildWindow(fromJk: Bool) {
         // Если открыто окно приложение Option1 (не Option-Tab),
         // то при нажатии на Option-Tab происходит фокус на Option1.
         closeAppWindow()
         
+        let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
+        case .apps: .apps
+        case .history: .history
+        case .jk: fromJk ? .history : .apps
+        }
         let optionTabData = OptionTabData(
-            selectedCachedWindow: AppObserver.getFromStackByIdxOrNil(1).map { previousHash in
-                cachedWindows.first { $0.value.axuiElement.hashValue == previousHash }?.value
-            } ?? nil,
+            uiMode: uiMode,
         )
         
-        let appsHeight: Int = {
-            let headersHeight: CGFloat = Double(optionTabData.appsUi.count) * (OptionTabView.itemHeight + OptionTabView.itemHeaderPadding)
-            let itemsHeight: CGFloat = Double(optionTabData.appsUi.flatMap(\.cachedWindows).count) * OptionTabView.itemHeight
-            let bottomPadding = OptionTabView.itemHeaderPadding
-            return Int((headersHeight + itemsHeight + bottomPadding).rounded(.up))
-        }()
-        
-        let menuHeight: Int = {
-            let separators: CGFloat = OptionTabView.menuSeparatorHeight * 2.0
-            let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
-            let settingsHeight: CGFloat = OptionTabView.itemHeight
-            let workspacesHeight: CGFloat = Double(MenuBarManager.instance.workspacesUi.count) * OptionTabView.itemHeight
-            let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
-                bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
-            }.reduce(0, +)
-            return Int((separators + vPaddings + settingsHeight + workspacesHeight + bindsHeight).rounded(.up))
-        }()
-        
-        let contentHeight: Int = max(appsHeight, menuHeight)
-        
-        let screenHeight: Int? = NSScreen.main.map { Int($0.visibleFrame.size.height) }
-        let windowHeight: Int = {
-            guard let screenHeight = screenHeight else {
-                return contentHeight
-            }
-            // Не нужно вертикальных отступов для визуальной
-            // наглядности если списов не входит в экран.
-            return min(contentHeight, screenHeight)
-        }()
-        
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: Int(OptionTabView.fullWidth), height: windowHeight),
+            contentRect: optionTabData.windowSize.nsRect,
             styleMask: [],
             backing: .buffered,
             defer: false,
@@ -134,22 +142,24 @@ class OptionTabManager {
             closeWindow: {
                 self.closeWindow()
             },
-            isFullHeight: windowHeight == screenHeight,
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
-        window.center()
         window.level = .mainMenu + 1
         // Fix crash on close https://stackoverflow.com/a/78684365
         window.isReleasedWhenClosed = false
         window.isOpaque = false
         window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0)
         
-        Task { @MainActor in
-            try await Task.sleep(nanoseconds: 80_000_000)
-            self.optionTabView?.window.makeKeyAndOrderFront(nil)
-        }
-        
         self.optionTabView = optionTabView
+        
+        if fromJk {
+            self.optionTabView?.window.makeKeyAndOrderFront(nil)
+        } else {
+            Task { @MainActor in
+                try await Task.sleep(nanoseconds: 80_000_000)
+                self.optionTabView?.window.makeKeyAndOrderFront(nil)
+            }
+        }
     }
 }
