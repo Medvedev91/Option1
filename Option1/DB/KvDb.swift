@@ -74,6 +74,23 @@ class KvDb {
     }
     
     //
+    // Option-Tab Mode
+    
+    @MainActor
+    static func selectOptionTabDbMode() -> OptionTabDbMode {
+        let defaultMode: OptionTabDbMode = .jk
+        guard let rawValue: String = selectByKeyOrNil(OPTION_TAB_DB_MODE_KEY)?.value else {
+            return defaultMode
+        }
+        return OptionTabDbMode.allCases.first { String($0.rawValue) == rawValue } ?? defaultMode
+    }
+    
+    @MainActor
+    static func upsertOptionTabDbMode(_ mode: OptionTabDbMode) {
+        upsert(key: OPTION_TAB_DB_MODE_KEY, value: String(mode.rawValue))
+    }
+    
+    //
     // Is Display in Menu Bar
     
     @MainActor
@@ -131,4 +148,5 @@ private let INIT_TIME_KEY = "init-time"
 private let ACTIVATION_EMAIL_KEY = "activation-email"
 private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"
 private let IS_OPTION_TAB_ENABLED_KEY = "is-option-tab-enabled"
+private let OPTION_TAB_DB_MODE_KEY = "option-tab-db-mode"
 private let IS_DISPLAY_IN_MENU_BAR_KEY = "is-display-in-menu-bar"
