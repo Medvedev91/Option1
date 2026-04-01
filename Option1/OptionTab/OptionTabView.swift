@@ -250,16 +250,7 @@ private struct AppView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
-            VStack(spacing: 0) {
-                
-                if let icon = appUi.icon {
-                    Image(nsImage: icon)
-                        .resizable()
-                        .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
-                        .onTapGesture {
-                            openApp()
-                        }
-                }
+            HStack(spacing: 0) {
                 
                 ZStack {
                     let isPinned = appUi.sort != nil
@@ -279,17 +270,25 @@ private struct AppView: View {
                         label: {
                             Image(systemName: isPinned ? "pin.fill" : "pin")
                                 .font(.system(size: 12, weight: .light))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.primary)
                                 .padding(.top, 1)
                                 .contentShape(Rectangle()) // Tap area
                         },
                     )
                     .buttonStyle(.plain)
                 }
-                .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
+                .frame(width: 28, height: OptionTabView.itemHeight)
+                .padding(.leading, 4)
+
+                if let icon = appUi.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
+                        .onTapGesture {
+                            openApp()
+                        }
+                }
             }
-            .frame(width: OptionTabView.itemHeight)
-            .padding(.leading, 12)
             .padding(.trailing, 2)
             
             VStack(spacing: 0) {
