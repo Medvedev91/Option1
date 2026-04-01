@@ -2,8 +2,6 @@
 // Based on https://gist.github.com/Medvedev91/58df7d63be01bd5a0f8880565f36d8b8
 //
 
-// todo check todo in file
-
 import Foundation
 import Cocoa
 
@@ -11,7 +9,6 @@ class AppObserver {
     
     static let shared = AppObserver()
     
-    // todo @MainActor
     static var stackAxuiHashes: [Int] = []
     
     ///
