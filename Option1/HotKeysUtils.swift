@@ -64,12 +64,12 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionTabPressed()
+                    OptionTabManager.instance.onOptionTabPressed(fromJk: false)
                     onOptionTabPressedTask = Task { @MainActor in
                         try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
                         while onOptionTabPressedTask != nil {
                             try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionTabPressed()
+                            OptionTabManager.instance.onOptionTabPressed(fromJk: false)
                         }
                     }
                 },
@@ -85,12 +85,12 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option, .shift],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionShiftTabPressed()
+                    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: false)
                     onOptionShiftTabPressedTask = Task { @MainActor in
                         try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
                         while onOptionShiftTabPressedTask != nil {
                             try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionShiftTabPressed()
+                            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: false)
                         }
                     }
                 },
