@@ -1,5 +1,6 @@
 import AppKit
 
+// AXUIElement hash: CachedWindow
 var cachedWindows: [Int: CachedWindow] = [:]
 
 struct CachedWindow: Hashable {
@@ -23,18 +24,19 @@ struct CachedWindow: Hashable {
             let title = try axuiElement.title(),
             let bundleIdentifier = nsRunningApplication.bundleIdentifier {
             
-            let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
-            let newCachedWindow = CachedWindow(
-                axuiElement: axuiElement,
-                pid: pid,
-                axuiElementId: axuiElementId,
-                title: title,
-                appBundle: bundleIdentifier,
-                icon: nsRunningApplication.icon,
-                shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
-            )
-            // Trial to fix floating crash on app starts
+            // Часто при старте приложения при обращении и записи в cachedWindows
+            // происходит крэш. Пытаюсь исправить через MainActor.
             Task { @MainActor in
+                let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
+                let newCachedWindow = CachedWindow(
+                    axuiElement: axuiElement,
+                    pid: pid,
+                    axuiElementId: axuiElementId,
+                    title: title,
+                    appBundle: bundleIdentifier,
+                    icon: nsRunningApplication.icon,
+                    shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
+                )
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
         }
@@ -44,7 +46,7 @@ struct CachedWindow: Hashable {
     static func addByApp(_ app: NSRunningApplication) throws {
         let pid = app.processIdentifier
         try AXUIElementCreateApplication(pid).allWindows(pid).forEach { axuiElement in
-            _ = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         }
     }
     
