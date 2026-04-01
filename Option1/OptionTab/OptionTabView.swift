@@ -119,7 +119,7 @@ struct OptionTabView: View {
                     }
                 }
             }
-
+            
             VStack(spacing: 0) {
                 
                 HStack {
@@ -127,14 +127,14 @@ struct OptionTabView: View {
                     DbModeButton(dbMode: .jk, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
                     DbModeButton(dbMode: .apps, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
                     DbModeButton(dbMode: .history, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
-
+                    
                     Spacer()
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
-
+                
                 MenuDivider()
-
+                
                 ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
                     MenuItemView(
                         onClick: {
@@ -205,7 +205,7 @@ struct OptionTabView: View {
                 }
                 
                 MenuDivider()
-
+                
                 MenuItemView(
                     onClick: {
                         closeWindow()
@@ -228,9 +228,20 @@ struct OptionTabView: View {
         .background(
             // Если все элементы не влазят в экран, углы лучше сделать прямоугольными,
             // будет нагляднее что нужно докручивать вниз.
-            RoundedRectangle(cornerRadius: data.isFullHeight ? 0 : 16, style: .continuous)
+            RoundedRectangle(cornerRadius: data.windowSize.isFullHeight ? 0 : 16, style: .continuous)
                 .fill(.thinMaterial)
         )
+        .onChange(of: data.windowSize.nsRect) { _, newValue in
+            NSAnimationContext.runAnimationGroup({ context in
+                context.timingFunction = CAMediaTimingFunction(name: .default)
+                window.animator().setFrame(
+                    newValue,
+                    display: false,
+                    animate: true,
+                )
+            }, completionHandler: {
+            })
+        }
     }
 }
 
