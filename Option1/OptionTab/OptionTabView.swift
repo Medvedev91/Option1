@@ -85,30 +85,35 @@ struct OptionTabView: View {
                                 return
                             }
                             
-                            let appsUi = data.appsUi.flatMap(\.cachedWindows)
-                            if new == appsUi.first {
+                            let windows: [CachedWindow] = switch data.uiMode {
+                            case .apps:
+                                data.appsUi.flatMap(\.cachedWindows)
+                            case .history:
+                                data.history
+                            }
+                            if new == windows.first {
                                 // Для первого элемента нужно прокрутить в
                                 // самый верх чтобы был виден заголовок.
                                 scroll.scrollTo(windowsScrollTopId)
-                            } else if new == appsUi.last {
+                            } else if new == windows.last {
                                 // Для последнего надо докрутить в самый низ для отступа.
                                 scroll.scrollTo(windowsScrollBottomId)
                             } else {
                                 // Прокрутка вперед актуальна если окно не влезает в высоту
-                                if let idx = appsUi.firstIndex(of: new) {
+                                if let idx = windows.firstIndex(of: new) {
                                     if isOptionTabPressedUpOrDown {
                                         let overScrollSize = 4
                                         if idx <= overScrollSize {
                                             scroll.scrollTo(windowsScrollTopId)
                                         } else {
-                                            scroll.scrollTo(appsUi[idx - overScrollSize].hashValue)
+                                            scroll.scrollTo(windows[idx - overScrollSize].hashValue)
                                         }
                                     } else {
                                         let overScrollSize = 3
-                                        if (appsUi.count - idx) <= overScrollSize {
+                                        if (windows.count - idx) <= overScrollSize {
                                             scroll.scrollTo(windowsScrollBottomId)
                                         } else {
-                                            scroll.scrollTo(appsUi[idx + overScrollSize].hashValue)
+                                            scroll.scrollTo(windows[idx + overScrollSize].hashValue)
                                         }
                                     }
                                 } else {
