@@ -9,6 +9,7 @@ class AppObserver {
     
     static let shared = AppObserver()
     
+    // todo @MainActor
     static var stackAxuiHashes: [Int] = []
     
     ///
@@ -86,20 +87,23 @@ class AppObserver {
         }
     }
     
-    static func getFromStackByIdxOrNil(_ idx: Int) -> Int? {
+    //
+    // Stack
+    
+    static func getCachedWindowFromStackByIdxOrNil(_ idx: Int) -> CachedWindow? {
         if (idx + 1) > stackAxuiHashes.count {
             return nil
         }
-        return stackAxuiHashes[idx]
+        let hash: Int = stackAxuiHashes[idx]
+        return cachedWindows.first { $0.value.axuiElement.hashValue == hash }?.value
     }
+    
+    ///
     
     fileprivate static func upsertStack(_ axuiElement: AXUIElement) {
         let hash: Int = axuiElement.hashValue
-        if let idx = stackAxuiHashes.firstIndex(of: hash) {
-            stackAxuiHashes.move(fromOffsets: [idx], toOffset: 0)
-        } else {
-            stackAxuiHashes.insert(hash, at: 0)
-        }
+        stackAxuiHashes.removeAll { $0 == hash }
+        stackAxuiHashes.insert(hash, at: 0)
     }
 }
 
