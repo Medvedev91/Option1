@@ -64,18 +64,10 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionTabPressed(fromJk: false)
-                    onOptionTabPressedTask = Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
-                        while onOptionTabPressedTask != nil {
-                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionTabPressed(fromJk: false)
-                        }
-                    }
+                    onOptionTabKeyDownPressed(fromJk: false)
                 },
                 keyUpHandler: {
-                    onOptionTabPressedTask?.cancel()
-                    onOptionTabPressedTask = nil
+                    onOptionTabKeyUpPressed()
                 },
             )
         )
@@ -85,18 +77,10 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option, .shift],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: false)
-                    onOptionShiftTabPressedTask = Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
-                        while onOptionShiftTabPressedTask != nil {
-                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: false)
-                        }
-                    }
+                    onOptionShiftTabKeyDownPressed(fromJk: false)
                 },
                 keyUpHandler: {
-                    onOptionShiftTabPressedTask?.cancel()
-                    onOptionShiftTabPressedTask = nil
+                    onOptionShiftTabKeyUpPressed()
                 },
             )
         )
@@ -184,6 +168,45 @@ class HotKeysUtils {
         }
     }
 }
+
+//
+// Option-Tab Handlers
+
+@MainActor
+private func onOptionTabKeyDownPressed(fromJk: Bool) {
+    OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+    onOptionTabPressedTask = Task { @MainActor in
+        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        while onOptionTabPressedTask != nil {
+            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+        }
+    }
+}
+
+private func onOptionTabKeyUpPressed() {
+    onOptionTabPressedTask?.cancel()
+    onOptionTabPressedTask = nil
+}
+
+@MainActor
+private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
+    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+    onOptionShiftTabPressedTask = Task { @MainActor in
+        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        while onOptionShiftTabPressedTask != nil {
+            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+        }
+    }
+}
+
+private func onOptionShiftTabKeyUpPressed() {
+    onOptionShiftTabPressedTask?.cancel()
+    onOptionShiftTabPressedTask = nil
+}
+
+///
 
 private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
     try WindowsManager.focusWindow(axuiElement: axuiElement)
