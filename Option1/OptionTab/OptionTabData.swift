@@ -67,3 +67,19 @@ private func buildAppsUi() -> [OptionTabAppUi] {
         return ($0.app?.localizedName ?? "") < ($1.app?.localizedName ?? "")
     }
 }
+
+private func buildStack(doCleanClosed: Bool) -> [CachedWindow] {
+    if doCleanClosed {
+        CachedWindow.cleanClosed__slow(reportIfSlow: false)
+    }
+    return cachedWindows.map { $0.value }.sorted { w0, w1 in
+        let stackIdx0: Int? = AppObserver.stackAxuiHashes.firstIndex(of: w0.axuiElement.hashValue)
+        let stackIdx1: Int? = AppObserver.stackAxuiHashes.firstIndex(of: w1.axuiElement.hashValue)
+        if let stackIdx0 = stackIdx0, let stackIdx1 = stackIdx1 {
+            return stackIdx0 < stackIdx1
+        }
+        if stackIdx0 != nil { return true }
+        if stackIdx1 != nil { return false }
+        return w0.title.lowercased() < w1.title.lowercased()
+    }
+}
