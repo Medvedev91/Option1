@@ -24,7 +24,6 @@ struct OptionTabView: View {
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
-    let isFullHeight: Bool
     
     ///
     
@@ -42,18 +41,34 @@ struct OptionTabView: View {
                         ZStack {}
                             .id(windowsScrollTopId)
                         
-                        ForEach(data.appsUi, id: \.app) { appUi in
-                            AppView(
-                                appUi: appUi,
-                                updateAppsUi: {
-                                    data.rebuildAppsUi()
-                                },
-                                selectedCachedWindow: data.selectedCachedWindow,
-                                onCachedWindowHover: { cachedWindow in
-                                    data.selectedCachedWindow = cachedWindow
-                                },
-                                onCachedWindowFocus: onCachedWindowFocus,
-                            )
+                        switch data.uiMode {
+                        case .apps:
+                            ForEach(data.appsUi, id: \.app) { appUi in
+                                AppView(
+                                    appUi: appUi,
+                                    updateAppsUi: {
+                                        data.rebuildAppsUi()
+                                    },
+                                    selectedCachedWindow: data.selectedCachedWindow,
+                                    onCachedWindowHover: { cachedWindow in
+                                        data.selectedCachedWindow = cachedWindow
+                                    },
+                                    onCachedWindowFocus: onCachedWindowFocus,
+                                )
+                            }
+                        case .history:
+                            ZStack {}
+                                .frame(height: Self.itemHeaderPadding)
+                            ForEach(data.history, id: \.self) { cachedWindow in
+                                HistoryItemView(
+                                    cachedWindow: cachedWindow,
+                                    selectedCachedWindow: data.selectedCachedWindow,
+                                    onCachedWindowHover: { cachedWindow in
+                                        data.selectedCachedWindow = cachedWindow
+                                    },
+                                    onCachedWindowFocus: onCachedWindowFocus,
+                                )
+                            }
                         }
                         
                         ZStack {}
