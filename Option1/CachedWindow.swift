@@ -16,7 +16,7 @@ struct CachedWindow: Hashable {
         nsRunningApplication: NSRunningApplication,
         axuiElement: AXUIElement,
         shellWithNewWindow: String? = nil,
-    ) throws -> CachedWindow? {
+    ) throws {
         if
             let pid = try axuiElement.pid(),
             let axuiElementId = axuiElement.id(),
@@ -37,9 +37,7 @@ struct CachedWindow: Hashable {
             Task { @MainActor in
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
-            return newCachedWindow
         }
-        return nil
     }
     
     // ВНИМАНИЕ! SUPER SLOW `.allWindows()`
