@@ -3,8 +3,55 @@ import AppKit
 @MainActor
 class OptionTabData: ObservableObject {
     
+    @Published var uiMode: OptionTabUiMode
     @Published var appsUi: [OptionTabAppUi]
+    @Published var history: [CachedWindow]
     @Published var selectedCachedWindow: CachedWindow?
+    
+    var windowHeight: Int {
+        let windowsHeight: Int = {
+            switch uiMode {
+            case .apps:
+                let headersHeight: CGFloat = Double(appsUi.count) * OptionTabView.itemHeaderPadding
+                let itemsHeight: CGFloat = Double(appsUi.flatMap(\.cachedWindows).count) * OptionTabView.itemHeight
+                let bottomPadding = OptionTabView.itemHeaderPadding
+                return Int((headersHeight + itemsHeight + bottomPadding).rounded(.up))
+            case .history:
+                let headerHeight: CGFloat = OptionTabView.itemHeaderPadding
+                let itemsHeight: CGFloat = Double(history.count) * OptionTabView.itemHeight
+                let bottomPadding: CGFloat = OptionTabView.itemHeaderPadding
+                return Int((headerHeight + itemsHeight + bottomPadding).rounded(.up))
+            }
+        }()
+        
+        let menuHeight: Int = {
+            let separators: CGFloat = OptionTabView.menuDividerHeight * 3.0
+            let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
+            let systemButtonsHeight: CGFloat = OptionTabView.itemHeight * 2.0 // Settings, Modes.
+            let workspacesHeight: CGFloat = Double(MenuBarManager.instance.workspacesUi.count) * OptionTabView.itemHeight
+            let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
+                bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
+            }.reduce(0, +)
+            return Int((separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight).rounded(.up))
+        }()
+        
+        let contentHeight: Int = max(windowsHeight, menuHeight)
+        
+        let windowHeight: Int = {
+            guard let screenHeight = screenHeightOrNil() else {
+                return contentHeight
+            }
+            // Не нужно вертикальных отступов для визуальной
+            // наглядности если список не входит в экран.
+            return min(contentHeight, screenHeight)
+        }()
+        
+        return windowHeight
+    }
+    
+    var isFullHeight: Bool {
+        windowHeight == screenHeightOrNil()
+    }
     
     init(
         selectedCachedWindow: CachedWindow?,
