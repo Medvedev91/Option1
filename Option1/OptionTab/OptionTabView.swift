@@ -12,12 +12,12 @@ struct OptionTabView: View {
     static let windowsWidth: CGFloat = 600.0
     static let menuWidth: CGFloat = fullWidth - windowsWidth
     
-    static let itemHeight = 24.0
+    static let itemHeight = 28.0
     static let itemTwoLinesHeight = 40.0
     static let itemHeaderPadding = itemHeight / 1.62
     
     static let menuIconWidth: CGFloat = 20.0
-    static let menuSeparatorHeight: CGFloat = itemHeaderPadding
+    static let menuDividerHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     let window: NSWindow
@@ -25,6 +25,10 @@ struct OptionTabView: View {
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
     let isFullHeight: Bool
+    
+    ///
+    
+    @State private var dbMode: OptionTabDbMode = KvDb.selectOptionTabDbMode()
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -133,10 +137,7 @@ struct OptionTabView: View {
                     )
                 }
                 
-                Divider()
-                    .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing, 24)
+                MenuDivider()
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
                     MenuItemView(
@@ -175,11 +176,8 @@ struct OptionTabView: View {
                     )
                 }
                 
-                Divider()
-                    .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing, 24)
-                
+                MenuDivider()
+
                 MenuItemView(
                     onClick: {
                         closeWindow()
