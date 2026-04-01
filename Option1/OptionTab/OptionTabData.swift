@@ -8,23 +8,23 @@ class OptionTabData: ObservableObject {
     @Published var history: [CachedWindow]
     @Published var selectedCachedWindow: CachedWindow?
     
-    var windowHeight: Int {
-        let windowsHeight: Int = {
+    var windowSize: OptionTabWindowSize {
+        let windowsHeight: CGFloat = {
             switch uiMode {
             case .apps:
                 let headersHeight: CGFloat = Double(appsUi.count) * OptionTabView.itemHeaderPadding
                 let itemsHeight: CGFloat = Double(appsUi.flatMap(\.cachedWindows).count) * OptionTabView.itemHeight
                 let bottomPadding = OptionTabView.itemHeaderPadding
-                return Int((headersHeight + itemsHeight + bottomPadding).rounded(.up))
+                return headersHeight + itemsHeight + bottomPadding
             case .history:
                 let headerHeight: CGFloat = OptionTabView.itemHeaderPadding
                 let itemsHeight: CGFloat = Double(history.count) * OptionTabView.itemHeight
                 let bottomPadding: CGFloat = OptionTabView.itemHeaderPadding
-                return Int((headerHeight + itemsHeight + bottomPadding).rounded(.up))
+                return headerHeight + itemsHeight + bottomPadding
             }
         }()
         
-        let menuHeight: Int = {
+        let menuHeight: CGFloat = {
             let separators: CGFloat = OptionTabView.menuDividerHeight * 3.0
             let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
             let systemButtonsHeight: CGFloat = OptionTabView.itemHeight * 2.0 // Settings, Modes.
@@ -32,13 +32,15 @@ class OptionTabData: ObservableObject {
             let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
                 bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
             }.reduce(0, +)
-            return Int((separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight).rounded(.up))
+            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight
         }()
         
-        let contentHeight: Int = max(windowsHeight, menuHeight)
-        
-        let windowHeight: Int = {
-            guard let screenHeight = screenHeightOrNil() else {
+        let contentWidth: CGFloat = OptionTabView.fullWidth
+        let contentHeight: CGFloat = max(windowsHeight, menuHeight)
+        let screenSize: CGSize? = NSScreen.main.map { $0.visibleFrame.size }
+
+        let windowHeight: CGFloat = {
+            guard let screenHeight = screenSize?.height else {
                 return contentHeight
             }
             // Не нужно вертикальных отступов для визуальной
@@ -46,11 +48,26 @@ class OptionTabData: ObservableObject {
             return min(contentHeight, screenHeight)
         }()
         
-        return windowHeight
-    }
-    
-    var isFullHeight: Bool {
-        windowHeight == screenHeightOrNil()
+        let x: CGFloat = {
+            guard let screenWidth = screenSize?.width else { return 0 }
+            return (screenWidth - contentWidth) / 2.0
+        }()
+        
+        let y: CGFloat = {
+            guard let screenHeight = screenSize?.height else { return 0 }
+            return (screenHeight - windowHeight) / 2.0
+        }()
+        
+        let nsRect = NSRect(
+            x: x,
+            y: y,
+            width: contentWidth,
+            height: windowHeight,
+        )
+        return OptionTabWindowSize(
+            nsRect: nsRect,
+            isFullHeight: screenSize.map { contentHeight >= $0.height } ?? true,
+        )
     }
     
     init(
