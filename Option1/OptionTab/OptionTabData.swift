@@ -77,18 +77,17 @@ class OptionTabData: ObservableObject {
         
         // Clean closed only once
         self.appsUi = buildAppsUi(doCleanClosed: true)
-        self.history = buildHistory(doCleanClosed: false)
+        let history = buildHistory(doCleanClosed: false)
+        self.history = history
         
         self.selectedCachedWindow = {
-            if let w = (AppObserver.getCachedWindowFromStackByIdxOrNil(1) ?? AppObserver.getCachedWindowFromStackByIdxOrNil(0)) {
-                return w
+            if history.count >= 2 {
+                return history[1]
             }
-            return switch uiMode {
-            case .apps:
-                appsUi.first?.cachedWindows.first
-            case .history:
-                history.first
+            if history.count == 1 {
+                return history[0]
             }
+            return nil
         }()
     }
     
