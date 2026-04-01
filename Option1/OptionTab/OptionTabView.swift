@@ -242,11 +242,6 @@ private struct AppView: View {
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
-    ///
-    
-    @State private var isFirstHeaderHover = true
-    @State private var isHeaderHover = false
-    
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
@@ -285,43 +280,15 @@ private struct AppView: View {
                         .resizable()
                         .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
                         .onTapGesture {
-                            openApp()
+                            if let cachedWindow = appUi.cachedWindows.first {
+                                onCachedWindowFocus(cachedWindow)
+                            }
                         }
                 }
             }
             .padding(.trailing, 2)
             
             VStack(spacing: 0) {
-                
-                WindowsListItemButton(
-                    text: appUi.app?.localizedName ?? "Other",
-                    fontWeight: .heavy,
-                    isSelected: isHeaderHover && selectedCachedWindow == nil,
-                    onClick: {
-                        openApp()
-                    },
-                )
-                .onContinuousHover { hoverPhase in
-                    // Если список не входит в экран, а курсор в зоне прокрутки,
-                    // при автоматической докрутке за выбранным элементом
-                    // сработает данный метод и открутит экран назад.
-                    if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
-                        return
-                    }
-                    
-                    switch hoverPhase {
-                    case .active:
-                        if !isFirstHeaderHover {
-                            onCachedWindowHover(nil)
-                            isHeaderHover = true
-                        }
-                        isFirstHeaderHover = false
-                    case .ended:
-                        isFirstHeaderHover = true
-                        isHeaderHover = false
-                    }
-                }
-                
                 let cachedWindows = appUi.cachedWindows
                 ForEach(cachedWindows, id: \.self) { cachedWindow in
                     CachedWindowView(
@@ -339,12 +306,6 @@ private struct AppView: View {
             }
         }
         .padding(.top, OptionTabView.itemHeaderPadding)
-    }
-    
-    private func openApp() {
-        if let cachedWindow = appUi.cachedWindows.first {
-            onCachedWindowFocus(cachedWindow)
-        }
     }
 }
 
