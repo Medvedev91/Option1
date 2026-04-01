@@ -12,6 +12,7 @@ private var onOptionTabPressedTask: Task<(), Error>? = nil
 private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 
 private var optionTabHotKeyHandlers: [HotKey] = []
+private var optionTabJkHotKeyHandlers: [HotKey] = []
 private var optionTabLocalMonitorForEvents: Any?
 private var optionTabGlobalMonitorForEvents: Any?
 
@@ -96,6 +97,10 @@ class HotKeysUtils {
                 OptionTabManager.instance.onOptionKeyUp()
             }
         }
+        
+        if KvDb.selectOptionTabDbMode() == .jk {
+            enableOptionTabJkHotKeys()
+        }
     }
     
     static func disableOptionTab() {
@@ -113,6 +118,48 @@ class HotKeysUtils {
             NSEvent.removeMonitor(optionTabGlobalMonitorForEventsLocal)
             optionTabGlobalMonitorForEvents = nil
         }
+        // JK
+        disableOptionTabJkHotKeys()
+    }
+    
+    @MainActor
+    static func enableOptionTabJkHotKeys() {
+        // Eliminate duplications
+        if !optionTabJkHotKeyHandlers.isEmpty {
+            return
+        }
+        
+        optionTabJkHotKeyHandlers.append(
+            HotKey(
+                key: .j,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionTabKeyDownPressed(fromJk: true)
+                },
+                keyUpHandler: {
+                    onOptionTabKeyUpPressed()
+                },
+            )
+        )
+        optionTabJkHotKeyHandlers.append(
+            HotKey(
+                key: .k,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionShiftTabKeyDownPressed(fromJk: true)
+                },
+                keyUpHandler: {
+                    onOptionShiftTabKeyUpPressed()
+                },
+            )
+        )
+    }
+    
+    static func disableOptionTabJkHotKeys() {
+        optionTabJkHotKeyHandlers.forEach { hotKey in
+            hotKey.isPaused = true
+        }
+        optionTabJkHotKeyHandlers.removeAll()
     }
     
     @MainActor

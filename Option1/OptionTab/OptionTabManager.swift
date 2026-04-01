@@ -93,6 +93,9 @@ class OptionTabManager {
     func closeWindow() {
         self.optionTabView?.window.close()
         self.optionTabView = nil
+        if KvDb.selectOptionTabDbMode() != .jk {
+            HotKeysUtils.disableOptionTabJkHotKeys()
+        }
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
@@ -161,5 +164,7 @@ class OptionTabManager {
                 self.optionTabView?.window.makeKeyAndOrderFront(nil)
             }
         }
+        
+        HotKeysUtils.enableOptionTabJkHotKeys()
     }
 }
