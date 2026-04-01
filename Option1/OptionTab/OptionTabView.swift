@@ -107,6 +107,19 @@ struct OptionTabView: View {
 
             VStack(spacing: 0) {
                 
+                HStack {
+                    
+                    DbModeButton(dbMode: .jk, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    DbModeButton(dbMode: .apps, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    DbModeButton(dbMode: .history, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+
+                    Spacer()
+                }
+                .frame(height: Self.itemHeight)
+                .padding(.leading, Self.menuIconWidth)
+
+                MenuDivider()
+
                 ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
                     MenuItemView(
                         onClick: {
@@ -200,7 +213,7 @@ struct OptionTabView: View {
         .background(
             // Если все элементы не влазят в экран, углы лучше сделать прямоугольными,
             // будет нагляднее что нужно докручивать вниз.
-            RoundedRectangle(cornerRadius: isFullHeight ? 0 : 16, style: .continuous)
+            RoundedRectangle(cornerRadius: data.isFullHeight ? 0 : 16, style: .continuous)
                 .fill(.thinMaterial)
         )
     }
