@@ -88,13 +88,13 @@ class HotKeysUtils {
         
         optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             if !event.modifierFlags.contains(.option) {
-                OptionTabManager.instance.onOptionKeyUp()
+                onOptionTabKeyUp()
             }
             return event
         }
         optionTabGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
             if !event.modifierFlags.contains(.option) {
-                OptionTabManager.instance.onOptionKeyUp()
+                onOptionTabKeyUp()
             }
         }
         
@@ -251,6 +251,13 @@ private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
 private func onOptionShiftTabKeyUpPressed() {
     onOptionShiftTabPressedTask?.cancel()
     onOptionShiftTabPressedTask = nil
+}
+
+@MainActor
+private func onOptionTabKeyUp() {
+    OptionTabManager.instance.onOptionKeyUp()
+    onOptionTabKeyUpPressed()
+    onOptionShiftTabKeyUpPressed()
 }
 
 ///
