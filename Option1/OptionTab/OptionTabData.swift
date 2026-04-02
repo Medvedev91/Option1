@@ -61,12 +61,26 @@ class OptionTabData: ObservableObject {
             )
         }
 
+        // Если можно расположить между top safe area и dock
+        let screenVisibleHeight: CGFloat = nsScreen.visibleFrame.height
+        if screenVisibleHeight >= contentHeight {
+            let offsetY: CGFloat = screenVisibleHeight - contentHeight
+            let dockHeight: CGFloat = screenHeight - screenVisibleHeight - safeAreaTop
+            // dockHeight > 10 т.к. почему-то даже без Dock он равен 1.0. Берем с запасом.
+            let offsetBottom: CGFloat = dockHeight + (offsetY / (dockHeight > 10 ? 2 : 1.62))
+            return OptionTabWindowSize(
+                nsRect: NSRect(x: x, y: offsetBottom, width: contentWidth, height: contentHeight),
+                isFullHeight: false,
+                safeAreaTop: 0,
+            )
+        }
+        
         let safeScreenHeight: CGFloat = screenHeight - safeAreaTop
         
-        // Если можно поместить под safe area
+        // Если можно поместить под top safe area но над dock.
         if safeScreenHeight > contentHeight {
             let offsetY: CGFloat = safeScreenHeight - contentHeight
-            let offsetBottom: CGFloat = offsetY / 1.62
+            let offsetBottom: CGFloat = (offsetY > 4 ? offsetY - 4 : offsetY)
             return OptionTabWindowSize(
                 nsRect: NSRect(x: x, y: offsetBottom, width: contentWidth, height: contentHeight),
                 isFullHeight: false,
