@@ -13,6 +13,7 @@ private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 
 private var optionTabHotKeyHandlers: [HotKey] = []
 private var optionTabJkHotKeyHandlers: [HotKey] = []
+private var optionTabArrowsHotKeyHandlers: [HotKey] = []
 private var optionTabLocalMonitorForEvents: Any?
 private var optionTabGlobalMonitorForEvents: Any?
 
@@ -160,6 +161,46 @@ class HotKeysUtils {
             hotKey.isPaused = true
         }
         optionTabJkHotKeyHandlers.removeAll()
+    }
+    
+    @MainActor
+    static func enableOptionTabArrowsHotKeys() {
+        // Eliminate duplications
+        if !optionTabArrowsHotKeyHandlers.isEmpty {
+            return
+        }
+        
+        optionTabArrowsHotKeyHandlers.append(
+            HotKey(
+                key: .downArrow,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionTabKeyDownPressed(fromJk: false)
+                },
+                keyUpHandler: {
+                    onOptionTabKeyUpPressed()
+                },
+            )
+        )
+        optionTabArrowsHotKeyHandlers.append(
+            HotKey(
+                key: .upArrow,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionShiftTabKeyDownPressed(fromJk: false)
+                },
+                keyUpHandler: {
+                    onOptionShiftTabKeyUpPressed()
+                },
+            )
+        )
+    }
+    
+    static func disableOptionTabArrowsHotKeys() {
+        optionTabArrowsHotKeyHandlers.forEach { hotKey in
+            hotKey.isPaused = true
+        }
+        optionTabArrowsHotKeyHandlers.removeAll()
     }
     
     @MainActor

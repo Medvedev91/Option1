@@ -96,6 +96,7 @@ class OptionTabManager {
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
+        HotKeysUtils.disableOptionTabArrowsHotKeys()
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
@@ -166,5 +167,6 @@ class OptionTabManager {
         }
         
         HotKeysUtils.enableOptionTabJkHotKeys()
+        HotKeysUtils.enableOptionTabArrowsHotKeys()
     }
 }
