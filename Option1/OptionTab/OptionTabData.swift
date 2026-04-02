@@ -49,14 +49,8 @@ class OptionTabData: ObservableObject {
         let x: CGFloat = (screenSize.width - contentWidth) / 2.0
         let y: CGFloat = (screenSize.height - windowHeight) / 2.0
         
-        let nsRect = NSRect(
-            x: x,
-            y: y,
-            width: contentWidth,
-            height: windowHeight,
-        )
         return OptionTabWindowSize(
-            nsRect: nsRect,
+            nsRect: NSRect(x: x, y: y, width: contentWidth, height: windowHeight),
             isFullHeight: contentHeight >= screenSize.height,
         )
     }
