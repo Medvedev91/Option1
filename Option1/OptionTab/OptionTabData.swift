@@ -61,25 +61,14 @@ class OptionTabData: ObservableObject {
             )
         }
 
-        let offsetY: CGFloat = screenHeight - contentHeight
-        let offsetTop: CGFloat = offsetY / 1.62
-        let offsetBottom: CGFloat = offsetY - offsetTop
+        let safeScreenHeight: CGFloat = screenHeight - safeAreaTop
         
-        // Если можно отобразить ровно по центру не задевая safe area
-        if offsetTop > safeAreaTop {
+        // Если можно поместить под safe area
+        if safeScreenHeight > contentHeight {
+            let offsetY: CGFloat = safeScreenHeight - contentHeight
+            let offsetBottom: CGFloat = offsetY / 1.62
             return OptionTabWindowSize(
                 nsRect: NSRect(x: x, y: offsetBottom, width: contentWidth, height: contentHeight),
-                isFullHeight: false,
-                safeAreaTop: 0,
-            )
-        }
-        
-        // Если задеваем safe area, но можно поменить под safe area
-        let safeScreenHeight: CGFloat = screenHeight - safeAreaTop
-        if safeScreenHeight >= contentHeight {
-            let bottomOffset: CGFloat = (safeScreenHeight - contentHeight) / 1.62
-            return OptionTabWindowSize(
-                nsRect: NSRect(x: x, y: bottomOffset, width: contentWidth, height: contentHeight),
                 isFullHeight: false,
                 safeAreaTop: 0,
             )
