@@ -44,6 +44,7 @@ struct OptionTabView: View {
                         
                         ZStack {}
                             .id(windowsScrollTopId)
+                            .padding(.bottom, data.windowSize.safeAreaTop)
                         
                         switch data.uiMode {
                         case .apps:
@@ -156,6 +157,7 @@ struct OptionTabView: View {
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
+                .padding(.top, data.windowSize.safeAreaTop)
                 .onHover { isHovered in
                     self.isModeHovered = isHovered
                 }
