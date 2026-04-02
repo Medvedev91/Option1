@@ -20,6 +20,8 @@ struct OptionTabView: View {
     static let menuDividerHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
+    @ObservedObject private var menuBarManager = MenuBarManager.instance
+    
     let window: NSWindow
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
@@ -140,11 +142,12 @@ struct OptionTabView: View {
                 
                 MenuDivider()
                 
-                ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
+                ForEach(menuBarManager.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
                     MenuItemView(
                         onClick: {
-                            closeWindow()
-                            MenuBarManager.instance.setWorkspaceDb(workspaceUi.workspaceDb)
+                            withAnimation {
+                                MenuBarManager.instance.setWorkspaceDb(workspaceUi.workspaceDb)
+                            }
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
@@ -172,7 +175,7 @@ struct OptionTabView: View {
                 
                 MenuDivider()
                 
-                ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
+                ForEach(menuBarManager.bindsUi, id: \.bindDb.id) { bindUi in
                     MenuItemView(
                         onClick: {
                             closeWindow()
