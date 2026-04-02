@@ -37,21 +37,57 @@ class OptionTabData: ObservableObject {
         
         let contentWidth: CGFloat = OptionTabView.fullWidth
         let contentHeight: CGFloat = max(windowsHeight, menuHeight)
+        
         guard let nsScreen: NSScreen = NSScreen.main else {
             return OptionTabWindowSize(
                 nsRect: NSRect(x: 0, y: 0, width: contentWidth, height: contentHeight),
                 isFullHeight: false,
+                safeAreaTop: 0,
             )
         }
-        let screenSize: CGSize = nsScreen.visibleFrame.size
-        let windowHeight: CGFloat = min(contentHeight, screenSize.height)
         
-        let x: CGFloat = (screenSize.width - contentWidth) / 2.0
-        let y: CGFloat = (screenSize.height - windowHeight) / 2.0
+        let screenWidth: CGFloat = nsScreen.frame.width
+        let x: CGFloat = (screenWidth - contentWidth) / 2.0
         
+        let screenHeight: CGFloat = nsScreen.frame.height
+        let safeAreaTop: CGFloat = nsScreen.safeAreaInsets.top
+        
+        // Если высота Option-Tab больше высоты экрана
+        if contentHeight >= screenHeight {
+            return OptionTabWindowSize(
+                nsRect: NSRect(x: x, y: 0, width: contentWidth, height: screenHeight),
+                isFullHeight: true,
+                safeAreaTop: safeAreaTop,
+            )
+        }
+
+        let offsetY: CGFloat = (screenHeight - contentHeight) / 2.0
+        
+        // Если можно отобразить ровно по центру не задевая safe area
+        if offsetY > safeAreaTop {
+            return OptionTabWindowSize(
+                nsRect: NSRect(x: x, y: offsetY, width: contentWidth, height: contentHeight),
+                isFullHeight: false,
+                safeAreaTop: 0,
+            )
+        }
+        
+        // Если задеваем safe area, но можно поменить под safe area
+        let safeScreenHeight: CGFloat = screenHeight - safeAreaTop
+        if safeScreenHeight >= contentHeight {
+            let bottomOffsetY: CGFloat = (safeScreenHeight - contentHeight) / 1.62
+            return OptionTabWindowSize(
+                nsRect: NSRect(x: x, y: bottomOffsetY, width: contentWidth, height: contentHeight),
+                isFullHeight: false,
+                safeAreaTop: 0,
+            )
+        }
+        
+        // Не помещается под safe area, отображаем во весь экран
         return OptionTabWindowSize(
-            nsRect: NSRect(x: x, y: y, width: contentWidth, height: windowHeight),
-            isFullHeight: contentHeight >= screenSize.height,
+            nsRect: NSRect(x: x, y: 0, width: contentWidth, height: screenHeight),
+            isFullHeight: true,
+            safeAreaTop: safeAreaTop,
         )
     }
     
