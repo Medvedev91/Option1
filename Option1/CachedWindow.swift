@@ -1,5 +1,6 @@
 import AppKit
 
+// AXUIElement hash: CachedWindow
 var cachedWindows: [Int: CachedWindow] = [:]
 
 struct CachedWindow: Hashable {
@@ -9,42 +10,43 @@ struct CachedWindow: Hashable {
     let axuiElementId: AXUIElementID
     let title: String
     let appBundle: String
+    let icon: NSImage?
     let shellWithNewWindow: String?
     
     static func addByAxuiElement(
         nsRunningApplication: NSRunningApplication,
         axuiElement: AXUIElement,
         shellWithNewWindow: String? = nil,
-    ) throws -> CachedWindow? {
+    ) throws {
         if
             let pid = try axuiElement.pid(),
             let axuiElementId = axuiElement.id(),
             let title = try axuiElement.title(),
             let bundleIdentifier = nsRunningApplication.bundleIdentifier {
             
-            let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
-            let newCachedWindow = CachedWindow(
-                axuiElement: axuiElement,
-                pid: pid,
-                axuiElementId: axuiElementId,
-                title: title,
-                appBundle: bundleIdentifier,
-                shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
-            )
-            // Trial to fix floating crash on app starts
+            // Часто при старте приложения при обращении и записи в cachedWindows
+            // происходит крэш. Пытаюсь исправить через MainActor.
             Task { @MainActor in
+                let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
+                let newCachedWindow = CachedWindow(
+                    axuiElement: axuiElement,
+                    pid: pid,
+                    axuiElementId: axuiElementId,
+                    title: title,
+                    appBundle: bundleIdentifier,
+                    icon: nsRunningApplication.icon,
+                    shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
+                )
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
-            return newCachedWindow
         }
-        return nil
     }
     
     // ВНИМАНИЕ! SUPER SLOW `.allWindows()`
     static func addByApp(_ app: NSRunningApplication) throws {
         let pid = app.processIdentifier
         try AXUIElementCreateApplication(pid).allWindows(pid).forEach { axuiElement in
-            _ = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         }
     }
     

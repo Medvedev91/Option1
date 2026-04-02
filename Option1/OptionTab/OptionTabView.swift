@@ -12,19 +12,22 @@ struct OptionTabView: View {
     static let windowsWidth: CGFloat = 600.0
     static let menuWidth: CGFloat = fullWidth - windowsWidth
     
-    static let itemHeight = 24.0
+    static let itemHeight = 28.0
     static let itemTwoLinesHeight = 40.0
     static let itemHeaderPadding = itemHeight / 1.62
     
     static let menuIconWidth: CGFloat = 20.0
-    static let menuSeparatorHeight: CGFloat = itemHeaderPadding
+    static let menuDividerHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
-    let isFullHeight: Bool
+    
+    ///
+    
+    @State private var dbMode: OptionTabDbMode = KvDb.selectOptionTabDbMode()
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -38,18 +41,34 @@ struct OptionTabView: View {
                         ZStack {}
                             .id(windowsScrollTopId)
                         
-                        ForEach(data.appsUi, id: \.app) { appUi in
-                            AppView(
-                                appUi: appUi,
-                                updateAppsUi: {
-                                    data.rebuildAppsUi()
-                                },
-                                selectedCachedWindow: data.selectedCachedWindow,
-                                onCachedWindowHover: { cachedWindow in
-                                    data.selectedCachedWindow = cachedWindow
-                                },
-                                onCachedWindowFocus: onCachedWindowFocus,
-                            )
+                        switch data.uiMode {
+                        case .apps:
+                            ForEach(data.appsUi, id: \.app) { appUi in
+                                AppView(
+                                    appUi: appUi,
+                                    updateAppsUi: {
+                                        data.rebuildAppsUi()
+                                    },
+                                    selectedCachedWindow: data.selectedCachedWindow,
+                                    onCachedWindowHover: { cachedWindow in
+                                        data.selectedCachedWindow = cachedWindow
+                                    },
+                                    onCachedWindowFocus: onCachedWindowFocus,
+                                )
+                            }
+                        case .history:
+                            ZStack {}
+                                .frame(height: Self.itemHeaderPadding)
+                            ForEach(data.history, id: \.self) { cachedWindow in
+                                HistoryItemView(
+                                    cachedWindow: cachedWindow,
+                                    selectedCachedWindow: data.selectedCachedWindow,
+                                    onCachedWindowHover: { cachedWindow in
+                                        data.selectedCachedWindow = cachedWindow
+                                    },
+                                    onCachedWindowFocus: onCachedWindowFocus,
+                                )
+                            }
                         }
                         
                         ZStack {}
@@ -66,30 +85,35 @@ struct OptionTabView: View {
                                 return
                             }
                             
-                            let appsUi = data.appsUi.flatMap(\.cachedWindows)
-                            if new == appsUi.first {
+                            let windows: [CachedWindow] = switch data.uiMode {
+                            case .apps:
+                                data.appsUi.flatMap(\.cachedWindows)
+                            case .history:
+                                data.history
+                            }
+                            if new == windows.first {
                                 // Для первого элемента нужно прокрутить в
                                 // самый верх чтобы был виден заголовок.
                                 scroll.scrollTo(windowsScrollTopId)
-                            } else if new == appsUi.last {
+                            } else if new == windows.last {
                                 // Для последнего надо докрутить в самый низ для отступа.
                                 scroll.scrollTo(windowsScrollBottomId)
                             } else {
                                 // Прокрутка вперед актуальна если окно не влезает в высоту
-                                if let idx = appsUi.firstIndex(of: new) {
+                                if let idx = windows.firstIndex(of: new) {
                                     if isOptionTabPressedUpOrDown {
                                         let overScrollSize = 4
                                         if idx <= overScrollSize {
                                             scroll.scrollTo(windowsScrollTopId)
                                         } else {
-                                            scroll.scrollTo(appsUi[idx - overScrollSize].hashValue)
+                                            scroll.scrollTo(windows[idx - overScrollSize].hashValue)
                                         }
                                     } else {
                                         let overScrollSize = 3
-                                        if (appsUi.count - idx) <= overScrollSize {
+                                        if (windows.count - idx) <= overScrollSize {
                                             scroll.scrollTo(windowsScrollBottomId)
                                         } else {
-                                            scroll.scrollTo(appsUi[idx + overScrollSize].hashValue)
+                                            scroll.scrollTo(windows[idx + overScrollSize].hashValue)
                                         }
                                     }
                                 } else {
@@ -100,8 +124,21 @@ struct OptionTabView: View {
                     }
                 }
             }
-
+            
             VStack(spacing: 0) {
+                
+                HStack {
+                    
+                    DbModeButton(dbMode: .jk, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    DbModeButton(dbMode: .apps, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    DbModeButton(dbMode: .history, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    
+                    Spacer()
+                }
+                .frame(height: Self.itemHeight)
+                .padding(.leading, Self.menuIconWidth)
+                
+                MenuDivider()
                 
                 ForEach(MenuBarManager.instance.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
                     MenuItemView(
@@ -133,10 +170,7 @@ struct OptionTabView: View {
                     )
                 }
                 
-                Divider()
-                    .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing, 24)
+                MenuDivider()
                 
                 ForEach(MenuBarManager.instance.bindsUi, id: \.bindDb.id) { bindUi in
                     MenuItemView(
@@ -175,10 +209,7 @@ struct OptionTabView: View {
                     )
                 }
                 
-                Divider()
-                    .frame(height: Self.menuSeparatorHeight)
-                    .padding(.leading, Self.menuIconWidth)
-                    .padding(.trailing, 24)
+                MenuDivider()
                 
                 MenuItemView(
                     onClick: {
@@ -202,9 +233,20 @@ struct OptionTabView: View {
         .background(
             // Если все элементы не влазят в экран, углы лучше сделать прямоугольными,
             // будет нагляднее что нужно докручивать вниз.
-            RoundedRectangle(cornerRadius: isFullHeight ? 0 : 16, style: .continuous)
+            RoundedRectangle(cornerRadius: data.windowSize.isFullHeight ? 0 : 16, style: .continuous)
                 .fill(.thinMaterial)
         )
+        .onChange(of: data.windowSize.nsRect) { _, newValue in
+            NSAnimationContext.runAnimationGroup({ context in
+                context.timingFunction = CAMediaTimingFunction(name: .default)
+                window.animator().setFrame(
+                    newValue,
+                    display: false,
+                    animate: true,
+                )
+            }, completionHandler: {
+            })
+        }
     }
 }
 
@@ -216,24 +258,10 @@ private struct AppView: View {
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
-    ///
-    
-    @State private var isFirstHeaderHover = true
-    @State private var isHeaderHover = false
-    
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
-            VStack(spacing: 0) {
-                
-                if let icon = appUi.icon {
-                    Image(nsImage: icon)
-                        .resizable()
-                        .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
-                        .onTapGesture {
-                            openApp()
-                        }
-                }
+            HStack(spacing: 0) {
                 
                 ZStack {
                     let isPinned = appUi.sort != nil
@@ -253,50 +281,30 @@ private struct AppView: View {
                         label: {
                             Image(systemName: isPinned ? "pin.fill" : "pin")
                                 .font(.system(size: 12, weight: .light))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.primary)
                                 .padding(.top, 1)
                                 .contentShape(Rectangle()) // Tap area
                         },
                     )
                     .buttonStyle(.plain)
                 }
-                .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
+                .frame(width: 28, height: OptionTabView.itemHeight)
+                .padding(.leading, 4)
+
+                if let icon = appUi.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
+                        .onTapGesture {
+                            if let cachedWindow = appUi.cachedWindows.first {
+                                onCachedWindowFocus(cachedWindow)
+                            }
+                        }
+                }
             }
-            .frame(width: OptionTabView.itemHeight)
-            .padding(.leading, 12)
             .padding(.trailing, 2)
             
             VStack(spacing: 0) {
-                
-                WindowsListItemButton(
-                    text: appUi.app?.localizedName ?? "Other",
-                    fontWeight: .heavy,
-                    isSelected: isHeaderHover && selectedCachedWindow == nil,
-                    onClick: {
-                        openApp()
-                    },
-                )
-                .onContinuousHover { hoverPhase in
-                    // Если список не входит в экран, а курсор в зоне прокрутки,
-                    // при автоматической докрутке за выбранным элементом
-                    // сработает данный метод и открутит экран назад.
-                    if HotKeysUtils.isOptionTabPressedUpOrDownOrNil != nil {
-                        return
-                    }
-                    
-                    switch hoverPhase {
-                    case .active:
-                        if !isFirstHeaderHover {
-                            onCachedWindowHover(nil)
-                            isHeaderHover = true
-                        }
-                        isFirstHeaderHover = false
-                    case .ended:
-                        isFirstHeaderHover = true
-                        isHeaderHover = false
-                    }
-                }
-                
                 let cachedWindows = appUi.cachedWindows
                 ForEach(cachedWindows, id: \.self) { cachedWindow in
                     CachedWindowView(
@@ -314,12 +322,6 @@ private struct AppView: View {
             }
         }
         .padding(.top, OptionTabView.itemHeaderPadding)
-    }
-    
-    private func openApp() {
-        if let cachedWindow = appUi.cachedWindows.first {
-            onCachedWindowFocus(cachedWindow)
-        }
     }
 }
 
@@ -435,5 +437,93 @@ private struct WindowsListItemButton: View {
         )
         .buttonStyle(.plain)
         .contentShape(Rectangle()) // Tap area
+    }
+}
+
+private struct HistoryItemView: View {
+    
+    let cachedWindow: CachedWindow
+    let selectedCachedWindow: CachedWindow?
+    let onCachedWindowHover: (CachedWindow?) -> Void
+    let onCachedWindowFocus: (CachedWindow) -> Void
+    
+    ///
+    
+    private let imageSize = OptionTabView.itemHeight
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            
+            ZStack {
+                if let icon = cachedWindow.icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: imageSize, height: imageSize)
+                        .onTapGesture {
+                            onCachedWindowFocus(cachedWindow)
+                        }
+                }
+            }
+            .frame(width: imageSize)
+            .padding(.leading, 16)
+            .padding(.trailing, 8)
+            
+            CachedWindowView(
+                cachedWindow: cachedWindow,
+                isSelected: cachedWindow == selectedCachedWindow,
+                onCachedWindowHover: { isHover in
+                    onCachedWindowHover(isHover ? cachedWindow : nil)
+                },
+                onCachedWindowFocus: {
+                    onCachedWindowFocus(cachedWindow)
+                },
+            )
+            .id(cachedWindow.hashValue)
+        }
+    }
+}
+
+private struct MenuDivider: View {
+    
+    var body: some View {
+        Divider()
+            .frame(height: OptionTabView.menuDividerHeight)
+            .padding(.leading, OptionTabView.menuIconWidth)
+            .padding(.trailing, 24)
+    }
+}
+
+private struct DbModeButton: View {
+    
+    let dbMode: OptionTabDbMode
+    @Binding var stateUiMode: OptionTabUiMode
+    @Binding var stateDbMode: OptionTabDbMode
+    
+    ///
+
+    private var text: String {
+        switch dbMode {
+        case .apps:
+            "Apps"
+        case .history:
+            "History"
+        case .jk:
+            "JK"
+        }
+    }
+    
+    var body: some View {
+        Button(text) {
+            stateUiMode = switch dbMode {
+            case .apps: .apps
+            case .history: .history
+            case .jk: stateUiMode
+            }
+            stateDbMode = dbMode
+            KvDb.upsertOptionTabDbMode(dbMode)
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(stateDbMode == dbMode ? .primary : .secondary)
+        .font(.system(size: fontSize))
     }
 }

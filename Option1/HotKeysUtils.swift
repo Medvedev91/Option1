@@ -7,11 +7,12 @@ private var keepHotKeyHandlers: [HotKey] = []
 // Option-Tab
 
 private let onOptionTabLongPressFirstDelay: UInt64 = 250_000_000
-private let onOptionTabLongPressRepeatDelay: UInt64 = 35_000_000
+private let onOptionTabLongPressRepeatDelay: UInt64 = 30_000_000
 private var onOptionTabPressedTask: Task<(), Error>? = nil
 private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 
 private var optionTabHotKeyHandlers: [HotKey] = []
+private var optionTabJkHotKeyHandlers: [HotKey] = []
 private var optionTabLocalMonitorForEvents: Any?
 private var optionTabGlobalMonitorForEvents: Any?
 
@@ -64,18 +65,10 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionTabPressed()
-                    onOptionTabPressedTask = Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
-                        while onOptionTabPressedTask != nil {
-                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionTabPressed()
-                        }
-                    }
+                    onOptionTabKeyDownPressed(fromJk: false)
                 },
                 keyUpHandler: {
-                    onOptionTabPressedTask?.cancel()
-                    onOptionTabPressedTask = nil
+                    onOptionTabKeyUpPressed()
                 },
             )
         )
@@ -85,18 +78,10 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option, .shift],
                 keyDownHandler: {
-                    OptionTabManager.instance.onOptionShiftTabPressed()
-                    onOptionShiftTabPressedTask = Task { @MainActor in
-                        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
-                        while onOptionShiftTabPressedTask != nil {
-                            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-                            OptionTabManager.instance.onOptionShiftTabPressed()
-                        }
-                    }
+                    onOptionShiftTabKeyDownPressed(fromJk: false)
                 },
                 keyUpHandler: {
-                    onOptionShiftTabPressedTask?.cancel()
-                    onOptionShiftTabPressedTask = nil
+                    onOptionShiftTabKeyUpPressed()
                 },
             )
         )
@@ -111,6 +96,10 @@ class HotKeysUtils {
             if !event.modifierFlags.contains(.option) {
                 OptionTabManager.instance.onOptionKeyUp()
             }
+        }
+        
+        if KvDb.selectOptionTabDbMode() == .jk {
+            enableOptionTabJkHotKeys()
         }
     }
     
@@ -129,6 +118,48 @@ class HotKeysUtils {
             NSEvent.removeMonitor(optionTabGlobalMonitorForEventsLocal)
             optionTabGlobalMonitorForEvents = nil
         }
+        // JK
+        disableOptionTabJkHotKeys()
+    }
+    
+    @MainActor
+    static func enableOptionTabJkHotKeys() {
+        // Eliminate duplications
+        if !optionTabJkHotKeyHandlers.isEmpty {
+            return
+        }
+        
+        optionTabJkHotKeyHandlers.append(
+            HotKey(
+                key: .j,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionTabKeyDownPressed(fromJk: true)
+                },
+                keyUpHandler: {
+                    onOptionTabKeyUpPressed()
+                },
+            )
+        )
+        optionTabJkHotKeyHandlers.append(
+            HotKey(
+                key: .k,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionShiftTabKeyDownPressed(fromJk: true)
+                },
+                keyUpHandler: {
+                    onOptionShiftTabKeyUpPressed()
+                },
+            )
+        )
+    }
+    
+    static func disableOptionTabJkHotKeys() {
+        optionTabJkHotKeyHandlers.forEach { hotKey in
+            hotKey.isPaused = true
+        }
+        optionTabJkHotKeyHandlers.removeAll()
     }
     
     @MainActor
@@ -184,6 +215,45 @@ class HotKeysUtils {
         }
     }
 }
+
+//
+// Option-Tab Handlers
+
+@MainActor
+private func onOptionTabKeyDownPressed(fromJk: Bool) {
+    OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+    onOptionTabPressedTask = Task { @MainActor in
+        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        while onOptionTabPressedTask != nil {
+            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+        }
+    }
+}
+
+private func onOptionTabKeyUpPressed() {
+    onOptionTabPressedTask?.cancel()
+    onOptionTabPressedTask = nil
+}
+
+@MainActor
+private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
+    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+    onOptionShiftTabPressedTask = Task { @MainActor in
+        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        while onOptionShiftTabPressedTask != nil {
+            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+        }
+    }
+}
+
+private func onOptionShiftTabKeyUpPressed() {
+    onOptionShiftTabPressedTask?.cancel()
+    onOptionShiftTabPressedTask = nil
+}
+
+///
 
 private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
     try WindowsManager.focusWindow(axuiElement: axuiElement)

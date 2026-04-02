@@ -9,8 +9,7 @@ class AppObserver {
     
     static let shared = AppObserver()
     
-    static var previousFocusedCachedWindow: CachedWindow? = nil
-    static var currentFocusedCachedWindow: CachedWindow? = nil
+    static var stackAxuiHashes: [Int] = []
     
     ///
     
@@ -80,19 +79,20 @@ class AppObserver {
             attachNotification(kAXApplicationActivatedNotification)
             attachNotification(kAXFocusedWindowChangedNotification)
             attachNotification(kAXTitleChangedNotification)
-
+            
             CFRunLoopAddSource(CFRunLoopGetCurrent(), AXObserverGetRunLoopSource(observer), .defaultMode)
             
             self.observers[pid] = observer
         }
     }
     
-    static func upsertFocusedCachedWindow(_ cachedWindow: CachedWindow) {
-        if cachedWindow.axuiElement.hashValue == Self.currentFocusedCachedWindow?.axuiElement.hashValue {
-            return
-        }
-        Self.previousFocusedCachedWindow = Self.currentFocusedCachedWindow
-        Self.currentFocusedCachedWindow = cachedWindow
+    //
+    // Stack
+    
+    fileprivate static func upsertStack(_ axuiElement: AXUIElement) {
+        let hash: Int = axuiElement.hashValue
+        stackAxuiHashes.removeAll { $0 == hash }
+        stackAxuiHashes.insert(hash, at: 0)
     }
 }
 
@@ -136,17 +136,15 @@ private func handleNotification(
             // Срабатывает при фокусе окна другого приложения.
             // Нужно использовать `focusedWindow()`
             if let focusedWindow = try axuiElement.focusedWindow() {
-                if let cachedWindow = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: focusedWindow) {
-                    AppObserver.upsertFocusedCachedWindow(cachedWindow)
-                }
+                AppObserver.upsertStack(focusedWindow)
+                try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: focusedWindow)
             }
         } else if (String(notification) == kAXFocusedWindowChangedNotification) {
             // Срабатывает при смене окна у текущего приложения. Например между
             // окнами Xcode. Иногда срабатывает при фокусе на другое приложение.
             // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
-            if let cachedWindow = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement) {
-                AppObserver.upsertFocusedCachedWindow(cachedWindow)
-            }
+            AppObserver.upsertStack(axuiElement)
+            try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
         } else if (String(notification) == kAXTitleChangedNotification) {
             // Срабатывает на изменение заголовка у окна.
             // Использовать напрямую `axuiElement`, а не `.focusedWindow()`.
@@ -155,7 +153,7 @@ private func handleNotification(
             // при холодном старте Idea в которой откроется несколько окон, у части окон
             // не полные имена, соответственно поиск по заголовку может не сработать.
             if let title = try axuiElement.title(), !title.isEmpty {
-                _ = try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
+                try CachedWindow.addByAxuiElement(nsRunningApplication: app, axuiElement: axuiElement)
             }
         } else {
             reportApi("AppObserver.handleNotification() unhandled notification")
