@@ -21,6 +21,8 @@ struct OptionTabView: View {
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     @ObservedObject private var menuBarManager = MenuBarManager.instance
+    @State private var isJkInfoPresented = false
+    @State private var isModeHovered: Bool = false
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
@@ -136,10 +138,34 @@ struct OptionTabView: View {
                     DbModeButton(dbMode: .history, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
                     
                     Spacer()
+                    
+                    if isModeHovered {
+                        Button(
+                            action: {
+                                isJkInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "info.circle")
+                                    .font(.system(size: 13, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                        .padding(.trailing, 21)
+                    }
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
-                
+                .onHover { isHovered in
+                    self.isModeHovered = isHovered
+                }
+                .alert(
+                    "",
+                    isPresented: $isJkInfoPresented,
+                    actions: {},
+                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, and Option-J to History.") }
+                )
+
                 MenuDivider()
                 
                 ForEach(menuBarManager.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
