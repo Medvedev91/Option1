@@ -37,26 +37,17 @@ class OptionTabData: ObservableObject {
         
         let contentWidth: CGFloat = OptionTabView.fullWidth
         let contentHeight: CGFloat = max(windowsHeight, menuHeight)
-        let screenSize: CGSize? = NSScreen.main.map { $0.visibleFrame.size }
-
-        let windowHeight: CGFloat = {
-            guard let screenHeight = screenSize?.height else {
-                return contentHeight
-            }
-            // Не нужно вертикальных отступов для визуальной
-            // наглядности если список не входит в экран.
-            return min(contentHeight, screenHeight)
-        }()
+        guard let nsScreen: NSScreen = NSScreen.main else {
+            return OptionTabWindowSize(
+                nsRect: NSRect(x: 0, y: 0, width: contentWidth, height: contentHeight),
+                isFullHeight: false,
+            )
+        }
+        let screenSize: CGSize = nsScreen.visibleFrame.size
+        let windowHeight: CGFloat = min(contentHeight, screenSize.height)
         
-        let x: CGFloat = {
-            guard let screenWidth = screenSize?.width else { return 0 }
-            return (screenWidth - contentWidth) / 2.0
-        }()
-        
-        let y: CGFloat = {
-            guard let screenHeight = screenSize?.height else { return 0 }
-            return (screenHeight - windowHeight) / 2.0
-        }()
+        let x: CGFloat = (screenSize.width - contentWidth) / 2.0
+        let y: CGFloat = (screenSize.height - windowHeight) / 2.0
         
         let nsRect = NSRect(
             x: x,
@@ -66,7 +57,7 @@ class OptionTabData: ObservableObject {
         )
         return OptionTabWindowSize(
             nsRect: nsRect,
-            isFullHeight: screenSize.map { contentHeight >= $0.height } ?? true,
+            isFullHeight: contentHeight >= screenSize.height,
         )
     }
     
