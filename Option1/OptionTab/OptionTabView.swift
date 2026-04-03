@@ -166,7 +166,7 @@ struct OptionTabView: View {
                     "",
                     isPresented: $isJkInfoPresented,
                     actions: {},
-                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, and Option-J to History.") }
+                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                 )
 
                 MenuDivider()
