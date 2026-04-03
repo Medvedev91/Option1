@@ -328,6 +328,7 @@ private struct AppView: View {
                                     .font(.system(size: 12, weight: .light))
                                     .foregroundColor(.primary)
                                     .padding(.top, 1)
+                                    .padding(.leading, 1)
                                     .contentShape(Rectangle()) // Tap area
                             },
                         )
