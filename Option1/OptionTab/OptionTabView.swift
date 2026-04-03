@@ -232,6 +232,7 @@ struct OptionTabView: View {
                                     ZStack {
                                         Text(badge)
                                             .font(.system(size: 10, weight: .semibold))
+                                            .foregroundColor(.white)
                                     }
                                     .frame(width: 18, height: 18)
                                     .background(Circle().fill(.red))
@@ -353,6 +354,7 @@ private struct AppView: View {
                         ZStack {
                             Text(badge)
                                 .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(.white)
                         }
                         .frame(width: 23, height: 23)
                         .background(Circle().fill(.red))
