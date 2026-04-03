@@ -29,6 +29,9 @@ struct NavigationScreen: View {
                             Label("Option-Tab", systemImage: "macwindow.stack")
                                 .tag(Tab.optionTab)
                             
+                            Label("Favorite", systemImage: "star")
+                                .tag(Tab.favorite)
+                            
                             Label("Settings", systemImage: "gearshape")
                                 .tag(Tab.settings)
                             
@@ -87,14 +90,16 @@ struct NavigationScreen: View {
                     switch tab {
                     case .main:
                         MainTab()
+                    case .optionTab:
+                        OptionTabTab()
+                    case .favorite:
+                        FavoriteTab()
                     case .settings:
                         SettingsTab(
                             onDonationsClick: {
                                 tab = .donations
                             },
                         )
-                    case .optionTab:
-                        OptionTabTab()
                     case .donations:
                         DonationsTab()
                     case .workspace(let workspaceDb):
@@ -181,6 +186,7 @@ struct NavigationScreen: View {
 private enum Tab: Hashable {
     case main
     case optionTab
+    case favorite
     case settings
     case donations
     case workspace(workspaceDb: WorkspaceDb?)
