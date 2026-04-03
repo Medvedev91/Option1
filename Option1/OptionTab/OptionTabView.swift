@@ -21,6 +21,7 @@ struct OptionTabView: View {
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     @ObservedObject private var menuBarManager = MenuBarManager.instance
+    @ObservedObject private var badgesManager = BadgesManager.instance
     @State private var isJkInfoPresented = false
     @State private var isModeHovered: Bool = false
     
@@ -211,15 +212,14 @@ struct OptionTabView: View {
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
-                                VStack(spacing: 0) {
+                                
+                                VStack(alignment: .leading, spacing: 0) {
                                     Text(bindUi.title)
-                                        .textAlign(.leading)
                                         .font(.system(size: fontSize, weight: .regular))
                                         .foregroundColor(isHover ? .white : .primary)
                                         .lineLimit(1)
                                     if let subtitle = bindUi.subtitle {
                                         Text(subtitle)
-                                            .textAlign(.leading)
                                             .foregroundColor(isHover ? .white : .secondary)
                                             .font(.system(size: 11, weight: .regular))
                                             .lineLimit(1)
@@ -227,7 +227,20 @@ struct OptionTabView: View {
                                             .padding(.bottom, 2)
                                     }
                                 }
+                                
+                                if let badge = badgesManager.dictionary[bindUi.bindDb.bundle] {
+                                    ZStack {
+                                        Text(badge)
+                                            .font(.system(size: 10, weight: .semibold))
+                                    }
+                                    .frame(width: 18, height: 18)
+                                    .background(Circle().fill(.red))
+                                    .padding(.leading, 6)
+                                    .padding(.trailing, 6)
+                                }
+                                
                                 Spacer(minLength: 0)
+
                                 Text(bindUi.badge)
                                     .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
