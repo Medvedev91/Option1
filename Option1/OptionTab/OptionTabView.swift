@@ -289,6 +289,19 @@ private struct AppView: View {
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
+    ///
+    
+    @ObservedObject private var badgesManager = BadgesManager.instance
+    @State private var isAppHovered = false
+    @State private var isPinWrapperHovered = false
+    
+    private var badge: String? {
+        guard let bundle = appUi.bundle else {
+            return nil
+        }
+        return badgesManager.dictionary[bundle]
+    }
+    
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
@@ -296,31 +309,48 @@ private struct AppView: View {
                 
                 ZStack {
                     let isPinned = appUi.sort != nil
-                    Button(
-                        action: {
-                            if let bundle = appUi.bundle {
-                                if isPinned {
-                                    OptionTabPinDb.delete(bundle: bundle)
-                                } else {
-                                    OptionTabPinDb.upsertToTop(bundle: bundle)
+                    if isPinWrapperHovered || ((badge == nil) && (isAppHovered || isPinned)) {
+                        Button(
+                            action: {
+                                if let bundle = appUi.bundle {
+                                    if isPinned {
+                                        OptionTabPinDb.delete(bundle: bundle)
+                                    } else {
+                                        OptionTabPinDb.upsertToTop(bundle: bundle)
+                                    }
+                                    withAnimation {
+                                        updateAppsUi()
+                                    }
                                 }
-                                withAnimation {
-                                    updateAppsUi()
-                                }
-                            }
-                        },
-                        label: {
-                            Image(systemName: isPinned ? "pin.fill" : "pin")
-                                .font(.system(size: 12, weight: .light))
-                                .foregroundColor(.primary)
-                                .padding(.top, 1)
-                                .contentShape(Rectangle()) // Tap area
-                        },
-                    )
-                    .buttonStyle(.plain)
+                            },
+                            label: {
+                                Image(systemName: isPinned ? "pin.fill" : "pin")
+                                    .font(.system(size: 12, weight: .light))
+                                    .foregroundColor(.primary)
+                                    .padding(.top, 1)
+                                    .contentShape(Rectangle()) // Tap area
+                            },
+                        )
+                        .buttonStyle(.plain)
+                    }
+                    
+                    if !isPinWrapperHovered,
+                       let badge = badge {
+                        ZStack {
+                            Text(badge)
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .frame(width: 23, height: 23)
+                        .background(Circle().fill(.red))
+                    }
                 }
                 .frame(width: 28, height: OptionTabView.itemHeight)
                 .padding(.leading, 4)
+                .padding(.trailing, 1)
+                .contentShape(Rectangle()) // Hover area
+                .onHover { isHovered in
+                    isPinWrapperHovered = isHovered
+                }
 
                 if let icon = appUi.icon {
                     Image(nsImage: icon)
@@ -353,6 +383,9 @@ private struct AppView: View {
             }
         }
         .padding(.top, OptionTabView.itemHeaderPadding)
+        .onHover { isHovered in
+            isAppHovered = isHovered
+        }
     }
 }
 
