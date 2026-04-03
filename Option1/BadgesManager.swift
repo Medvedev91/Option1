@@ -11,6 +11,8 @@ class BadgesManager: ObservableObject {
     // Based on https://stackoverflow.com/a/75167602
     static func updateAsync() {
         Task {
+            let timeStartMls = timeMls()
+            
             let CoreServiceBundle = CFBundleGetBundleWithIdentifier("com.apple.CoreServices" as CFString)
             
             let GetRunningApplicationArray: () -> [CFTypeRef] = {
@@ -37,6 +39,11 @@ class BadgesManager: ObservableObject {
                 }
             
             BadgesManager.instance.dictionary = dictionaryLocal
+            
+            let elapsedMls = timeMls() - timeStartMls
+            if elapsedMls > 50 {
+                reportApi("BadgesManager.updateAsync() too slow: \(elapsedMls) mls")
+            }
         }
     }
 }

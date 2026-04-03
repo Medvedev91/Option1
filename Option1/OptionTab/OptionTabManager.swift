@@ -117,6 +117,9 @@ class OptionTabManager {
     }
     
     private func buildWindow(fromJk: Bool) {
+        // Нужно начать как можно раньше
+        BadgesManager.updateAsync()
+        
         // Если открыто окно приложение Option1 (не Option-Tab),
         // то при нажатии на Option-Tab происходит фокус на Option1.
         closeAppWindow()
