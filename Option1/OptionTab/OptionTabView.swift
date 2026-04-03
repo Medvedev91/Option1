@@ -529,11 +529,27 @@ private struct HistoryItemView: View {
     
     ///
     
+    @ObservedObject private var badgesManager = BadgesManager.instance
     private let imageSize = OptionTabView.itemHeight
-    
+    private let badgeSize = 23.0
+
     var body: some View {
         HStack(spacing: 0) {
             
+            ZStack {
+                if let badge = badgesManager.dictionary[cachedWindow.appBundle] {
+                    ZStack {
+                        Text(badge)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    .fillMaxSize()
+                    .background(Circle().fill(.red))
+                }
+            }
+            .frame(width: badgeSize, height: badgeSize)
+            .padding(.leading, 6)
+
             ZStack {
                 if let icon = cachedWindow.icon {
                     Image(nsImage: icon)
@@ -545,8 +561,7 @@ private struct HistoryItemView: View {
                 }
             }
             .frame(width: imageSize)
-            .padding(.leading, 16)
-            .padding(.trailing, 8)
+            .padding(.leading, 4)
             
             CachedWindowView(
                 cachedWindow: cachedWindow,
@@ -559,6 +574,7 @@ private struct HistoryItemView: View {
                 },
             )
             .id(cachedWindow.hashValue)
+            .padding(.leading, 2)
         }
     }
 }
