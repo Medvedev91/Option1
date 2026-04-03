@@ -360,14 +360,22 @@ private func handleSpecial(
                     reportApi("handleSpecial() no app: \(bindDb.bundle)")
                     return
                 }
-                if let focused = try? WindowsManager.getFocusedWindowOrNil(),
-                   let pid = try? focused.pid(),
-                   nsApp.processIdentifier == pid {
-                    _ = try? CachedWindow.addByAxuiElement(
-                        nsRunningApplication: nsApp,
-                        axuiElement: focused,
-                        shellWithNewWindow: path,
-                    )
+                // todo
+                // Борьба с ошибкой, кода после открытия окна с path для
+                // shellWithNewWindow, path присваивается другому. Возможно из-за
+                // того что getFocusedWindowOrNil() возвращает прежнее окно.
+                // Возможно asyncAfter еще сильнее усугубляет ситуацию. Нужно время
+                // тестировать т.к. баг плавающий. Начал 2026-04-03.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    if let focused = try? WindowsManager.getFocusedWindowOrNil(),
+                       let pid = try? focused.pid(),
+                       nsApp.processIdentifier == pid {
+                        try? CachedWindow.addByAxuiElement(
+                            nsRunningApplication: nsApp,
+                            axuiElement: focused,
+                            shellWithNewWindow: path,
+                        )
+                    }
                 }
             })
             return true
