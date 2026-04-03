@@ -6,6 +6,8 @@ struct FavoriteTab: View {
     @State private var addFormBundle: String? = nil
     @State private var addFormTitle: String = ""
     @State private var addFormSubstring: String = ""
+    @State private var addFormFilePickerPresented = false
+    @State private var addFormFilePickerInfoPresented = false
     
     @Query private var appsDb: [AppDb]
     
@@ -38,9 +40,62 @@ struct FavoriteTab: View {
                     }
                 }
                 
-                TextField("Name", text: $addFormTitle)
+                TextField("Title", text: $addFormTitle)
                     .autocorrectionDisabled()
-                    .frame(width: 120)
+                    .frame(width: 140)
+                    .disabled(addFormBundle == nil)
+
+                if addFormSubstring.isEmpty {
+                    Button(
+                        action: {
+                            addFormFilePickerInfoPresented = true
+                        },
+                        label: {
+                            Label("File or Folder", systemImage: "folder")
+                        },
+                    )
+                    .disabled(addFormBundle == nil)
+                    .confirmationDialog(
+                        "",
+                        isPresented: $addFormFilePickerInfoPresented,
+                    ) {
+                        Button("Select File or Folder") {
+                            addFormFilePickerPresented = true
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        
+                        Button("Cancel", role: .cancel) {
+                        }
+                    } message: {
+                        Text("If the app supports opening files or folders, select the one you want to open.\n\nIf it doesn't open properly, please contact me. I'll research this app.")
+                    }
+                    .fileImporter(
+                        isPresented: $addFormFilePickerPresented,
+                        allowedContentTypes: [.data, .directory],
+                        onCompletion: { result in
+                            switch result {
+                            case .success(let url):
+                                addFormSubstring = url.relativePath
+                            case .failure:
+                                break
+                            }
+                        }
+                    )
+                } else {
+                    HStack(spacing: 8) {
+                        Text(userRelativePath(addFormSubstring))
+                        Button(
+                            action: {
+                                addFormSubstring = ""
+                            },
+                            label: {
+                                Image(systemName: "xmark.circle")
+                                    .font(.system(size: 14, weight: .regular))
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                    }
+                }
                 
                 Button("Add to Favorite") {
                     if let addFormBundle = addFormBundle {
