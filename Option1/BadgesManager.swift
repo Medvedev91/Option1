@@ -35,7 +35,8 @@ class BadgesManager: ObservableObject {
                 .filter{ $0.keys.contains(badgeLabelKey) }
                 .reduce(into: [:]) { $0[$1[kCFBundleIdentifierKey as String] as! String] = ($1[badgeLabelKey] as! [String:CFTypeRef])["label"] }
                 .forEach { (key, value) in
-                    dictionaryLocal[key] = value as? String
+                    let badge: String? = (value as? String)?.trim()
+                    dictionaryLocal[key] = badge.map { $0.isEmpty ? nil : $0 } ?? nil
                 }
             
             BadgesManager.instance.dictionary = dictionaryLocal
