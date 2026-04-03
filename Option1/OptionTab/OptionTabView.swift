@@ -21,6 +21,7 @@ struct OptionTabView: View {
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     @ObservedObject private var menuBarManager = MenuBarManager.instance
+    @ObservedObject private var badgesManager = BadgesManager.instance
     @State private var isJkInfoPresented = false
     @State private var isModeHovered: Bool = false
     
@@ -211,15 +212,14 @@ struct OptionTabView: View {
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
-                                VStack(spacing: 0) {
+                                
+                                VStack(alignment: .leading, spacing: 0) {
                                     Text(bindUi.title)
-                                        .textAlign(.leading)
                                         .font(.system(size: fontSize, weight: .regular))
                                         .foregroundColor(isHover ? .white : .primary)
                                         .lineLimit(1)
                                     if let subtitle = bindUi.subtitle {
                                         Text(subtitle)
-                                            .textAlign(.leading)
                                             .foregroundColor(isHover ? .white : .secondary)
                                             .font(.system(size: 11, weight: .regular))
                                             .lineLimit(1)
@@ -227,7 +227,21 @@ struct OptionTabView: View {
                                             .padding(.bottom, 2)
                                     }
                                 }
+                                
+                                if let badge = badgesManager.dictionary[bindUi.bindDb.bundle] {
+                                    ZStack {
+                                        Text(badge)
+                                            .font(.system(size: 10, weight: .semibold))
+                                            .foregroundColor(.white)
+                                    }
+                                    .frame(width: 18, height: 18)
+                                    .background(Circle().fill(.red))
+                                    .padding(.leading, 6)
+                                    .padding(.trailing, 6)
+                                }
+                                
                                 Spacer(minLength: 0)
+
                                 Text(bindUi.badge)
                                     .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
@@ -289,6 +303,19 @@ private struct AppView: View {
     let onCachedWindowHover: (CachedWindow?) -> Void
     let onCachedWindowFocus: (CachedWindow) -> Void
     
+    ///
+    
+    @ObservedObject private var badgesManager = BadgesManager.instance
+    @State private var isAppHovered = false
+    @State private var isPinWrapperHovered = false
+    
+    private var badge: String? {
+        guard let bundle = appUi.bundle else {
+            return nil
+        }
+        return badgesManager.dictionary[bundle]
+    }
+    
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             
@@ -296,31 +323,50 @@ private struct AppView: View {
                 
                 ZStack {
                     let isPinned = appUi.sort != nil
-                    Button(
-                        action: {
-                            if let bundle = appUi.bundle {
-                                if isPinned {
-                                    OptionTabPinDb.delete(bundle: bundle)
-                                } else {
-                                    OptionTabPinDb.upsertToTop(bundle: bundle)
+                    if isPinWrapperHovered || ((badge == nil) && (isAppHovered || isPinned)) {
+                        Button(
+                            action: {
+                                if let bundle = appUi.bundle {
+                                    if isPinned {
+                                        OptionTabPinDb.delete(bundle: bundle)
+                                    } else {
+                                        OptionTabPinDb.upsertToTop(bundle: bundle)
+                                    }
+                                    withAnimation {
+                                        updateAppsUi()
+                                    }
                                 }
-                                withAnimation {
-                                    updateAppsUi()
-                                }
-                            }
-                        },
-                        label: {
-                            Image(systemName: isPinned ? "pin.fill" : "pin")
-                                .font(.system(size: 12, weight: .light))
-                                .foregroundColor(.primary)
-                                .padding(.top, 1)
-                                .contentShape(Rectangle()) // Tap area
-                        },
-                    )
-                    .buttonStyle(.plain)
+                            },
+                            label: {
+                                Image(systemName: isPinned ? "pin.fill" : "pin")
+                                    .font(.system(size: 12, weight: .light))
+                                    .foregroundColor(.primary)
+                                    .padding(.top, 1)
+                                    .padding(.leading, 1)
+                                    .contentShape(Rectangle()) // Tap area
+                            },
+                        )
+                        .buttonStyle(.plain)
+                    }
+                    
+                    if !isPinWrapperHovered,
+                       let badge = badge {
+                        ZStack {
+                            Text(badge)
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: 23, height: 23)
+                        .background(Circle().fill(.red))
+                    }
                 }
                 .frame(width: 28, height: OptionTabView.itemHeight)
                 .padding(.leading, 4)
+                .padding(.trailing, 1)
+                .contentShape(Rectangle()) // Hover area
+                .onHover { isHovered in
+                    isPinWrapperHovered = isHovered
+                }
 
                 if let icon = appUi.icon {
                     Image(nsImage: icon)
@@ -353,6 +399,9 @@ private struct AppView: View {
             }
         }
         .padding(.top, OptionTabView.itemHeaderPadding)
+        .onHover { isHovered in
+            isAppHovered = isHovered
+        }
     }
 }
 
@@ -480,11 +529,27 @@ private struct HistoryItemView: View {
     
     ///
     
+    @ObservedObject private var badgesManager = BadgesManager.instance
     private let imageSize = OptionTabView.itemHeight
-    
+    private let badgeSize = 23.0
+
     var body: some View {
         HStack(spacing: 0) {
             
+            ZStack {
+                if let badge = badgesManager.dictionary[cachedWindow.appBundle] {
+                    ZStack {
+                        Text(badge)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    .fillMaxSize()
+                    .background(Circle().fill(.red))
+                }
+            }
+            .frame(width: badgeSize, height: badgeSize)
+            .padding(.leading, 6)
+
             ZStack {
                 if let icon = cachedWindow.icon {
                     Image(nsImage: icon)
@@ -496,8 +561,7 @@ private struct HistoryItemView: View {
                 }
             }
             .frame(width: imageSize)
-            .padding(.leading, 16)
-            .padding(.trailing, 8)
+            .padding(.leading, 4)
             
             CachedWindowView(
                 cachedWindow: cachedWindow,
@@ -510,6 +574,7 @@ private struct HistoryItemView: View {
                 },
             )
             .id(cachedWindow.hashValue)
+            .padding(.leading, 2)
         }
     }
 }
