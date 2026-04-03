@@ -4,7 +4,7 @@ import SwiftData
 struct FavoriteTab: View {
     
     @State private var addFormBundle: String? = nil
-    @State private var addFormName: String = ""
+    @State private var addFormTitle: String = ""
     @State private var addFormSubstring: String = ""
     
     @Query private var appsDb: [AppDb]
@@ -38,19 +38,19 @@ struct FavoriteTab: View {
                     }
                 }
                 
-                TextField("Name", text: $addFormName)
+                TextField("Name", text: $addFormTitle)
                     .autocorrectionDisabled()
-                    .frame(width: 140)
+                    .frame(width: 120)
                 
                 Button("Add to Favorite") {
                     if let addFormBundle = addFormBundle {
                         _ = FavoriteDb.insert(
                             bundle: addFormBundle,
-                            name: addFormName,
+                            title: addFormTitle,
                             substring: addFormSubstring,
                         )
                         self.addFormBundle = nil
-                        self.addFormName = ""
+                        self.addFormTitle = ""
                         self.addFormSubstring = ""
                     }
                     syncFavoritesUi()
@@ -64,7 +64,7 @@ struct FavoriteTab: View {
             List {
                 ForEach(favoritesUi, id: \.favoriteDb.id) { favoriteUi in
                     HStack {
-                        Text(favoriteUi.name)
+                        Text(favoriteUi.title)
                         Spacer()
                         Button(
                             action: {
@@ -124,7 +124,7 @@ private struct FavoriteUi {
     
     let favoriteDb: FavoriteDb
     
-    var name: String {
-        favoriteDb.buildUiName()
+    var title: String {
+        favoriteDb.buildUiTitle()
     }
 }

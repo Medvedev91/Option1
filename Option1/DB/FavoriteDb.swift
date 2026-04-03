@@ -8,25 +8,25 @@ class FavoriteDb {
     @Attribute(.unique) var id: UUID
     var sort: Int
     var bundle: String
-    var name: String
+    var title: String
     var substring: String
     
     init(
         id: UUID,
         sort: Int,
         bundle: String,
-        name: String,
+        title: String,
         substring: String,
     ) {
         self.id = id
         self.sort = sort
         self.bundle = bundle
-        self.name = name
+        self.title = title
         self.substring = substring
     }
     
-    func buildUiName() -> String {
-        if !name.isEmpty { return name }
+    func buildUiTitle() -> String {
+        if !title.isEmpty { return title }
         return selectAppDbOrNil()?.name ?? bundle
     }
     
@@ -53,7 +53,7 @@ class FavoriteDb {
     
     static func insert(
         bundle: String,
-        name: String,
+        title: String,
         substring: String,
     ) -> FavoriteDb {
         let maxSort: Int = selectAllSorted().map(\.sort).max() ?? 0
@@ -61,7 +61,7 @@ class FavoriteDb {
             id: UUID(),
             sort: maxSort + 1,
             bundle: bundle,
-            name: name.trim(),
+            title: title.trim(),
             substring: substring.trim(),
         )
         DB.modelContainer.mainContext.insert(favoriteDb)
