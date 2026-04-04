@@ -271,9 +271,9 @@ class HotKeysUtils {
 private func onOptionTabKeyDownPressed(fromJk: Bool) {
     OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
     onOptionTabPressedTask = Task { @MainActor in
-        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        try await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
         while onOptionTabPressedTask != nil {
-            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            try await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
             OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
         }
     }
@@ -288,9 +288,9 @@ private func onOptionTabKeyUpPressed() {
 private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
     OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
     onOptionShiftTabPressedTask = Task { @MainActor in
-        try? await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
+        try await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
         while onOptionShiftTabPressedTask != nil {
-            try? await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
+            try await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
             OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
         }
     }
