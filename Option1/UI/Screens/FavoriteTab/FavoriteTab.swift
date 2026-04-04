@@ -115,6 +115,7 @@ struct FavoriteTab: View {
                 Spacer()
             }
             .padding(.horizontal, 8)
+            .padding(.top, 8)
             
             List {
                 ForEach(favoritesUi, id: \.favoriteDb.id) { favoriteUi in
