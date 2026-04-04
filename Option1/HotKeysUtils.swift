@@ -37,7 +37,7 @@ class HotKeysUtils {
                     keyDownHandler: {
                         Task { @MainActor in
                             OptionTabManager.instance.closeWindow()
-                            handleRun(key: key)
+                            handleKey(key: key)
                         }
                     },
                 )
@@ -204,7 +204,7 @@ class HotKeysUtils {
     }
     
     @MainActor
-    static func handleRun(key: Key) {
+    static func handleKey(key: Key) {
         ping()
         _ = isAccessibilityGranted(showDialog: true)
         
@@ -224,20 +224,27 @@ class HotKeysUtils {
             return workspaceBindDb ?? sharedBindDb
         }() else { return }
         
-        if bindDb.substring.isEmpty {
-            WindowsManager.openApplicationByBundle(bindDb.bundle)
+        handleRaw(bundle: bindDb.bundle, substring: bindDb.substring)
+    }
+    
+    static func handleRaw(
+        bundle: String,
+        substring: String,
+    ) {
+        if substring.isEmpty {
+            WindowsManager.openApplicationByBundle(bundle)
             return
         }
         
-        if handleSpecial(bindDb: bindDb) {
+        if handleSpecial(bundle: bundle, substring: substring) {
             return
         }
         
         // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
         if NSWorkspace.shared.runningApplications.first(where: {
-            $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+            $0.bundleIdentifier?.lowercased() == bundle.lowercased()
         }) == nil {
-            WindowsManager.openApplicationByBundle(bindDb.bundle)
+            WindowsManager.openApplicationByBundle(bundle)
             return
         }
         
@@ -246,8 +253,8 @@ class HotKeysUtils {
             
             let windows: [CachedWindow] = cachedWindows.map { $0.value }
             guard let window: CachedWindow = windows.first(where: {
-                $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
-                $0.appBundle == bindDb.bundle
+                $0.title.lowercased().contains(substring.lowercased()) &&
+                $0.appBundle == bundle
             }) else { return }
             
             try focusAxuiElement(window.axuiElement)
@@ -316,10 +323,11 @@ private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
 }
 
 private func handleSpecial(
-    bindDb: BindDb,
+    bundle: String,
+    substring: String,
 ) -> Bool {
-    if bindDb.bundle == BundleIds.Xcode {
-        let project = bindDb.substring
+    if bundle == BundleIds.Xcode {
+        let project = substring
         if isFileExists(project) {
             let result = shell("xed", project)
             // No sense to update cachedWindows
@@ -328,9 +336,8 @@ private func handleSpecial(
         return false
     }
     
-    if BundleIds.isOpenByShellWithNewWindow(bindDb.bundle) {
-        let bundle = bindDb.bundle
-        let path = bindDb.substring
+    if BundleIds.isOpenByShellWithNewWindow(bundle) {
+        let path = substring
         if isFileExists(path) {
             
             // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
@@ -355,9 +362,9 @@ private func handleSpecial(
                 // Почему-то у объекта приложения из completionHandler .bundleIdentifier всегда nil,
                 // из-за этого .addByAxuiElement() работает неправильно. Ищем в запущенных приложениях.
                 guard let nsApp = NSWorkspace.shared.runningApplications.first(where: {
-                    $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+                    $0.bundleIdentifier?.lowercased() == bundle.lowercased()
                 }) else {
-                    reportApi("handleSpecial() no app: \(bindDb.bundle)")
+                    reportApi("handleSpecial() no app: \(bundle)")
                     return
                 }
                 // todo
@@ -383,8 +390,8 @@ private func handleSpecial(
         return false
     }
     
-    if isFileExists(bindDb.substring) {
-        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
+    if isFileExists(substring) {
+        let result = shell("open", "-b", bundle, substring)
         // No sense to update cachedWindows
         return result == 0
     }

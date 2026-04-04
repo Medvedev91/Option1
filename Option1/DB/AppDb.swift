@@ -3,6 +3,7 @@ import SwiftData
 import Cocoa
 
 @Model
+@MainActor
 class AppDb {
     
     @Attribute(.unique) var bundle: String
@@ -13,20 +14,24 @@ class AppDb {
         self.name = name
     }
     
-    @MainActor
     func delete() {
         DB.modelContainer.mainContext.delete(self)
         DB.save()
     }
     
+    func getIcon() -> NSImage? {
+        guard let path = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else {
+            return nil
+        }
+        return NSWorkspace.shared.icon(forFile: path.relativePath)
+    }
+    
     ///
     
-    @MainActor
     static func selectAll() -> [AppDb] {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<AppDb>())
     }
     
-    @MainActor
     static func upsert(runningApps: [NSRunningApplication]) {
         runningApps.forEach { runningApp in
             if runningApp.activationPolicy != .regular {
@@ -44,7 +49,6 @@ class AppDb {
         }
     }
     
-    @MainActor
     static func upsertRaw(
         bundle: String,
         name: String,
@@ -63,7 +67,6 @@ class AppDb {
         reportLog("AppDb.upsertRaw() update: \(bundle) \(name)")
     }
     
-    @MainActor
     static func cleanRemoved() {
         selectAll().forEach { appDb in
             if NSWorkspace.shared.urlForApplication(withBundleIdentifier: appDb.bundle) == nil {

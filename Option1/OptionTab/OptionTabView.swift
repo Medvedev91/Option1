@@ -166,7 +166,7 @@ struct OptionTabView: View {
                     "",
                     isPresented: $isJkInfoPresented,
                     actions: {},
-                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, and Option-J to History.") }
+                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                 )
 
                 MenuDivider()
@@ -208,7 +208,7 @@ struct OptionTabView: View {
                     MenuItemView(
                         onClick: {
                             closeWindow()
-                            HotKeysUtils.handleRun(key: bindUi.key)
+                            HotKeysUtils.handleKey(key: bindUi.key)
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
@@ -250,6 +250,80 @@ struct OptionTabView: View {
                             .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
                             .padding(.leading, Self.menuIconWidth)
                             .padding(.trailing, 6)
+                        },
+                    )
+                }
+                
+                MenuDivider()
+                
+                MenuItemView(
+                    onClick:{
+                        closeWindow()
+                        FavoriteTabUtils.instance.needToShow = true
+                        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                    },
+                    content: { isHover in
+                        HStack(spacing: 0) {
+                            
+                            Text("Favourites")
+                                .foregroundColor(isHover ? .white : .secondary)
+                                .font(.system(size: 11, weight: .semibold))
+                            
+                            Spacer(minLength: 0)
+                            
+                            if isHover {
+                                Image(systemName: "plus")
+                                    .foregroundColor(isHover ? .white : .secondary)
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                        }
+                        .frame(height: Self.itemHeight)
+                        .padding(.leading, Self.menuIconWidth)
+                        .padding(.trailing, 10)
+                    },
+                )
+                
+                ForEach(data.favoritesUi, id: \.favoriteDb.id) { favoriteUi in
+                    MenuItemView(
+                        onClick:{
+                            closeWindow()
+                            HotKeysUtils.handleRaw(
+                                bundle: favoriteUi.favoriteDb.bundle,
+                                substring: favoriteUi.favoriteDb.substring,
+                            )
+                        },
+                        content: { isHover in
+                            HStack(spacing: 0) {
+                                
+                                Spacer(minLength: 0)
+                                    .frame(width: Self.menuIconWidth - 2)
+                                
+                                let icon = favoriteUi.icon
+                                if let icon = icon {
+                                    Image(nsImage: icon)
+                                        .resizable()
+                                        .frame(width: 24, height: 24)
+                                }
+                                
+                                Text(favoriteUi.title)
+                                    .foregroundColor(isHover ? .white : .primary)
+                                    .padding(.leading, icon == nil ? 2 : 6)
+                                
+                                if let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle] {
+                                    ZStack {
+                                        Text(badge)
+                                            .font(.system(size: 10, weight: .semibold))
+                                            .foregroundColor(.white)
+                                    }
+                                    .frame(width: 18, height: 18)
+                                    .background(Circle().fill(.red))
+                                    .padding(.leading, 6)
+                                    .padding(.trailing, 6)
+                                }
+                                
+                                Spacer(minLength: 0)
+                            }
+                            .frame(height: Self.itemHeight)
                         },
                     )
                 }

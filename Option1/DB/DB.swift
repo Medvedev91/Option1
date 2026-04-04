@@ -14,7 +14,7 @@ struct DB {
         #endif
         // cd ~/Library/Application\ Support/
         let fileURL = URL.applicationSupportDirectory.appending(path: "\(folder)/SwiftData.store")
-        let schema = Schema([KvDb.self, WorkspaceDb.self, BindDb.self, AppDb.self, OptionTabPinDb.self])
+        let schema = Schema([KvDb.self, WorkspaceDb.self, BindDb.self, AppDb.self, OptionTabPinDb.self, FavoriteDb.self])
         let configuration = ModelConfiguration(
             "SwiftData",
             schema: schema,
