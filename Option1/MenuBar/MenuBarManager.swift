@@ -185,6 +185,6 @@ private extension AppDelegate {
         guard let key: Key = menuItem.representedObject as? Key else {
             return
         }
-        HotKeysUtils.handleRun(key: key)
+        HotKeysUtils.handleKey(key: key)
     }
 }

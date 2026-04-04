@@ -208,7 +208,7 @@ struct OptionTabView: View {
                     MenuItemView(
                         onClick: {
                             closeWindow()
-                            HotKeysUtils.handleRun(key: bindUi.key)
+                            HotKeysUtils.handleKey(key: bindUi.key)
                         },
                         content: { isHover in
                             HStack(spacing: 0) {

@@ -37,7 +37,7 @@ class HotKeysUtils {
                     keyDownHandler: {
                         Task { @MainActor in
                             OptionTabManager.instance.closeWindow()
-                            handleRun(key: key)
+                            handleKey(key: key)
                         }
                     },
                 )
@@ -204,7 +204,7 @@ class HotKeysUtils {
     }
     
     @MainActor
-    static func handleRun(key: Key) {
+    static func handleKey(key: Key) {
         ping()
         _ = isAccessibilityGranted(showDialog: true)
         
