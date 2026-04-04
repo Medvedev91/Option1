@@ -19,6 +19,13 @@ class AppDb {
         DB.save()
     }
     
+    func getIcon() -> NSImage? {
+        guard let path = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundle) else {
+            return nil
+        }
+        return NSWorkspace.shared.icon(forFile: path.relativePath)
+    }
+    
     ///
     
     static func selectAll() -> [AppDb] {
