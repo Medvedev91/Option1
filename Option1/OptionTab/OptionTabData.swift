@@ -7,6 +7,7 @@ class OptionTabData: ObservableObject {
     @Published var appsUi: [OptionTabAppUi]
     @Published var history: [CachedWindow]
     @Published var selectedCachedWindow: CachedWindow?
+    @Published var favoritesUi: [OptionTabFavoriteUi]
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -25,14 +26,15 @@ class OptionTabData: ObservableObject {
         }()
         
         let menuHeight: CGFloat = {
-            let separators: CGFloat = OptionTabView.menuDividerHeight * 3.0
+            let separators: CGFloat = OptionTabView.menuDividerHeight * 4.0
+            let favorites: CGFloat = (OptionTabView.itemHeight * Double(favoritesUi.count)) + OptionTabView.itemHeight
             let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
             let systemButtonsHeight: CGFloat = OptionTabView.itemHeight * 2.0 // Settings, Modes.
             let workspacesHeight: CGFloat = Double(MenuBarManager.instance.workspacesUi.count) * OptionTabView.itemHeight
             let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
                 bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
             }.reduce(0, +)
-            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight
+            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight + favorites
         }()
         
         let contentWidth: CGFloat = OptionTabView.fullWidth
@@ -115,6 +117,10 @@ class OptionTabData: ObservableObject {
             }
             return nil
         }()
+        
+        self.favoritesUi = FavoriteDb.selectAllSorted().map {
+            OptionTabFavoriteUi(favoriteDb: $0)
+        }
     }
     
     func rebuildAppsUi() {
