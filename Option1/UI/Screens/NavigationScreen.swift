@@ -136,6 +136,12 @@ struct NavigationScreen: View {
                 isDonationsAlertPresented = true
             }
         }
+        .onReceive(FavoriteTabUtils.instance.$needToShow) { needToShow in
+            if needToShow {
+                FavoriteTabUtils.instance.needToShow = false
+                tab = .favorite
+            }
+        }
         .confirmationDialog(
             "Option1 is 100% free. I only ask for donations.",
             isPresented: $isDonationsAlertPresented,
