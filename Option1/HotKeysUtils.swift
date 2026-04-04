@@ -229,7 +229,7 @@ class HotKeysUtils {
             return
         }
         
-        if handleSpecial(bindDb: bindDb) {
+        if handleSpecial(bundle: bindDb.bundle, substring: bindDb.substring) {
             return
         }
         
@@ -316,10 +316,11 @@ private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
 }
 
 private func handleSpecial(
-    bindDb: BindDb,
+    bundle: String,
+    substring: String,
 ) -> Bool {
-    if bindDb.bundle == BundleIds.Xcode {
-        let project = bindDb.substring
+    if bundle == BundleIds.Xcode {
+        let project = substring
         if isFileExists(project) {
             let result = shell("xed", project)
             // No sense to update cachedWindows
@@ -328,9 +329,8 @@ private func handleSpecial(
         return false
     }
     
-    if BundleIds.isOpenByShellWithNewWindow(bindDb.bundle) {
-        let bundle = bindDb.bundle
-        let path = bindDb.substring
+    if BundleIds.isOpenByShellWithNewWindow(bundle) {
+        let path = substring
         if isFileExists(path) {
             
             // При вызове NSWorkspace.shared.openApplication() с createsNewApplicationInstance
@@ -355,9 +355,9 @@ private func handleSpecial(
                 // Почему-то у объекта приложения из completionHandler .bundleIdentifier всегда nil,
                 // из-за этого .addByAxuiElement() работает неправильно. Ищем в запущенных приложениях.
                 guard let nsApp = NSWorkspace.shared.runningApplications.first(where: {
-                    $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+                    $0.bundleIdentifier?.lowercased() == bundle.lowercased()
                 }) else {
-                    reportApi("handleSpecial() no app: \(bindDb.bundle)")
+                    reportApi("handleSpecial() no app: \(bundle)")
                     return
                 }
                 // todo
@@ -383,8 +383,8 @@ private func handleSpecial(
         return false
     }
     
-    if isFileExists(bindDb.substring) {
-        let result = shell("open", "-b", bindDb.bundle, bindDb.substring)
+    if isFileExists(substring) {
+        let result = shell("open", "-b", bundle, substring)
         // No sense to update cachedWindows
         return result == 0
     }
