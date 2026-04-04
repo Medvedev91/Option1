@@ -224,20 +224,27 @@ class HotKeysUtils {
             return workspaceBindDb ?? sharedBindDb
         }() else { return }
         
-        if bindDb.substring.isEmpty {
-            WindowsManager.openApplicationByBundle(bindDb.bundle)
+        handleRaw(bundle: bindDb.bundle, substring: bindDb.substring)
+    }
+    
+    static func handleRaw(
+        bundle: String,
+        substring: String,
+    ) {
+        if substring.isEmpty {
+            WindowsManager.openApplicationByBundle(bundle)
             return
         }
         
-        if handleSpecial(bundle: bindDb.bundle, substring: bindDb.substring) {
+        if handleSpecial(bundle: bundle, substring: substring) {
             return
         }
         
         // Если среди запущенных приложений нет с нужным bundle то запускаем bundle
         if NSWorkspace.shared.runningApplications.first(where: {
-            $0.bundleIdentifier?.lowercased() == bindDb.bundle.lowercased()
+            $0.bundleIdentifier?.lowercased() == bundle.lowercased()
         }) == nil {
-            WindowsManager.openApplicationByBundle(bindDb.bundle)
+            WindowsManager.openApplicationByBundle(bundle)
             return
         }
         
@@ -246,8 +253,8 @@ class HotKeysUtils {
             
             let windows: [CachedWindow] = cachedWindows.map { $0.value }
             guard let window: CachedWindow = windows.first(where: {
-                $0.title.lowercased().contains(bindDb.substring.lowercased()) &&
-                $0.appBundle == bindDb.bundle
+                $0.title.lowercased().contains(substring.lowercased()) &&
+                $0.appBundle == bundle
             }) else { return }
             
             try focusAxuiElement(window.axuiElement)
