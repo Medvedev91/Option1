@@ -9,7 +9,9 @@ struct CachedWindow: Hashable {
     let pid: pid_t
     let axuiElementId: AXUIElementID
     let title: String
+    let nsRunningApplication: NSRunningApplication
     let appBundle: String
+    let appName: String
     let icon: NSImage?
     let shellWithNewWindow: String?
     
@@ -22,7 +24,8 @@ struct CachedWindow: Hashable {
             let pid = try axuiElement.pid(),
             let axuiElementId = axuiElement.id(),
             let title = try axuiElement.title(),
-            let bundleIdentifier = nsRunningApplication.bundleIdentifier {
+            let bundleIdentifier = nsRunningApplication.bundleIdentifier,
+            let appName = nsRunningApplication.localizedName {
             
             // Часто при старте приложения при обращении и записи в cachedWindows
             // происходит крэш. Пытаюсь исправить через MainActor.
@@ -33,7 +36,9 @@ struct CachedWindow: Hashable {
                     pid: pid,
                     axuiElementId: axuiElementId,
                     title: title,
+                    nsRunningApplication: nsRunningApplication,
                     appBundle: bundleIdentifier,
+                    appName: appName,
                     icon: nsRunningApplication.icon,
                     shellWithNewWindow: shellWithNewWindow ?? oldCachedWindow?.shellWithNewWindow,
                 )
