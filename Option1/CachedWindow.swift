@@ -45,6 +45,8 @@ struct CachedWindow: Hashable {
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
         }
+        
+        cleanClosed__slow(reportIfSlow: false)
     }
     
     // ВНИМАНИЕ! SUPER SLOW `.allWindows()`
