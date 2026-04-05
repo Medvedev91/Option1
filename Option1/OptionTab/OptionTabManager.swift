@@ -117,8 +117,15 @@ class OptionTabManager {
     }
     
     func onOptionKeyUp() {
-        guard let selectedCachedWindow = optionTabView?.data.selectedCachedWindow else {
-            closeWindow()
+        // Если отжали Option до того как появилось окно,
+        // т.е. быстрое переключение между окнами.
+        if delayedOpening != nil {
+            self.delayedOpening = nil
+            let cwKeys = cachedWindows.keys
+            let hashes = AppObserver.stackAxuiHashes.filter { cwKeys.contains($0) }
+            if hashes.count >= 2, let axuiElement = cachedWindows[hashes[1]]?.axuiElement {
+                try? WindowsManager.focusWindow(axuiElement: axuiElement)
+            }
             return
         }
         
