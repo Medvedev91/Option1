@@ -128,8 +128,12 @@ class OptionTabData: ObservableObject {
     }
 }
 
+// ВНИМАНИЕ!
+// Строго контролировать скорость выполнения,
+// на момент разработки это ~3млс.
 @MainActor
 private func buildAppsUi(doCleanClosed: Bool) -> [OptionTabAppUi] {
+    // print(";;; f 0  \(timeMls())")
     if doCleanClosed {
         CachedWindow.cleanClosed__slow(reportIfSlow: false)
     }
@@ -138,46 +142,35 @@ private func buildAppsUi(doCleanClosed: Bool) -> [OptionTabAppUi] {
         uniqueKeysWithValues: OptionTabPinDb.selectAll().map { ($0.bundle, $0.sort) }
     )
     
-    // Running Apps
-    var appsUi: [OptionTabAppUi] = []
-    NSWorkspace.shared.runningApplications.forEach { app in
-        guard let bundle: String = app.bundleIdentifier else { return }
-        let appCachedWindows: [CachedWindow] = cachedWindows
-            .map { $0.value }
-            .filter { $0.appBundle == bundle }
-            .sorted { $0.title.lowercased() < $1.title.lowercased() }
-        guard !appCachedWindows.isEmpty else { return }
-        let activeAppUi = OptionTabAppUi(
-            app: app,
+    // Работа с NSWorkspace.shared.runningApplications занимает много
+    // времени, особенно вызовы .activationPolicy и .bundleIdentifier.
+    // По этому работаем только с cachedWindows.
+    let appsMap: [String: [CachedWindow]] = Dictionary(
+        grouping: cachedWindows.map(\.value),
+        by: { $0.appBundle },
+    )
+
+    let appsUi: [OptionTabAppUi] = appsMap.map { (_, cachedWindowsLocal) in
+        let firstCachedWindow: CachedWindow = cachedWindowsLocal.first!
+        let bundle: String = firstCachedWindow.appBundle
+        return OptionTabAppUi(
+            app: firstCachedWindow.nsRunningApplication,
+            appName: firstCachedWindow.appName,
             bundle: bundle,
             sort: sortMap[bundle],
-            icon: app.icon,
-            cachedWindows: appCachedWindows,
+            icon: firstCachedWindow.icon,
+            cachedWindows: cachedWindowsLocal.sorted { $0.title.lowercased() < $1.title.lowercased() },
         )
-        appsUi.append(activeAppUi)
     }
-    
-    // Other Apps
-    let usedCachedWindows: [CachedWindow] = appsUi.flatMap(\.cachedWindows)
-    let otherCachedWindows: [CachedWindow] = cachedWindows
-        .map { $0.value }
-        .filter { !usedCachedWindows.contains($0) }
-    if !otherCachedWindows.isEmpty {
-        appsUi.append(OptionTabAppUi(
-            app: nil,
-            bundle: nil,
-            sort: nil,
-            icon: nil,
-            cachedWindows: otherCachedWindows,
-        ))
-    }
-    
-    return appsUi.sorted {
+
+    let res = appsUi.sorted {
         if let sort0 = $0.sort, let sort1 = $1.sort { return sort0 < sort1 }
         if $0.sort != nil { return true }
         if $1.sort != nil { return false }
-        return ($0.app?.localizedName ?? "") < ($1.app?.localizedName ?? "")
+        return $0.appName < $1.appName
     }
+    // print(";;; f 9  \(timeMls())")
+    return res
 }
 
 private func buildHistory(doCleanClosed: Bool) -> [CachedWindow] {
