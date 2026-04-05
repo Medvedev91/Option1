@@ -79,7 +79,7 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option, .shift],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: false)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -147,7 +147,7 @@ class HotKeysUtils {
                 key: .k,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: true)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -187,7 +187,7 @@ class HotKeysUtils {
                 key: .upArrow,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: false)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -285,13 +285,13 @@ private func onOptionTabKeyUpPressed() {
 }
 
 @MainActor
-private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
-    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+private func onOptionShiftTabKeyDownPressed() {
+    OptionTabManager.instance.onOptionShiftTabPressed()
     onOptionShiftTabPressedTask = Task { @MainActor in
         try await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
         while onOptionShiftTabPressedTask != nil {
             try await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+            OptionTabManager.instance.onOptionShiftTabPressed()
         }
     }
 }
