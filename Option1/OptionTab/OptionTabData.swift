@@ -104,7 +104,7 @@ class OptionTabData: ObservableObject {
     init(
         uiMode: OptionTabUiMode,
     ) {
-        // print(";;; e  \(timeMls())")
+        // print(";;; e0 \(timeMls())")
         self.uiMode = uiMode
         
         // Clean closed only once
@@ -125,7 +125,7 @@ class OptionTabData: ObservableObject {
         self.favoritesUi = FavoriteDb.selectAllSorted().map {
             OptionTabFavoriteUi(favoriteDb: $0)
         }
-        // print(";;; e 9  \(timeMls())")
+        // print(";;; e9 \(timeMls())")
     }
     
     func rebuildAppsUi() {
