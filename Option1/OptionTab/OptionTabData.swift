@@ -98,9 +98,13 @@ class OptionTabData: ObservableObject {
         )
     }
     
+    // ВНИМАНИЕ!
+    // Строго контролировать скорость выполнения,
+    // на момент разработки это ~3млс.
     init(
         uiMode: OptionTabUiMode,
     ) {
+        // print(";;; e  \(timeMls())")
         self.uiMode = uiMode
         
         // Clean closed only once
@@ -121,6 +125,7 @@ class OptionTabData: ObservableObject {
         self.favoritesUi = FavoriteDb.selectAllSorted().map {
             OptionTabFavoriteUi(favoriteDb: $0)
         }
+        // print(";;; e 9  \(timeMls())")
     }
     
     func rebuildAppsUi() {
