@@ -4,10 +4,10 @@ import AppKit
 class OptionTabData: ObservableObject {
     
     @Published var uiMode: OptionTabUiMode
-    @Published var appsUi: [OptionTabAppUi]
-    @Published var history: [CachedWindow]
-    @Published var selectedCachedWindow: CachedWindow?
-    @Published var favoritesUi: [OptionTabFavoriteUi]
+    @Published var appsUi: [OptionTabAppUi] = []
+    @Published var history: [CachedWindow] = []
+    @Published var selectedCachedWindow: CachedWindow? = nil
+    @Published var favoritesUi: [OptionTabFavoriteUi] = []
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -104,12 +104,16 @@ class OptionTabData: ObservableObject {
     init(
         uiMode: OptionTabUiMode,
     ) {
-        // print(";;; e0 \(timeMls())")
         self.uiMode = uiMode
-        
-        // Clean closed only once
-        self.appsUi = buildAppsUi(doCleanClosed: true)
-        let history = buildHistory(doCleanClosed: false)
+        self.rebuild(uiMode: uiMode)
+    }
+    
+    func rebuild(
+        uiMode: OptionTabUiMode,
+    ) {
+        self.uiMode = uiMode
+        self.appsUi = buildAppsUi()
+        let history = buildHistory()
         self.history = history
         
         self.selectedCachedWindow = {
@@ -125,11 +129,10 @@ class OptionTabData: ObservableObject {
         self.favoritesUi = FavoriteDb.selectAllSorted().map {
             OptionTabFavoriteUi(favoriteDb: $0)
         }
-        // print(";;; e9 \(timeMls())")
     }
     
     func rebuildAppsUi() {
-        self.appsUi = buildAppsUi(doCleanClosed: true)
+        self.appsUi = buildAppsUi()
     }
 }
 
@@ -137,12 +140,7 @@ class OptionTabData: ObservableObject {
 // Строго контролировать скорость выполнения,
 // на момент разработки это ~3млс.
 @MainActor
-private func buildAppsUi(doCleanClosed: Bool) -> [OptionTabAppUi] {
-    // print(";;; f 0  \(timeMls())")
-    if doCleanClosed {
-        CachedWindow.cleanClosed__slow(reportIfSlow: false)
-    }
-    
+private func buildAppsUi() -> [OptionTabAppUi] {
     let sortMap: [String: Int] = Dictionary(
         uniqueKeysWithValues: OptionTabPinDb.selectAll().map { ($0.bundle, $0.sort) }
     )
@@ -174,14 +172,10 @@ private func buildAppsUi(doCleanClosed: Bool) -> [OptionTabAppUi] {
         if $1.sort != nil { return false }
         return $0.appName < $1.appName
     }
-    // print(";;; f 9  \(timeMls())")
     return res
 }
 
-private func buildHistory(doCleanClosed: Bool) -> [CachedWindow] {
-    if doCleanClosed {
-        CachedWindow.cleanClosed__slow(reportIfSlow: false)
-    }
+private func buildHistory() -> [CachedWindow] {
     return cachedWindows.map { $0.value }.sorted { w0, w1 in
         let stackIdx0: Int? = AppObserver.stackAxuiHashes.firstIndex(of: w0.axuiElement.hashValue)
         let stackIdx1: Int? = AppObserver.stackAxuiHashes.firstIndex(of: w1.axuiElement.hashValue)
