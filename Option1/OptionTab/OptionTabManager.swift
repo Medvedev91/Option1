@@ -103,7 +103,7 @@ class OptionTabManager {
         self.isEnabled = isEnabled
         KvDb.upsertIsOptionTabEnabled(isEnabled)
         if isEnabled {
-            HotKeysUtils.enableOptionTab() 
+            HotKeysUtils.enableOptionTab()
         } else {
             HotKeysUtils.disableOptionTab()
         }
