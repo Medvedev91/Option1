@@ -9,10 +9,45 @@ class OptionTabManager {
     
     var isEnabled: Bool = KvDb.selectIsOptionTabEnabled()
     
-    private var optionTabView: OptionTabView?
+    private let optionTabView: OptionTabView
+    
+    private var isOpen = false
+    private var delayedOpening: (() -> Void)? = nil
+    
+    private init() {
+        let optionTabData = OptionTabData(
+            uiMode: .history,
+        )
+        
+        let window = NSWindow(
+            contentRect: optionTabData.windowSize.nsRect,
+            styleMask: [],
+            backing: .buffered,
+            defer: false,
+        )
+        let optionTabView = OptionTabView(
+            window: window,
+            data: optionTabData,
+            onCachedWindowFocus: { cachedWindow in
+                OptionTabManager.instance.focusCachedWindow(cachedWindow)
+            },
+            closeWindow: {
+                OptionTabManager.instance.closeWindow()
+            },
+        )
+        
+        window.contentView = NSHostingView(rootView: optionTabView)
+        window.level = .mainMenu + 1
+        // Fix crash on close https://stackoverflow.com/a/78684365
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0)
+        
+        self.optionTabView = optionTabView
+    }
     
     func onOptionTabPressed(fromJk: Bool) {
-        if let optionTabView = optionTabView {
+        if isOpen {
             let data = optionTabView.data
             switch data.uiMode {
             case.apps:
@@ -47,9 +82,9 @@ class OptionTabManager {
         }
         buildWindow(fromJk: fromJk)
     }
-    
-    func onOptionShiftTabPressed(fromJk: Bool) {
-        if let optionTabView = optionTabView {
+   
+    func onOptionShiftTabPressed() {
+        if isOpen {
             let data = optionTabView.data
             switch data.uiMode {
             case .apps:
@@ -79,7 +114,6 @@ class OptionTabManager {
             }
             return
         }
-        buildWindow(fromJk: fromJk)
     }
     
     func onOptionKeyUp() {
@@ -87,16 +121,45 @@ class OptionTabManager {
             closeWindow()
             return
         }
-        focusCachedWindow(selectedCachedWindow)
+        
+        // Т.к. функция может вызываться из вне просто так,
+        // исключаем вызовы когда окно не было открыто.
+        if !isOpen {
+            return
+        }
+        
+        closeWindow()
+        if let selectedCachedWindow = optionTabView.data.selectedCachedWindow {
+            focusCachedWindow(selectedCachedWindow)
+        }
+    }
+    
+    func openWindow(
+        uiMode: OptionTabUiMode,
+    ) {
+        // Если открыто окно приложение Option1 (не Option-Tab),
+        // то при нажатии на Option-Tab происходит фокус на Option1.
+        closeAppWindow()
+
+        isOpen = true
+        
+        optionTabView.data.rebuild(
+            uiMode: uiMode,
+        )
+        
+        optionTabView.window.makeKeyAndOrderFront(nil)
+        
+        HotKeysUtils.enableOptionTabJkHotKeys()
+        HotKeysUtils.enableOptionTabArrowsHotKeys()
     }
     
     func closeWindow() {
-        self.optionTabView?.window.close()
-        self.optionTabView = nil
+        isOpen = false
+        self.optionTabView.window.close()
+        HotKeysUtils.disableOptionTabArrowsHotKeys()
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
-        HotKeysUtils.disableOptionTabArrowsHotKeys()
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
@@ -114,62 +177,5 @@ class OptionTabManager {
     private func focusCachedWindow(_ cachedWindow: CachedWindow) {
         try? WindowsManager.focusWindow(axuiElement: cachedWindow.axuiElement)
         closeWindow()
-    }
-    
-    private func buildWindow(fromJk: Bool) {
-        // Нужно начать как можно раньше
-        BadgesManager.updateAsync()
-        
-        // Если открыто окно приложение Option1 (не Option-Tab),
-        // то при нажатии на Option-Tab происходит фокус на Option1.
-        closeAppWindow()
-        
-        let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
-        case .apps: .apps
-        case .history: .history
-        case .jk: fromJk ? .history : .apps
-        }
-        let optionTabData = OptionTabData(
-            uiMode: uiMode,
-        )
-        
-        let window = NSWindow(
-            contentRect: optionTabData.windowSize.nsRect,
-            styleMask: [],
-            backing: .buffered,
-            defer: false,
-        )
-        
-        let optionTabView = OptionTabView(
-            window: window,
-            data: optionTabData,
-            onCachedWindowFocus: { cachedWindow in
-                self.focusCachedWindow(cachedWindow)
-            },
-            closeWindow: {
-                self.closeWindow()
-            },
-        )
-        
-        window.contentView = NSHostingView(rootView: optionTabView)
-        window.level = .mainMenu + 1
-        // Fix crash on close https://stackoverflow.com/a/78684365
-        window.isReleasedWhenClosed = false
-        window.isOpaque = false
-        window.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0)
-        
-        self.optionTabView = optionTabView
-        
-        if fromJk {
-            self.optionTabView?.window.makeKeyAndOrderFront(nil)
-        } else {
-            Task { @MainActor in
-                try await Task.sleep(nanoseconds: 80_000_000)
-                self.optionTabView?.window.makeKeyAndOrderFront(nil)
-            }
-        }
-        
-        HotKeysUtils.enableOptionTabJkHotKeys()
-        HotKeysUtils.enableOptionTabArrowsHotKeys()
     }
 }
