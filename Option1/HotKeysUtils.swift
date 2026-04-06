@@ -239,6 +239,7 @@ class HotKeysUtils {
         handleRaw(bundle: bindDb.bundle, substring: bindDb.substring)
     }
     
+    @MainActor
     static func handleRaw(
         bundle: String,
         substring: String,
@@ -334,6 +335,7 @@ private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
     }
 }
 
+@MainActor
 private func handleSpecial(
     bundle: String,
     substring: String,
