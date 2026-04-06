@@ -76,11 +76,31 @@ class OptionTabManager {
                 } else {
                     data.selectedCachedWindow = history.first
                 }
-                break
             }
-            return
+        } else if let delayedOpening = delayedOpening {
+            delayedOpening()
+            // Т.к. это происходит если я нажимаю повторно пока
+            // ожидается открытие, нужно эмитировать повторное нажатие.
+            onOptionTabPressed(fromJk: fromJk)
+        } else if fromJk {
+            openWindow(uiMode: .history)
+        } else {
+            let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
+            case .apps: .apps
+            case .history: .history
+            case .jk: .apps // Не может случиться т.к. выше условие с fromJk
+            }
+            self.delayedOpening = {
+                self.delayedOpening = nil
+                self.openWindow(uiMode: uiMode)
+            }
+            Task {
+                try await Task.sleep(nanoseconds: 80_000_000)
+                if let delayedOpening = self.delayedOpening {
+                    delayedOpening()
+                }
+            }
         }
-        buildWindow(fromJk: fromJk)
     }
    
     func onOptionShiftTabPressed() {
