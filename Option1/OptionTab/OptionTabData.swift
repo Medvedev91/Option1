@@ -8,6 +8,7 @@ class OptionTabData: ObservableObject {
     @Published var history: [CachedWindow] = []
     @Published var selectedCachedWindow: CachedWindow? = nil
     @Published var favoritesUi: [OptionTabFavoriteUi] = []
+    var animateWindowResize = true
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -129,6 +130,7 @@ class OptionTabData: ObservableObject {
         self.favoritesUi = FavoriteDb.selectAllSorted().map {
             OptionTabFavoriteUi(favoriteDb: $0)
         }
+        self.animateWindowResize = false
     }
     
     func rebuildAppsUi() {
