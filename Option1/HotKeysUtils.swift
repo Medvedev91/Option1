@@ -88,16 +88,29 @@ class HotKeysUtils {
         )
         
         optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
-            if !event.modifierFlags.contains(.option) {
+            if event.modifierFlags.contains(.option) {
+                BadgesManager.updateAsync()
+                CachedWindow.cleanClosed__slow(reportIfSlow: true)
+            } else {
                 onOptionTabKeyUp()
             }
             return event
         }
+        // Для отладки производительности открытия Option-Tab удобно использовать этот метод.
+        // Суть - быстро нажимать Option-Tab и смотреть разницу между двумя "b1", именно "b1" а не "b2",
+        // т.е. между нажатием от отпусканием Option. На момент разработки укладывался в 100млс.
         optionTabGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
-            if !event.modifierFlags.contains(.option) {
+            // print(";;; b1 \(timeMls())")
+            if event.modifierFlags.contains(.option) {
+                BadgesManager.updateAsync()
+                CachedWindow.cleanClosed__slow(reportIfSlow: true)
+            } else {
                 onOptionTabKeyUp()
+                // print(";;; b2 \(timeMls())")
             }
         }
+        
+        ///
         
         if KvDb.selectOptionTabDbMode() == .jk {
             enableOptionTabJkHotKeys()
