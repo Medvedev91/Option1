@@ -137,6 +137,9 @@ class OptionTabManager {
     }
     
     func onOptionKeyUp() {
+        // На всякий случай
+        closeWindow()
+        
         // Если отжали Option до того как появилось окно,
         // т.е. быстрое переключение между окнами.
         if delayedOpening != nil {
@@ -155,7 +158,6 @@ class OptionTabManager {
             return
         }
         
-        closeWindow()
         if let selectedCachedWindow = optionTabView.data.selectedCachedWindow {
             focusCachedWindow(selectedCachedWindow)
         }
