@@ -20,16 +20,16 @@ struct CachedWindow: Hashable {
         axuiElement: AXUIElement,
         shellWithNewWindow: String? = nil,
     ) throws {
-        if
-            let pid = try axuiElement.pid(),
-            let axuiElementId = axuiElement.id(),
-            let title = try axuiElement.title(),
-            let bundleIdentifier = nsRunningApplication.bundleIdentifier,
-            let appName = nsRunningApplication.localizedName {
-            
-            // Часто при старте приложения при обращении и записи в cachedWindows
-            // происходит крэш. Пытаюсь исправить через MainActor.
-            Task { @MainActor in
+        Task { @MainActor in
+            if
+                let pid = try axuiElement.pid(),
+                let axuiElementId = axuiElement.id(),
+                let title = try axuiElement.title(),
+                let bundleIdentifier = nsRunningApplication.bundleIdentifier,
+                let appName = nsRunningApplication.localizedName {
+                
+                // Часто при старте приложения при обращении и записи в cachedWindows
+                // происходит крэш. Пытаюсь исправить через MainActor.
                 let oldCachedWindow: CachedWindow? = cachedWindows[axuiElement.hashValue]
                 let newCachedWindow = CachedWindow(
                     axuiElement: axuiElement,
@@ -44,6 +44,11 @@ struct CachedWindow: Hashable {
                 )
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
+            
+            // Обновляем именно тут, т.к. например после закрытия окна
+            // вызывается AppObserver.handleNotification(), а нам как
+            // раз надо очистить закрытые окна.
+            cleanClosed__slow(reportIfSlow: false)
         }
     }
     
@@ -66,6 +71,9 @@ struct CachedWindow: Hashable {
     // Внимание 3
     // Вызывать только когда важен результат, т.е. перед использованием cachedWindows.
     //
+    // MainActor т.к. были крэши при обращении к cachedWindows.
+    //
+    @MainActor
     static func cleanClosed__slow(reportIfSlow: Bool = true) {
         let timeStartMls = timeMls()
         let windowsToRemove: [Int: CachedWindow] = cachedWindows.filter { _, cachedWindow in

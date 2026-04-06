@@ -79,7 +79,7 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option, .shift],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: false)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -88,16 +88,27 @@ class HotKeysUtils {
         )
         
         optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
-            if !event.modifierFlags.contains(.option) {
+            if event.modifierFlags.contains(.option) {
+                BadgesManager.updateAsync()
+            } else {
                 onOptionTabKeyUp()
             }
             return event
         }
+        // Для отладки производительности открытия Option-Tab удобно использовать этот метод.
+        // Суть - быстро нажимать Option-Tab и смотреть разницу между двумя "b1", именно "b1" а не "b2",
+        // т.е. между нажатием от отпусканием Option. На момент разработки укладывался в 100млс.
         optionTabGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
-            if !event.modifierFlags.contains(.option) {
+            // print(";;; b1 \(timeMls())")
+            if event.modifierFlags.contains(.option) {
+                BadgesManager.updateAsync()
+            } else {
                 onOptionTabKeyUp()
+                // print(";;; b2 \(timeMls())")
             }
         }
+        
+        ///
         
         if KvDb.selectOptionTabDbMode() == .jk {
             enableOptionTabJkHotKeys()
@@ -147,7 +158,7 @@ class HotKeysUtils {
                 key: .k,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: true)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -187,7 +198,7 @@ class HotKeysUtils {
                 key: .upArrow,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionShiftTabKeyDownPressed(fromJk: false)
+                    onOptionShiftTabKeyDownPressed()
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
@@ -227,6 +238,7 @@ class HotKeysUtils {
         handleRaw(bundle: bindDb.bundle, substring: bindDb.substring)
     }
     
+    @MainActor
     static func handleRaw(
         bundle: String,
         substring: String,
@@ -285,13 +297,13 @@ private func onOptionTabKeyUpPressed() {
 }
 
 @MainActor
-private func onOptionShiftTabKeyDownPressed(fromJk: Bool) {
-    OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+private func onOptionShiftTabKeyDownPressed() {
+    OptionTabManager.instance.onOptionShiftTabPressed()
     onOptionShiftTabPressedTask = Task { @MainActor in
         try await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
         while onOptionShiftTabPressedTask != nil {
             try await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-            OptionTabManager.instance.onOptionShiftTabPressed(fromJk: fromJk)
+            OptionTabManager.instance.onOptionShiftTabPressed()
         }
     }
 }
@@ -322,6 +334,7 @@ private func focusAxuiElement(_ axuiElement: AXUIElement) throws {
     }
 }
 
+@MainActor
 private func handleSpecial(
     bundle: String,
     substring: String,

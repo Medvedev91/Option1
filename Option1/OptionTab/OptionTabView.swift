@@ -135,9 +135,9 @@ struct OptionTabView: View {
                 
                 HStack {
                     
-                    DbModeButton(dbMode: .jk, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
-                    DbModeButton(dbMode: .apps, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
-                    DbModeButton(dbMode: .history, stateUiMode: $data.uiMode, stateDbMode: $dbMode)
+                    DbModeButton(optionTabData: data, dbMode: .jk, stateDbMode: $dbMode)
+                    DbModeButton(optionTabData: data, dbMode: .apps, stateDbMode: $dbMode)
+                    DbModeButton(optionTabData: data, dbMode: .history, stateDbMode: $dbMode)
                     
                     Spacer()
                     
@@ -361,7 +361,7 @@ struct OptionTabView: View {
                 window.animator().setFrame(
                     newValue,
                     display: false,
-                    animate: true,
+                    animate: data.animateWindowResize,
                 )
             }, completionHandler: {
             })
@@ -665,8 +665,8 @@ private struct MenuDivider: View {
 
 private struct DbModeButton: View {
     
+    let optionTabData: OptionTabData
     let dbMode: OptionTabDbMode
-    @Binding var stateUiMode: OptionTabUiMode
     @Binding var stateDbMode: OptionTabDbMode
     
     ///
@@ -684,13 +684,14 @@ private struct DbModeButton: View {
     
     var body: some View {
         Button(text) {
-            stateUiMode = switch dbMode {
+            optionTabData.uiMode = switch dbMode {
             case .apps: .apps
             case .history: .history
-            case .jk: stateUiMode
+            case .jk: optionTabData.uiMode
             }
             stateDbMode = dbMode
             KvDb.upsertOptionTabDbMode(dbMode)
+            optionTabData.animateWindowResize = true
         }
         .buttonStyle(.plain)
         .foregroundColor(stateDbMode == dbMode ? .primary : .secondary)

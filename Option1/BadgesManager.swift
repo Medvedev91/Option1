@@ -42,7 +42,7 @@ class BadgesManager: ObservableObject {
             BadgesManager.instance.dictionary = dictionaryLocal
             
             let elapsedMls = timeMls() - timeStartMls
-            if elapsedMls > 50 {
+            if elapsedMls > 100 {
                 reportApi("BadgesManager.updateAsync() too slow: \(elapsedMls) mls")
             }
         }
