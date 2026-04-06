@@ -90,7 +90,6 @@ class HotKeysUtils {
         optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             if event.modifierFlags.contains(.option) {
                 BadgesManager.updateAsync()
-                CachedWindow.cleanClosed__slow(reportIfSlow: true)
             } else {
                 onOptionTabKeyUp()
             }
