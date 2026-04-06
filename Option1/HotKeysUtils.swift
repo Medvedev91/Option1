@@ -103,7 +103,6 @@ class HotKeysUtils {
             // print(";;; b1 \(timeMls())")
             if event.modifierFlags.contains(.option) {
                 BadgesManager.updateAsync()
-                CachedWindow.cleanClosed__slow(reportIfSlow: true)
             } else {
                 onOptionTabKeyUp()
                 // print(";;; b2 \(timeMls())")
