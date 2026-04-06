@@ -71,6 +71,8 @@ struct CachedWindow: Hashable {
     // Внимание 3
     // Вызывать только когда важен результат, т.е. перед использованием cachedWindows.
     //
+    // MainActor т.к. были крэши при обращении к cachedWindows.
+    //
     @MainActor
     static func cleanClosed__slow(reportIfSlow: Bool = true) {
         let timeStartMls = timeMls()
