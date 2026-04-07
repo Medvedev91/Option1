@@ -3,14 +3,14 @@ import Combine
 import HotKey
 
 // Without Vim's jk
-private let flightKeys: [Key] = [
+private let jumpKeys: [Key] = [
     // Letters
     .a, .b, .c, .d, .e, .f, .g, .h, .i, /*.j, .k,*/ .l, .m, .n, .o, .p, .q, .r, .s, .t, .u, .v, .w, .x, .y, .z,
     // Symbols
     .leftBracket, .rightBracket, .backslash, .semicolon, .quote, .comma, .period, .slash, .grave, .minus, .equal,
 ]
 
-private var hotKeysFlightHandlers: [HotKey] = []
+private var hotKeysJumpHandlers: [HotKey] = []
 
 @MainActor
 class OptionTabData: ObservableObject {
@@ -28,7 +28,7 @@ class OptionTabData: ObservableObject {
     @Published var workspacesUi: [OptionTabWorkspaceUi] = []
     @Published var bindsUi: [MenuBarBindUi] = []
     
-    @Published var flightCachedWindowKeyMap: [/* Hash */ Int: Key] = [:]
+    @Published var jumpCachedWindowKeyMap: [/* Hash */ Int: Key] = [:]
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -133,7 +133,7 @@ class OptionTabData: ObservableObject {
 
         Publishers.Map(upstream: MenuBarManager.instance.$workspacesUi, transform: { menuBarWorkspacesUi in
             menuBarWorkspacesUi.enumerated().map { (idx, menuBarWorkspaceUi) in
-                OptionTabWorkspaceUi(key: flightKeys[idx], menuBarWorkspaceUi: menuBarWorkspaceUi, onClick: {
+                OptionTabWorkspaceUi(key: jumpKeys[idx], menuBarWorkspaceUi: menuBarWorkspaceUi, onClick: {
                     MenuBarManager.instance.setWorkspaceDb(menuBarWorkspaceUi.workspaceDb)
                 })
             }
@@ -162,7 +162,7 @@ class OptionTabData: ObservableObject {
         
         let favoriteExtraIdx = workspacesUi.count
         self.favoritesUi = FavoriteDb.selectAllSorted().enumerated().map { (idx, favoriteDb) in
-            OptionTabFavoriteUi(key: flightKeys[idx + favoriteExtraIdx], favoriteDb: favoriteDb, onClick: {
+            OptionTabFavoriteUi(key: jumpKeys[idx + favoriteExtraIdx], favoriteDb: favoriteDb, onClick: {
                 self.closeWindow()
                 HotKeysUtils.handleRaw(
                     bundle: favoriteDb.bundle,
@@ -173,19 +173,19 @@ class OptionTabData: ObservableObject {
         
         let windowsExtraIdx = favoriteExtraIdx + favoritesUi.count
         // Не использую Set т.к. важен порядок
-        let busyKeys = flightKeys[0..<windowsExtraIdx]
-        var freeKeys = flightKeys[windowsExtraIdx..<flightKeys.count]
+        let busyKeys = jumpKeys[0..<windowsExtraIdx]
+        var freeKeys = jumpKeys[windowsExtraIdx..<jumpKeys.count]
         // Освобождаем клавиши если были добавлены рабочие пространства или избранные
-        flightCachedWindowKeyMap.forEach { (hash, key) in
+        jumpCachedWindowKeyMap.forEach { (hash, key) in
             if busyKeys.contains(key) {
-                flightCachedWindowKeyMap.removeValue(forKey: hash)
+                jumpCachedWindowKeyMap.removeValue(forKey: hash)
             }
         }
         // Освобождаем клавиши для закрытых окон
         let windowsHashes = Set<Int>(history.map(\.axuiElement.hashValue))
-        flightCachedWindowKeyMap.forEach { (hash, key) in
+        jumpCachedWindowKeyMap.forEach { (hash, key) in
             if !windowsHashes.contains(hash) {
-                flightCachedWindowKeyMap.removeValue(forKey: hash)
+                jumpCachedWindowKeyMap.removeValue(forKey: hash)
             } else {
                 freeKeys.removeAll { $0 == key }
             }
@@ -194,15 +194,15 @@ class OptionTabData: ObservableObject {
             if freeKeys.isEmpty {
                 return
             }
-            if flightCachedWindowKeyMap[hash] == nil {
-                flightCachedWindowKeyMap[hash] = freeKeys.popFirst()!
+            if jumpCachedWindowKeyMap[hash] == nil {
+                jumpCachedWindowKeyMap[hash] = freeKeys.popFirst()!
             }
         }
         
         self.animateWindowResize = false
         
         self.removeHotKeyHandlers()
-        hotKeysFlightHandlers = flightKeys.map { key in
+        hotKeysJumpHandlers = jumpKeys.map { key in
             let hotKey = HotKey(
                 key: key,
                 modifiers: [.option],
@@ -215,7 +215,7 @@ class OptionTabData: ObservableObject {
                         favoriteUi.onClick()
                         return
                     }
-                    if let hash = self.flightCachedWindowKeyMap.first(where: { $0.value == key })?.key,
+                    if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == key })?.key,
                        let cachedWindow = self.history.first(where: { $0.axuiElement.hashValue == hash }) {
                         self.onCachedWindowFocus(cachedWindow)
                     }
@@ -230,8 +230,8 @@ class OptionTabData: ObservableObject {
     }
     
     func removeHotKeyHandlers() {
-        hotKeysFlightHandlers.forEach { $0.isPaused = true }
-        hotKeysFlightHandlers.removeAll()
+        hotKeysJumpHandlers.forEach { $0.isPaused = true }
+        hotKeysJumpHandlers.removeAll()
     }
 }
 
