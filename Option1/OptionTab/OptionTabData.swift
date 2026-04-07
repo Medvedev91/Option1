@@ -187,7 +187,7 @@ class OptionTabData: ObservableObject {
             if !windowsHashes.contains(hash) {
                 flightCachedWindowKeyMap.removeValue(forKey: hash)
             } else {
-                freeKeys.remove(key)
+                freeKeys.removeAll { $0 == key }
             }
         }
         windowsHashes.forEach { hash in
