@@ -1,7 +1,5 @@
-import HotKey
-
 struct OptionTabWorkspaceUi {
-    let key: Key
+    let jumpKey: OptionTabJumpKey
     let menuBarWorkspaceUi: MenuBarWorkspaceUi
     let onClick: () -> Void
 }
