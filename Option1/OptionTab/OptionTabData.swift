@@ -1,4 +1,16 @@
 import AppKit
+import Combine
+import HotKey
+
+// Without Vim's jk
+private let flightKeys: [Key] = [
+    // Letters
+    .a, .b, .c, .d, .e, .f, .g, .h, .i, /*.j, .k,*/ .l, .m, .n, .o, .p, .q, .r, .s, .t, .u, .v, .w, .x, .y, .z,
+    // Symbols
+    .leftBracket, .rightBracket, .backslash, .semicolon, .quote, .comma, .period, .slash, .grave, .minus, .equal,
+]
+
+private var hotKeysFlightHandlers: [HotKey] = []
 
 @MainActor
 class OptionTabData: ObservableObject {
@@ -160,8 +172,9 @@ class OptionTabData: ObservableObject {
         }
         
         let windowsExtraIdx = favoriteExtraIdx + favoritesUi.count
-        let busyKeys = Set<Key>(flightKeys[0..<windowsExtraIdx])
-        var freeKeys = Set<Key>(flightKeys[windowsExtraIdx..<flightKeys.count])
+        // Не использую Set т.к. важен порядок
+        let busyKeys = flightKeys[0..<windowsExtraIdx]
+        var freeKeys = flightKeys[windowsExtraIdx..<flightKeys.count]
         // Освобождаем клавиши если были добавлены рабочие пространства или избранные
         flightCachedWindowKeyMap.forEach { (hash, key) in
             if busyKeys.contains(key) {
