@@ -1,10 +1,9 @@
 import AppKit
-import HotKey
 
 @MainActor
 struct OptionTabFavoriteUi {
     
-    let key: Key
+    let jumpKey: OptionTabJumpKey
     let favoriteDb: FavoriteDb
     let onClick: () -> Void
     
