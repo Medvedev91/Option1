@@ -478,7 +478,7 @@ private struct CachedWindowView: View {
     var body: some View {
         WindowsListItemButton(
             text: cachedWindow.title,
-            jumpLetter: optionTabData.jumpCachedWindowKeyMap[cachedWindow.axuiElement.hashValue]?.description.uppercased(),
+            jumpKey: optionTabData.jumpCachedWindowKeyMap[cachedWindow.axuiElement.hashValue],
             fontWeight: .regular,
             isSelected: isSelected,
             onClick: {
@@ -552,7 +552,7 @@ private struct MenuItemView<Content: View>: View {
 private struct WindowsListItemButton: View {
     
     let text: String
-    let jumpLetter: String?
+    let jumpKey: Key?
     let fontWeight: Font.Weight
     let isSelected: Bool
     let onClick: () -> Void
@@ -563,17 +563,26 @@ private struct WindowsListItemButton: View {
                 onClick()
             },
             label: {
-                Text(text)
-                    .textAlign(.leading)
-                    .font(.system(size: fontSize, weight: fontWeight))
-                    .lineLimit(1)
-                    .frame(height: OptionTabView.itemHeight)
-                    .padding(.horizontal, windowsListItemInnerPadding)
-                    .foregroundColor(isSelected ? .white : .primary)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8, style: .circular)
-                            .fill(isSelected ? .blue : .clear)
-                    )
+                HStack(spacing: 0) {
+                    
+                    Text(text)
+                        .font(.system(size: fontSize, weight: fontWeight))
+                        .lineLimit(1)
+                        .foregroundColor(isSelected ? .white : .primary)
+                    
+                    if let key = jumpKey {
+                        JumpButton(key: key, color: isSelected ? .white : .secondary)
+                            .padding(.leading, 8)
+                    }
+                    
+                    Spacer(minLength: 0)
+                }
+                .frame(height: OptionTabView.itemHeight)
+                .padding(.horizontal, windowsListItemInnerPadding)
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .circular)
+                        .fill(isSelected ? .blue : .clear)
+                )
             }
         )
         .buttonStyle(.plain)
