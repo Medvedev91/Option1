@@ -18,6 +18,10 @@ class OptionTabData: ObservableObject {
     @Published var uiMode: OptionTabUiMode
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
+    
+    @Published var isJkInfoPresented = false
+    @Published var isKeepShortcutsGlobalInfoPresented = false
+    @Published var isKeepJumpsGlobal: Bool = KvDb.selectIsKeepJumpsGlobal()
 
     @Published var appsUi: [OptionTabAppUi] = []
     @Published var history: [CachedWindow] = []
@@ -219,6 +223,7 @@ class OptionTabData: ObservableObject {
                     if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == key })?.key,
                        let cachedWindow = self.history.first(where: { $0.axuiElement.hashValue == hash }) {
                         self.onCachedWindowFocus(cachedWindow)
+                        return
                     }
                 },
             )
