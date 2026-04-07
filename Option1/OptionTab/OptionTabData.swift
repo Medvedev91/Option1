@@ -219,6 +219,7 @@ class OptionTabData: ObservableObject {
                     if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == key })?.key,
                        let cachedWindow = self.history.first(where: { $0.axuiElement.hashValue == hash }) {
                         self.onCachedWindowFocus(cachedWindow)
+                        return
                     }
                 },
             )
