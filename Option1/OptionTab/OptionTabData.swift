@@ -119,9 +119,6 @@ class OptionTabData: ObservableObject {
         )
     }
     
-    // ВНИМАНИЕ!
-    // Строго контролировать скорость выполнения,
-    // на момент разработки это ~3млс.
     init(
         uiMode: OptionTabUiMode,
         onCachedWindowFocus: @escaping (CachedWindow) -> Void,
@@ -142,6 +139,9 @@ class OptionTabData: ObservableObject {
         Publishers.Map(upstream: MenuBarManager.instance.$bindsUi, transform: { $0 }).assign(to: &$bindsUi)
     }
     
+    // ВНИМАНИЕ!
+    // Строго контролировать скорость выполнения,
+    // на момент разработки это ~10млс.
     func rebuild(
         uiMode: OptionTabUiMode,
     ) {
@@ -182,7 +182,8 @@ class OptionTabData: ObservableObject {
             }
         }
         // Освобождаем клавиши для закрытых окон
-        let windowsHashes = Set<Int>(history.map(\.axuiElement.hashValue))
+        // Не использую Set т.к. важен порядок
+        let windowsHashes = history.map(\.axuiElement.hashValue)
         jumpCachedWindowKeyMap.forEach { (hash, key) in
             if !windowsHashes.contains(hash) {
                 jumpCachedWindowKeyMap.removeValue(forKey: hash)
