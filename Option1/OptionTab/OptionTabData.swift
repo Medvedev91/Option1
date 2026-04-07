@@ -3,12 +3,16 @@ import Combine
 import HotKey
 
 // Without Vim's jk
-private let jumpKeys: [Key] = [
+private let jumpKeysRaw: [Key] = [
     // Letters
     .a, .b, .c, .d, .e, .f, .g, .h, .i, /*.j, .k,*/ .l, .m, .n, .o, .p, .q, .r, .s, .t, .u, .v, .w, .x, .y, .z,
     // Symbols
     .leftBracket, .rightBracket, .backslash, .semicolon, .quote, .comma, .period, .slash, .grave, .minus, .equal,
 ]
+
+private let jumpKeys: [OptionTabJumpKey] =
+jumpKeysRaw.map { OptionTabJumpKey(key: $0, modifiers: [.option]) } +
+jumpKeysRaw.map { OptionTabJumpKey(key: $0, modifiers: [.option, .shift]) }
 
 private var hotKeysJumpHandlers: [HotKey] = []
 
@@ -32,7 +36,7 @@ class OptionTabData: ObservableObject {
     @Published var workspacesUi: [OptionTabWorkspaceUi] = []
     @Published var bindsUi: [MenuBarBindUi] = []
     
-    @Published var jumpCachedWindowKeyMap: [/* Hash */ Int: Key] = [:]
+    @Published var jumpCachedWindowKeyMap: [/* AXUIElement Hash */ Int: OptionTabJumpKey] = [:]
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -134,7 +138,7 @@ class OptionTabData: ObservableObject {
 
         Publishers.Map(upstream: MenuBarManager.instance.$workspacesUi, transform: { menuBarWorkspacesUi in
             menuBarWorkspacesUi.enumerated().map { (idx, menuBarWorkspaceUi) in
-                OptionTabWorkspaceUi(key: jumpKeys[idx], menuBarWorkspaceUi: menuBarWorkspaceUi, onClick: {
+                OptionTabWorkspaceUi(jumpKey: jumpKeys[idx], menuBarWorkspaceUi: menuBarWorkspaceUi, onClick: {
                     MenuBarManager.instance.setWorkspaceDb(menuBarWorkspaceUi.workspaceDb)
                 })
             }
@@ -166,7 +170,7 @@ class OptionTabData: ObservableObject {
         
         let favoriteExtraIdx = workspacesUi.count
         self.favoritesUi = FavoriteDb.selectAllSorted().enumerated().map { (idx, favoriteDb) in
-            OptionTabFavoriteUi(key: jumpKeys[idx + favoriteExtraIdx], favoriteDb: favoriteDb, onClick: {
+            OptionTabFavoriteUi(jumpKey: jumpKeys[idx + favoriteExtraIdx], favoriteDb: favoriteDb, onClick: {
                 self.closeWindow()
                 HotKeysUtils.handleRaw(
                     bundle: favoriteDb.bundle,
@@ -207,20 +211,20 @@ class OptionTabData: ObservableObject {
         self.animateWindowResize = false
         
         self.removeHotKeyHandlers()
-        hotKeysJumpHandlers = jumpKeys.map { key in
+        hotKeysJumpHandlers = jumpKeys.map { jumpKey in
             let hotKey = HotKey(
-                key: key,
-                modifiers: [.option],
+                key: jumpKey.key,
+                modifiers: jumpKey.modifiers,
                 keyDownHandler: {
-                    if let workspaceUi = self.workspacesUi.first(where: { $0.key == key }) {
+                    if let workspaceUi = self.workspacesUi.first(where: { $0.jumpKey == jumpKey }) {
                         workspaceUi.onClick()
                         return
                     }
-                    if let favoriteUi = self.favoritesUi.first(where: { $0.key == key }) {
+                    if let favoriteUi = self.favoritesUi.first(where: { $0.jumpKey == jumpKey }) {
                         favoriteUi.onClick()
                         return
                     }
-                    if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == key })?.key,
+                    if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == jumpKey })?.key,
                        let cachedWindow = self.history.first(where: { $0.axuiElement.hashValue == hash }) {
                         self.onCachedWindowFocus(cachedWindow)
                         return

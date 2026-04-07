@@ -1,6 +1,5 @@
 import AppKit
 import SwiftUI
-import HotKey
 
 private let fontSize = 14.0
 private let windowsListItemInnerPadding = 8.0
@@ -201,7 +200,7 @@ struct OptionTabView: View {
                                     .font(.system(size: fontSize, weight: .regular))
                                     .lineLimit(1)
                                 
-                                JumpButton(key: workspaceUi.key, color: isHover ? .white : .secondary)
+                                JumpButton(jumpKey: workspaceUi.jumpKey, color: isHover ? .white : .secondary)
                                     .padding(.leading, 8)
                                 
                                 Spacer(minLength: 0)
@@ -316,7 +315,7 @@ struct OptionTabView: View {
                                 
                                 let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle]
                                 
-                                JumpButton(key: favoriteUi.key, color: isHover ? .white : .secondary)
+                                JumpButton(jumpKey: favoriteUi.jumpKey, color: isHover ? .white : .secondary)
                                     .padding(.leading, badge == nil ? 8 : 4)
                                 
                                 if let badge = badge {
@@ -572,7 +571,7 @@ private struct MenuItemView<Content: View>: View {
 private struct WindowsListItemButton: View {
     
     let text: String
-    let jumpKey: Key?
+    let jumpKey: OptionTabJumpKey?
     let fontWeight: Font.Weight
     let isSelected: Bool
     let onClick: () -> Void
@@ -590,8 +589,8 @@ private struct WindowsListItemButton: View {
                         .lineLimit(1)
                         .foregroundColor(isSelected ? .white : .primary)
                     
-                    if let key = jumpKey {
-                        JumpButton(key: key, color: isSelected ? .white : .secondary)
+                    if let jumpKey = jumpKey {
+                        JumpButton(jumpKey: jumpKey, color: isSelected ? .white : .secondary)
                             .padding(.leading, 8)
                     }
                     
@@ -713,11 +712,11 @@ private struct DbModeButton: View {
 
 private struct JumpButton: View {
     
-    let key: Key
+    let jumpKey: OptionTabJumpKey
     let color: Color
     
     var body: some View {
-        Text(key.description.uppercased())
+        Text(jumpKey.text)
             .font(.system(size: fontSize, weight: .regular))
             .foregroundColor(color)
     }
