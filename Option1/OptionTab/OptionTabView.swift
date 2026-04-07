@@ -22,8 +22,8 @@ struct OptionTabView: View {
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
     @ObservedObject private var badgesManager = BadgesManager.instance
-    @State private var isJkInfoPresented = false
-    @State private var isModeHovered: Bool = false
+    
+    @State private var isModeHovered = false
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
@@ -131,7 +131,7 @@ struct OptionTabView: View {
                     if isModeHovered {
                         Button(
                             action: {
-                                isJkInfoPresented = true
+                                data.isInfoPresented = true
                             },
                             label: {
                                 Image(systemName: "info.circle")
@@ -140,18 +140,31 @@ struct OptionTabView: View {
                             },
                         )
                         .buttonStyle(.borderless)
-                        .padding(.trailing, 21)
                     }
+                    
+                    Button(
+                        action: {
+                            data.isKeepJumpsGlobal = KvDb.upsertIsKeepJumpsGlobal(!data.isKeepJumpsGlobal)
+                        },
+                        label: {
+                            Image(systemName: "keyboard")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(data.isKeepJumpsGlobal ? .primary : .secondary)
+                        },
+                    )
+                    .buttonStyle(.borderless)
+                    .help("Keep Shortcuts Global")
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
+                .padding(.trailing, 21)
                 .padding(.top, data.windowSize.safeAreaTop)
                 .onHover { isHovered in
                     self.isModeHovered = isHovered
                 }
                 .alert(
                     "",
-                    isPresented: $isJkInfoPresented,
+                    isPresented: $data.isInfoPresented,
                     actions: {},
                     message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                 )

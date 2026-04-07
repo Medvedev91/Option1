@@ -195,6 +195,7 @@ class OptionTabManager {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
         self.optionTabView.data.removeHotKeyHandlers()
+        self.optionTabView.data.isInfoPresented = false
     }
     
     func setIsEnabled(_ isEnabled: Bool) {

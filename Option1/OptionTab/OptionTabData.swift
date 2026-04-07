@@ -18,6 +18,9 @@ class OptionTabData: ObservableObject {
     @Published var uiMode: OptionTabUiMode
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
+    
+    @Published var isInfoPresented = false
+    @Published var isKeepJumpsGlobal: Bool = KvDb.selectIsKeepJumpsGlobal()
 
     @Published var appsUi: [OptionTabAppUi] = []
     @Published var history: [CachedWindow] = []
