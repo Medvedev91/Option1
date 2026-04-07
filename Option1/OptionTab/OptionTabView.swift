@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import HotKey
 
 private let fontSize = 14.0
 private let windowsListItemInnerPadding = 8.0
@@ -20,15 +21,12 @@ struct OptionTabView: View {
     static let menuDividerHeight: CGFloat = itemHeaderPadding
     static let menuItemOuterTrailingPadding: CGFloat = 12
     
-    @ObservedObject private var menuBarManager = MenuBarManager.instance
     @ObservedObject private var badgesManager = BadgesManager.instance
     @State private var isJkInfoPresented = false
     @State private var isModeHovered: Bool = false
     
     let window: NSWindow
     @ObservedObject var data: OptionTabData
-    let onCachedWindowFocus: (CachedWindow) -> Void
-    let closeWindow: () -> Void
     
     ///
     
@@ -51,15 +49,8 @@ struct OptionTabView: View {
                         case .apps:
                             ForEach(data.appsUi, id: \.app) { appUi in
                                 AppView(
+                                    optionTabData: data,
                                     appUi: appUi,
-                                    updateAppsUi: {
-                                        data.rebuildAppsUi()
-                                    },
-                                    selectedCachedWindow: data.selectedCachedWindow,
-                                    onCachedWindowHover: { cachedWindow in
-                                        data.selectedCachedWindow = cachedWindow
-                                    },
-                                    onCachedWindowFocus: onCachedWindowFocus,
                                 )
                             }
                         case .history:
@@ -67,12 +58,8 @@ struct OptionTabView: View {
                                 .frame(height: Self.itemHeaderPadding)
                             ForEach(data.history, id: \.self) { cachedWindow in
                                 HistoryItemView(
+                                    optionTabData: data,
                                     cachedWindow: cachedWindow,
-                                    selectedCachedWindow: data.selectedCachedWindow,
-                                    onCachedWindowHover: { cachedWindow in
-                                        data.selectedCachedWindow = cachedWindow
-                                    },
-                                    onCachedWindowFocus: onCachedWindowFocus,
                                 )
                             }
                         }
@@ -168,20 +155,18 @@ struct OptionTabView: View {
                     actions: {},
                     message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                 )
-
+                
                 MenuDivider()
                 
-                ForEach(menuBarManager.workspacesUi, id: \.workspaceDb?.id) { workspaceUi in
+                ForEach(data.workspacesUi, id: \.menuBarWorkspaceUi.workspaceDb?.id) { workspaceUi in
                     MenuItemView(
                         onClick: {
-                            withAnimation {
-                                MenuBarManager.instance.setWorkspaceDb(workspaceUi.workspaceDb)
-                            }
+                            workspaceUi.onClick()
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
                                 HStack(spacing: 0) {
-                                    if workspaceUi.isSelected {
+                                    if workspaceUi.menuBarWorkspaceUi.isSelected {
                                         Image(systemName: "checkmark")
                                             .foregroundColor(isHover ? .white : .primary)
                                             .font(.system(size: 11, weight: .semibold))
@@ -191,11 +176,15 @@ struct OptionTabView: View {
                                 }
                                 .frame(width: Self.menuIconWidth)
                                 
-                                Text(workspaceUi.workspaceDb?.name ?? "Shared")
+                                Text(workspaceUi.menuBarWorkspaceUi.workspaceDb?.name ?? "Shared")
                                     .foregroundColor(isHover ? .white : .primary)
-                                    .textAlign(.leading)
                                     .font(.system(size: fontSize, weight: .regular))
                                     .lineLimit(1)
+                                
+                                JumpButton(key: workspaceUi.key, color: isHover ? .white : .secondary)
+                                    .padding(.leading, 8)
+                                
+                                Spacer(minLength: 0)
                             }
                             .frame(height: Self.itemHeight)
                         },
@@ -204,10 +193,10 @@ struct OptionTabView: View {
                 
                 MenuDivider()
                 
-                ForEach(menuBarManager.bindsUi, id: \.bindDb.id) { bindUi in
+                ForEach(data.bindsUi, id: \.bindDb.id) { bindUi in
                     MenuItemView(
                         onClick: {
-                            closeWindow()
+                            data.closeWindow()
                             HotKeysUtils.handleKey(key: bindUi.key)
                         },
                         content: { isHover in
@@ -257,8 +246,8 @@ struct OptionTabView: View {
                 MenuDivider()
                 
                 MenuItemView(
-                    onClick:{
-                        closeWindow()
+                    onClick: {
+                        data.closeWindow()
                         FavoriteTabUtils.instance.needToShow = true
                         WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                     },
@@ -285,12 +274,8 @@ struct OptionTabView: View {
                 
                 ForEach(data.favoritesUi, id: \.favoriteDb.id) { favoriteUi in
                     MenuItemView(
-                        onClick:{
-                            closeWindow()
-                            HotKeysUtils.handleRaw(
-                                bundle: favoriteUi.favoriteDb.bundle,
-                                substring: favoriteUi.favoriteDb.substring,
-                            )
+                        onClick: {
+                            favoriteUi.onClick()
                         },
                         content: { isHover in
                             HStack(spacing: 0) {
@@ -309,7 +294,12 @@ struct OptionTabView: View {
                                     .foregroundColor(isHover ? .white : .primary)
                                     .padding(.leading, icon == nil ? 2 : 6)
                                 
-                                if let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle] {
+                                let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle]
+                                
+                                JumpButton(key: favoriteUi.key, color: isHover ? .white : .secondary)
+                                    .padding(.leading, badge == nil ? 8 : 4)
+                                
+                                if let badge = badge {
                                     ZStack {
                                         Text(badge)
                                             .font(.system(size: 10, weight: .semibold))
@@ -332,7 +322,7 @@ struct OptionTabView: View {
                 
                 MenuItemView(
                     onClick: {
-                        closeWindow()
+                        data.closeWindow()
                         WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                     },
                     content: { isHover in
@@ -371,11 +361,8 @@ struct OptionTabView: View {
 
 private struct AppView: View {
     
+    @StateObject var optionTabData: OptionTabData
     let appUi: OptionTabAppUi
-    let updateAppsUi: () -> Void
-    let selectedCachedWindow: CachedWindow?
-    let onCachedWindowHover: (CachedWindow?) -> Void
-    let onCachedWindowFocus: (CachedWindow) -> Void
     
     ///
     
@@ -407,7 +394,7 @@ private struct AppView: View {
                                         OptionTabPinDb.upsertToTop(bundle: bundle)
                                     }
                                     withAnimation {
-                                        updateAppsUi()
+                                        self.optionTabData.rebuildAppsUi()
                                     }
                                 }
                             },
@@ -448,7 +435,7 @@ private struct AppView: View {
                         .frame(width: OptionTabView.itemHeight, height: OptionTabView.itemHeight)
                         .onTapGesture {
                             if let cachedWindow = appUi.cachedWindows.first {
-                                onCachedWindowFocus(cachedWindow)
+                                optionTabData.onCachedWindowFocus(cachedWindow)
                             }
                         }
                 }
@@ -459,13 +446,11 @@ private struct AppView: View {
                 let cachedWindows = appUi.cachedWindows
                 ForEach(cachedWindows, id: \.self) { cachedWindow in
                     CachedWindowView(
+                        optionTabData: optionTabData,
                         cachedWindow: cachedWindow,
-                        isSelected: cachedWindow == selectedCachedWindow,
+                        isSelected: cachedWindow == optionTabData.selectedCachedWindow,
                         onCachedWindowHover: { isHover in
-                            onCachedWindowHover(isHover ? cachedWindow : nil)
-                        },
-                        onCachedWindowFocus: {
-                            onCachedWindowFocus(cachedWindow)
+                            optionTabData.selectedCachedWindow = isHover ? cachedWindow : nil
                         },
                     )
                     .id(cachedWindow.hashValue)
@@ -481,10 +466,10 @@ private struct AppView: View {
 
 private struct CachedWindowView: View {
     
+    @StateObject var optionTabData: OptionTabData
     let cachedWindow: CachedWindow
     let isSelected: Bool
     let onCachedWindowHover: (Bool) -> Void
-    let onCachedWindowFocus: () -> Void
     
     ///
     
@@ -493,10 +478,11 @@ private struct CachedWindowView: View {
     var body: some View {
         WindowsListItemButton(
             text: cachedWindow.title,
+            jumpLetter: optionTabData.jumpCachedWindowKeyMap[cachedWindow.axuiElement.hashValue]?.description.uppercased(),
             fontWeight: .regular,
             isSelected: isSelected,
             onClick: {
-                onCachedWindowFocus()
+                optionTabData.onCachedWindowFocus(cachedWindow)
             },
         )
         .onContinuousHover { hoverPhase in
@@ -566,6 +552,7 @@ private struct MenuItemView<Content: View>: View {
 private struct WindowsListItemButton: View {
     
     let text: String
+    let jumpLetter: String?
     let fontWeight: Font.Weight
     let isSelected: Bool
     let onClick: () -> Void
@@ -596,10 +583,8 @@ private struct WindowsListItemButton: View {
 
 private struct HistoryItemView: View {
     
+    @StateObject var optionTabData: OptionTabData
     let cachedWindow: CachedWindow
-    let selectedCachedWindow: CachedWindow?
-    let onCachedWindowHover: (CachedWindow?) -> Void
-    let onCachedWindowFocus: (CachedWindow) -> Void
     
     ///
     
@@ -630,7 +615,7 @@ private struct HistoryItemView: View {
                         .resizable()
                         .frame(width: imageSize, height: imageSize)
                         .onTapGesture {
-                            onCachedWindowFocus(cachedWindow)
+                            optionTabData.onCachedWindowFocus(cachedWindow)
                         }
                 }
             }
@@ -638,13 +623,11 @@ private struct HistoryItemView: View {
             .padding(.leading, 4)
             
             CachedWindowView(
+                optionTabData: optionTabData,
                 cachedWindow: cachedWindow,
-                isSelected: cachedWindow == selectedCachedWindow,
+                isSelected: cachedWindow == optionTabData.selectedCachedWindow,
                 onCachedWindowHover: { isHover in
-                    onCachedWindowHover(isHover ? cachedWindow : nil)
-                },
-                onCachedWindowFocus: {
-                    onCachedWindowFocus(cachedWindow)
+                    optionTabData.selectedCachedWindow = isHover ? cachedWindow : nil
                 },
             )
             .id(cachedWindow.hashValue)
@@ -665,7 +648,7 @@ private struct MenuDivider: View {
 
 private struct DbModeButton: View {
     
-    let optionTabData: OptionTabData
+    @StateObject var optionTabData: OptionTabData
     let dbMode: OptionTabDbMode
     @Binding var stateDbMode: OptionTabDbMode
     
@@ -696,5 +679,17 @@ private struct DbModeButton: View {
         .buttonStyle(.plain)
         .foregroundColor(stateDbMode == dbMode ? .primary : .secondary)
         .font(.system(size: fontSize))
+    }
+}
+
+private struct JumpButton: View {
+    
+    let key: Key
+    let color: Color
+    
+    var body: some View {
+        Text(key.description.uppercased())
+            .font(.system(size: fontSize, weight: .regular))
+            .foregroundColor(color)
     }
 }
