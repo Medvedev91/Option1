@@ -74,6 +74,20 @@ class KvDb {
     }
     
     //
+    // Is Keep Jumps Global
+    
+    @MainActor
+    static func selectIsKeepJumpsGlobal() -> Bool {
+        selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? false
+    }
+    
+    @MainActor
+    static func upsertIsKeepJumpsGlobal(_ isKeep: Bool) -> Bool {
+        upsert(key: IS_KEEP_JUMPS_GLOBAL_KEY, value: isKeep ? "1" : "0")
+        return isKeep
+    }
+    
+    //
     // Option-Tab Mode
     
     @MainActor
@@ -147,6 +161,7 @@ private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
 private let ACTIVATION_EMAIL_KEY = "activation-email"
 private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"
+private let IS_KEEP_JUMPS_GLOBAL_KEY = "is-keep-jumps-global"
 private let IS_OPTION_TAB_ENABLED_KEY = "is-option-tab-enabled"
 private let OPTION_TAB_DB_MODE_KEY = "option-tab-db-mode"
 private let IS_DISPLAY_IN_MENU_BAR_KEY = "is-display-in-menu-bar"
