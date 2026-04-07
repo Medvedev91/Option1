@@ -19,7 +19,8 @@ class OptionTabData: ObservableObject {
     let onCachedWindowFocus: (CachedWindow) -> Void
     let closeWindow: () -> Void
     
-    @Published var isInfoPresented = false
+    @Published var isJkInfoPresented = false
+    @Published var isKeepShortcutsGlobalInfoPresented = false
     @Published var isKeepJumpsGlobal: Bool = KvDb.selectIsKeepJumpsGlobal()
 
     @Published var appsUi: [OptionTabAppUi] = []

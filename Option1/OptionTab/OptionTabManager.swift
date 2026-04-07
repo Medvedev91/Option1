@@ -189,13 +189,16 @@ class OptionTabManager {
     
     func closeWindow() {
         isOpen = false
-        self.optionTabView.window.close()
+        optionTabView.window.close()
         HotKeysUtils.disableOptionTabArrowsHotKeys()
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
-        self.optionTabView.data.removeHotKeyHandlers()
-        self.optionTabView.data.isInfoPresented = false
+        optionTabView.data.isJkInfoPresented = false
+        optionTabView.data.isKeepShortcutsGlobalInfoPresented = false
+        if !optionTabView.data.isKeepJumpsGlobal {
+            optionTabView.data.removeHotKeyHandlers()
+        }
     }
     
     func setIsEnabled(_ isEnabled: Bool) {

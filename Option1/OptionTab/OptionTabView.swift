@@ -125,13 +125,17 @@ struct OptionTabView: View {
                     DbModeButton(optionTabData: data, dbMode: .jk, stateDbMode: $dbMode)
                     DbModeButton(optionTabData: data, dbMode: .apps, stateDbMode: $dbMode)
                     DbModeButton(optionTabData: data, dbMode: .history, stateDbMode: $dbMode)
-                    
-                    Spacer()
-                    
+                        .alert(
+                            "",
+                            isPresented: $data.isJkInfoPresented,
+                            actions: {},
+                            message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
+                        )
+
                     if isModeHovered {
                         Button(
                             action: {
-                                data.isInfoPresented = true
+                                data.isJkInfoPresented = true
                             },
                             label: {
                                 Image(systemName: "info.circle")
@@ -142,9 +146,12 @@ struct OptionTabView: View {
                         .buttonStyle(.borderless)
                     }
                     
+                    Spacer()
+
                     Button(
                         action: {
                             data.isKeepJumpsGlobal = KvDb.upsertIsKeepJumpsGlobal(!data.isKeepJumpsGlobal)
+                            data.isKeepShortcutsGlobalInfoPresented = true
                         },
                         label: {
                             Image(systemName: "keyboard")
@@ -154,6 +161,12 @@ struct OptionTabView: View {
                     )
                     .buttonStyle(.borderless)
                     .help("Keep Shortcuts Global")
+                    .alert(
+                        "",
+                        isPresented: $data.isKeepShortcutsGlobalInfoPresented,
+                        actions: {},
+                        message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nThis feature keeps shortcuts for windows active even if Option-Tab is closed.") }
+                    )
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
@@ -162,12 +175,6 @@ struct OptionTabView: View {
                 .onHover { isHovered in
                     self.isModeHovered = isHovered
                 }
-                .alert(
-                    "",
-                    isPresented: $data.isInfoPresented,
-                    actions: {},
-                    message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
-                )
                 
                 MenuDivider()
                 
