@@ -17,6 +17,12 @@ class OptionTabManager {
     private init() {
         let optionTabData = OptionTabData(
             uiMode: .history,
+            onCachedWindowFocus: { cachedWindow in
+                OptionTabManager.instance.focusCachedWindow(cachedWindow)
+            },
+            closeWindow: {
+                OptionTabManager.instance.closeWindow()
+            },
         )
         
         let window = NSWindow(
@@ -28,12 +34,6 @@ class OptionTabManager {
         let optionTabView = OptionTabView(
             window: window,
             data: optionTabData,
-            onCachedWindowFocus: { cachedWindow in
-                OptionTabManager.instance.focusCachedWindow(cachedWindow)
-            },
-            closeWindow: {
-                OptionTabManager.instance.closeWindow()
-            },
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
