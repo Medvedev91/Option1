@@ -24,8 +24,8 @@ class MenuBarManager: ObservableObject {
     @Published var workspacesDb: [WorkspaceDb] = []
     @Published var bindsDb: [BindDb] = []
     
-    var workspacesUi: [MenuBarWorkspaceUi] = []
-    var bindsUi: [MenuBarBindUi] = []
+    @Published var workspacesUi: [MenuBarWorkspaceUi] = []
+    @Published var bindsUi: [MenuBarBindUi] = []
     
     func setup() {
         updateUi()

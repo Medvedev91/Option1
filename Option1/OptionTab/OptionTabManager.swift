@@ -17,6 +17,12 @@ class OptionTabManager {
     private init() {
         let optionTabData = OptionTabData(
             uiMode: .history,
+            onCachedWindowFocus: { cachedWindow in
+                OptionTabManager.instance.focusCachedWindow(cachedWindow)
+            },
+            closeWindow: {
+                OptionTabManager.instance.closeWindow()
+            },
         )
         
         let window = NSWindow(
@@ -28,12 +34,6 @@ class OptionTabManager {
         let optionTabView = OptionTabView(
             window: window,
             data: optionTabData,
-            onCachedWindowFocus: { cachedWindow in
-                OptionTabManager.instance.focusCachedWindow(cachedWindow)
-            },
-            closeWindow: {
-                OptionTabManager.instance.closeWindow()
-            },
         )
         
         window.contentView = NSHostingView(rootView: optionTabView)
@@ -177,6 +177,11 @@ class OptionTabManager {
         )
         
         optionTabView.window.makeKeyAndOrderFront(nil)
+        // Устанавливает фокус на окно, но после закрытия фокус не
+        // не возвращается на прежнюю программу что не удобно.
+        // Можно сохранять окно что было в фокусе и потом возвращать,
+        // но это много запутанной логики.
+        // NSApplication.shared.activate(ignoringOtherApps: false)
         
         HotKeysUtils.enableOptionTabJkHotKeys()
         HotKeysUtils.enableOptionTabArrowsHotKeys()
@@ -189,6 +194,7 @@ class OptionTabManager {
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
+        self.optionTabView.data.removeHotKeyHandlers()
     }
     
     func setIsEnabled(_ isEnabled: Bool) {

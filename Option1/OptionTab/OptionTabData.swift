@@ -1,14 +1,34 @@
 import AppKit
+import Combine
+import HotKey
+
+// Without Vim's jk
+private let jumpKeys: [Key] = [
+    // Letters
+    .a, .b, .c, .d, .e, .f, .g, .h, .i, /*.j, .k,*/ .l, .m, .n, .o, .p, .q, .r, .s, .t, .u, .v, .w, .x, .y, .z,
+    // Symbols
+    .leftBracket, .rightBracket, .backslash, .semicolon, .quote, .comma, .period, .slash, .grave, .minus, .equal,
+]
+
+private var hotKeysJumpHandlers: [HotKey] = []
 
 @MainActor
 class OptionTabData: ObservableObject {
     
     @Published var uiMode: OptionTabUiMode
+    let onCachedWindowFocus: (CachedWindow) -> Void
+    let closeWindow: () -> Void
+
     @Published var appsUi: [OptionTabAppUi] = []
     @Published var history: [CachedWindow] = []
     @Published var selectedCachedWindow: CachedWindow? = nil
     @Published var favoritesUi: [OptionTabFavoriteUi] = []
     var animateWindowResize = true
+    
+    @Published var workspacesUi: [OptionTabWorkspaceUi] = []
+    @Published var bindsUi: [MenuBarBindUi] = []
+    
+    @Published var jumpCachedWindowKeyMap: [/* Hash */ Int: Key] = [:]
     
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
@@ -31,8 +51,8 @@ class OptionTabData: ObservableObject {
             let favorites: CGFloat = (OptionTabView.itemHeight * Double(favoritesUi.count)) + OptionTabView.itemHeight
             let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
             let systemButtonsHeight: CGFloat = OptionTabView.itemHeight * 2.0 // Settings, Modes.
-            let workspacesHeight: CGFloat = Double(MenuBarManager.instance.workspacesUi.count) * OptionTabView.itemHeight
-            let bindsHeight: CGFloat = MenuBarManager.instance.bindsUi.map { bindUi in
+            let workspacesHeight: CGFloat = Double(workspacesUi.count) * OptionTabView.itemHeight
+            let bindsHeight: CGFloat = bindsUi.map { bindUi in
                 bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
             }.reduce(0, +)
             return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight + favorites
@@ -99,16 +119,29 @@ class OptionTabData: ObservableObject {
         )
     }
     
-    // ВНИМАНИЕ!
-    // Строго контролировать скорость выполнения,
-    // на момент разработки это ~3млс.
     init(
         uiMode: OptionTabUiMode,
+        onCachedWindowFocus: @escaping (CachedWindow) -> Void,
+        closeWindow: @escaping () -> Void,
     ) {
         self.uiMode = uiMode
-        self.rebuild(uiMode: uiMode)
+        self.onCachedWindowFocus = onCachedWindowFocus
+        self.closeWindow = closeWindow
+
+        Publishers.Map(upstream: MenuBarManager.instance.$workspacesUi, transform: { menuBarWorkspacesUi in
+            menuBarWorkspacesUi.enumerated().map { (idx, menuBarWorkspaceUi) in
+                OptionTabWorkspaceUi(key: jumpKeys[idx], menuBarWorkspaceUi: menuBarWorkspaceUi, onClick: {
+                    MenuBarManager.instance.setWorkspaceDb(menuBarWorkspaceUi.workspaceDb)
+                })
+            }
+        }).assign(to: &$workspacesUi)
+        
+        Publishers.Map(upstream: MenuBarManager.instance.$bindsUi, transform: { $0 }).assign(to: &$bindsUi)
     }
     
+    // ВНИМАНИЕ!
+    // Строго контролировать скорость выполнения,
+    // на момент разработки это ~10млс.
     func rebuild(
         uiMode: OptionTabUiMode,
     ) {
@@ -127,14 +160,79 @@ class OptionTabData: ObservableObject {
             return nil
         }()
         
-        self.favoritesUi = FavoriteDb.selectAllSorted().map {
-            OptionTabFavoriteUi(favoriteDb: $0)
+        let favoriteExtraIdx = workspacesUi.count
+        self.favoritesUi = FavoriteDb.selectAllSorted().enumerated().map { (idx, favoriteDb) in
+            OptionTabFavoriteUi(key: jumpKeys[idx + favoriteExtraIdx], favoriteDb: favoriteDb, onClick: {
+                self.closeWindow()
+                HotKeysUtils.handleRaw(
+                    bundle: favoriteDb.bundle,
+                    substring: favoriteDb.substring,
+                )
+            })
         }
+        
+        let windowsExtraIdx = favoriteExtraIdx + favoritesUi.count
+        // Не использую Set т.к. важен порядок
+        let busyKeys = jumpKeys[0..<windowsExtraIdx]
+        var freeKeys = jumpKeys[windowsExtraIdx..<jumpKeys.count]
+        // Освобождаем клавиши если были добавлены рабочие пространства или избранные
+        jumpCachedWindowKeyMap.forEach { (hash, key) in
+            if busyKeys.contains(key) {
+                jumpCachedWindowKeyMap.removeValue(forKey: hash)
+            }
+        }
+        // Освобождаем клавиши для закрытых окон
+        // Не использую Set т.к. важен порядок
+        let windowsHashes = history.map(\.axuiElement.hashValue)
+        jumpCachedWindowKeyMap.forEach { (hash, key) in
+            if !windowsHashes.contains(hash) {
+                jumpCachedWindowKeyMap.removeValue(forKey: hash)
+            } else {
+                freeKeys.removeAll { $0 == key }
+            }
+        }
+        windowsHashes.forEach { hash in
+            if freeKeys.isEmpty {
+                return
+            }
+            if jumpCachedWindowKeyMap[hash] == nil {
+                jumpCachedWindowKeyMap[hash] = freeKeys.popFirst()!
+            }
+        }
+        
         self.animateWindowResize = false
+        
+        self.removeHotKeyHandlers()
+        hotKeysJumpHandlers = jumpKeys.map { key in
+            let hotKey = HotKey(
+                key: key,
+                modifiers: [.option],
+                keyDownHandler: {
+                    if let workspaceUi = self.workspacesUi.first(where: { $0.key == key }) {
+                        workspaceUi.onClick()
+                        return
+                    }
+                    if let favoriteUi = self.favoritesUi.first(where: { $0.key == key }) {
+                        favoriteUi.onClick()
+                        return
+                    }
+                    if let hash = self.jumpCachedWindowKeyMap.first(where: { $0.value == key })?.key,
+                       let cachedWindow = self.history.first(where: { $0.axuiElement.hashValue == hash }) {
+                        self.onCachedWindowFocus(cachedWindow)
+                    }
+                },
+            )
+            return hotKey
+        }
     }
     
     func rebuildAppsUi() {
         self.appsUi = buildAppsUi()
+    }
+    
+    func removeHotKeyHandlers() {
+        hotKeysJumpHandlers.forEach { $0.isPaused = true }
+        hotKeysJumpHandlers.removeAll()
     }
 }
 
