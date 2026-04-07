@@ -194,6 +194,7 @@ class OptionTabManager {
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
+        self.optionTabView.data.removeHotKeyHandlers()
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
