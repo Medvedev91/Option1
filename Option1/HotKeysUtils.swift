@@ -14,8 +14,9 @@ private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 private var optionTabHotKeyHandlers: [HotKey] = []
 private var optionTabJkHotKeyHandlers: [HotKey] = []
 private var optionTabArrowsHotKeyHandlers: [HotKey] = []
-private var optionTabLocalMonitorForEvents: Any?
-private var optionTabGlobalMonitorForEvents: Any?
+
+private var optionTabFlagsLocalMonitorForEvents: Any?
+private var optionTabFlagsGlobalMonitorForEvents: Any?
 
 class HotKeysUtils {
     
@@ -87,7 +88,7 @@ class HotKeysUtils {
             )
         )
         
-        optionTabLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
+        optionTabFlagsLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             if event.modifierFlags.contains(.option) {
                 BadgesManager.updateAsync()
             } else {
@@ -98,7 +99,7 @@ class HotKeysUtils {
         // Для отладки производительности открытия Option-Tab удобно использовать этот метод.
         // Суть - быстро нажимать Option-Tab и смотреть разницу между двумя "b1", именно "b1" а не "b2",
         // т.е. между нажатием от отпусканием Option. На момент разработки укладывался в 100млс.
-        optionTabGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
+        optionTabFlagsGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
             // print(";;; b1 \(timeMls())")
             if event.modifierFlags.contains(.option) {
                 BadgesManager.updateAsync()
@@ -122,13 +123,13 @@ class HotKeysUtils {
         }
         optionTabHotKeyHandlers.removeAll()
         // Modifier Events
-        if let optionTabLocalMonitorForEventsLocal = optionTabLocalMonitorForEvents {
-            NSEvent.removeMonitor(optionTabLocalMonitorForEventsLocal)
-            optionTabLocalMonitorForEvents = nil
+        if let optionTabFlagsLocalMonitorForEventsLocal = optionTabFlagsLocalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabFlagsLocalMonitorForEventsLocal)
+            optionTabFlagsLocalMonitorForEvents = nil
         }
-        if let optionTabGlobalMonitorForEventsLocal = optionTabGlobalMonitorForEvents {
-            NSEvent.removeMonitor(optionTabGlobalMonitorForEventsLocal)
-            optionTabGlobalMonitorForEvents = nil
+        if let optionTabFlagsGlobalMonitorForEventsLocal = optionTabFlagsGlobalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabFlagsGlobalMonitorForEventsLocal)
+            optionTabFlagsGlobalMonitorForEvents = nil
         }
         // JK
         disableOptionTabJkHotKeys()
