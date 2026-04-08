@@ -18,6 +18,9 @@ private var optionTabArrowsHotKeyHandlers: [HotKey] = []
 private var optionTabFlagsLocalMonitorForEvents: Any?
 private var optionTabFlagsGlobalMonitorForEvents: Any?
 
+private var optionTabDoubleLocalMonitorForEvents: Any?
+private var optionTabDoubleGlobalMonitorForEvents: Any?
+
 class HotKeysUtils {
     
     static let keys: [Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
@@ -109,6 +112,15 @@ class HotKeysUtils {
             }
         }
         
+        optionTabDoubleLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .any) { event -> NSEvent? in
+            OptionTabDoubleManager.handleKeyDown(event: event)
+            return event
+        }
+        
+        optionTabDoubleGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .any) { event in
+            OptionTabDoubleManager.handleKeyDown(event: event)
+        }
+        
         ///
         
         if KvDb.selectOptionTabDbMode() == .jk {
@@ -130,6 +142,14 @@ class HotKeysUtils {
         if let optionTabFlagsGlobalMonitorForEventsLocal = optionTabFlagsGlobalMonitorForEvents {
             NSEvent.removeMonitor(optionTabFlagsGlobalMonitorForEventsLocal)
             optionTabFlagsGlobalMonitorForEvents = nil
+        }
+        if let optionTabDoubleLocalMonitorForEventsLocal = optionTabDoubleLocalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabDoubleLocalMonitorForEventsLocal)
+            optionTabDoubleLocalMonitorForEvents = nil
+        }
+        if let optionTabDoubleGlobalMonitorForEventsLocal = optionTabDoubleGlobalMonitorForEvents {
+            NSEvent.removeMonitor(optionTabDoubleGlobalMonitorForEventsLocal)
+            optionTabDoubleGlobalMonitorForEvents = nil
         }
         // JK
         disableOptionTabJkHotKeys()
