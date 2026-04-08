@@ -92,24 +92,15 @@ class HotKeysUtils {
         )
         
         optionTabFlagsLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
-            if event.modifierFlags.contains(.option) {
-                BadgesManager.updateAsync()
-            } else {
-                onOptionTabKeyUp()
-            }
+            handleOptionTabFlagsMonitorForEvents(event: event)
             return event
         }
         // Для отладки производительности открытия Option-Tab удобно использовать этот метод.
-        // Суть - быстро нажимать Option-Tab и смотреть разницу между двумя "b1", именно "b1" а не "b2",
-        // т.е. между нажатием от отпусканием Option. На момент разработки укладывался в 100млс.
+        // Суть - быстро нажимать Option-Tab и смотреть разницу между двумя "b1", т.е. между
+        // нажатием от отпусканием Option. На момент разработки укладывался в 100млс.
         optionTabFlagsGlobalMonitorForEvents = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { event in
             // print(";;; b1 \(timeMls())")
-            if event.modifierFlags.contains(.option) {
-                BadgesManager.updateAsync()
-            } else {
-                onOptionTabKeyUp()
-                // print(";;; b2 \(timeMls())")
-            }
+            handleOptionTabFlagsMonitorForEvents(event: event)
         }
         
         optionTabDoubleLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .any) { event -> NSEvent? in
@@ -339,6 +330,15 @@ private func onOptionTabKeyUp() {
     OptionTabManager.instance.onOptionKeyUp()
     onOptionTabKeyUpPressed()
     onOptionShiftTabKeyUpPressed()
+}
+
+@MainActor
+private func handleOptionTabFlagsMonitorForEvents(event: NSEvent) {
+    if event.modifierFlags.contains(.option) {
+        BadgesManager.updateAsync()
+    } else {
+        onOptionTabKeyUp()
+    }
 }
 
 ///
