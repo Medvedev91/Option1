@@ -35,8 +35,10 @@ class OptionTabDoubleManager {
                     case .jk: .apps
                     }
                     OptionTabManager.instance.openWindow(uiMode: uiMode, withPreselectedCachedWindow: false)
+                    cancel()
+                } else {
+                    self.lastKeyDownMls = timeMls()
                 }
-                cancel()
             } else {
                 lastKeyDownMls = timeMls()
             }
