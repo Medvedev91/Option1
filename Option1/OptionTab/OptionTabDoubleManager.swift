@@ -22,7 +22,6 @@ class OptionTabDoubleManager {
         }
         let flags = event.modifierFlags
         if otherFlags.first(where: { flags.contains($0) }) != nil {
-            print(";; dom other flag")
             cancel()
             return
         }
