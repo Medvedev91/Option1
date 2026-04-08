@@ -152,13 +152,14 @@ class OptionTabData: ObservableObject {
     // на момент разработки это ~10млс.
     func rebuild(
         uiMode: OptionTabUiMode,
+        withPreselectedCachedWindow: Bool,
     ) {
         self.uiMode = uiMode
         self.appsUi = buildAppsUi()
         let history = buildHistory()
         self.history = history
         
-        self.selectedCachedWindow = {
+        self.selectedCachedWindow = !withPreselectedCachedWindow ? nil : {
             if history.count >= 2 {
                 return history[1]
             }

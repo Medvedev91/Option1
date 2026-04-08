@@ -83,7 +83,7 @@ class OptionTabManager {
             // ожидается открытие, нужно эмитировать повторное нажатие.
             onOptionTabPressed(fromJk: fromJk)
         } else if fromJk {
-            openWindow(uiMode: .history)
+            openWindow(uiMode: .history, withPreselectedCachedWindow: true)
         } else {
             let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
             case .apps: .apps
@@ -92,7 +92,7 @@ class OptionTabManager {
             }
             self.delayedOpening = {
                 self.delayedOpening = nil
-                self.openWindow(uiMode: uiMode)
+                self.openWindow(uiMode: uiMode, withPreselectedCachedWindow: true)
             }
             Task {
                 try await Task.sleep(nanoseconds: 80_000_000)
@@ -165,6 +165,7 @@ class OptionTabManager {
     
     func openWindow(
         uiMode: OptionTabUiMode,
+        withPreselectedCachedWindow: Bool,
     ) {
         // Если открыто окно приложение Option1 (не Option-Tab),
         // то при нажатии на Option-Tab происходит фокус на Option1.
@@ -174,6 +175,7 @@ class OptionTabManager {
         
         optionTabView.data.rebuild(
             uiMode: uiMode,
+            withPreselectedCachedWindow: withPreselectedCachedWindow,
         )
         
         optionTabView.window.makeKeyAndOrderFront(nil)
