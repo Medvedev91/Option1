@@ -78,7 +78,7 @@ class KvDb {
     
     @MainActor
     static func selectIsKeepJumpsGlobal() -> Bool {
-        selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? false
+        selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? true
     }
     
     @MainActor
