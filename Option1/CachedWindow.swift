@@ -21,6 +21,21 @@ struct CachedWindow: Hashable {
         shellWithNewWindow: String? = nil,
     ) throws {
         Task { @MainActor in
+            //
+            // Обновляем именно тут по нескольким причинам:
+            //
+            // 1.
+            // Вызываем именно до добавления в cachedWindows, из-за особенностей
+            // локиги cleanClosed__slow(). Если проверять после добавления, то
+            // cleanClosed__slow() может по ошибке удалить все окна т.к. будет добавлено
+            // одно точно существующее а остальные еще недоступны после пробуждения.
+            //
+            // 2.
+            // После закрытия окна вызывается AppObserver.handleNotification(),
+            // а нам как раз надо очистить закрытые окна.
+            //
+            cleanClosed__slow(reportIfSlow: false)
+            
             if
                 let pid = try axuiElement.pid(),
                 let axuiElementId = axuiElement.id(),
@@ -44,11 +59,6 @@ struct CachedWindow: Hashable {
                 )
                 cachedWindows[axuiElement.hashValue] = newCachedWindow
             }
-            
-            // Обновляем именно тут, т.к. например после закрытия окна
-            // вызывается AppObserver.handleNotification(), а нам как
-            // раз надо очистить закрытые окна.
-            cleanClosed__slow(reportIfSlow: false)
         }
     }
     
