@@ -201,6 +201,12 @@ class OptionTabManager {
         if !optionTabView.data.isKeepJumpsGlobal {
             optionTabView.data.removeHotKeyHandlers()
         }
+        Task {
+            // Просто удобное место для вызова.
+            // Человек может увидеть что-то не
+            // существущее, и переоткрыть Option-Tab.
+            CachedWindow.cleanClosed__slow()
+        }
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
