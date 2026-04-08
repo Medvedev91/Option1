@@ -69,7 +69,8 @@ class OptionTabData: ObservableObject {
         let contentWidth: CGFloat = OptionTabView.fullWidth
         let contentHeight: CGFloat = max(windowsHeight, menuHeight)
         
-        guard let nsScreen: NSScreen = NSScreen.main else {
+        // Нужно брать первый а не main т.к. он главный и окно будет отображаться на нем
+        guard let nsScreen: NSScreen = NSScreen.screens.first else {
             return OptionTabWindowSize(
                 nsRect: NSRect(x: 0, y: 0, width: contentWidth, height: contentHeight),
                 isFullHeight: false,
