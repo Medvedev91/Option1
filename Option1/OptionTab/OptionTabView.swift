@@ -126,7 +126,7 @@ struct OptionTabView: View {
                         .padding(.leading, 8)
                         .alert(
                             "",
-                            isPresented: $data.isJkInfoPresented,
+                            isPresented: $data.isInfoPresented,
                             actions: {},
                             message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                         )
@@ -155,7 +155,7 @@ struct OptionTabView: View {
                     
                     Button(
                         action: {
-                            data.isJkInfoPresented = true
+                            data.isInfoPresented = true
                         },
                         label: {
                             Image(systemName: "info.circle")
