@@ -38,6 +38,8 @@ class OptionTabData: ObservableObject {
     
     @Published var jumpCachedWindowKeyMap: [/* AXUIElement Hash */ Int: OptionTabJumpKey] = [:]
     
+    @Published var showDonations = false
+    
     var windowSize: OptionTabWindowSize {
         let windowsHeight: CGFloat = {
             switch uiMode {
@@ -63,7 +65,8 @@ class OptionTabData: ObservableObject {
             let bindsHeight: CGFloat = bindsUi.map { bindUi in
                 bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
             }.reduce(0, +)
-            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight + favorites
+            let donations: CGFloat = showDonations ? OptionTabView.itemHeight : 0
+            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight + favorites + donations
         }()
         
         let contentWidth: CGFloat = OptionTabView.fullWidth
@@ -235,6 +238,8 @@ class OptionTabData: ObservableObject {
             )
             return hotKey
         }
+        
+        showDonations = (KvDb.selectActivationEmailOrNil() == nil) && ((KvDb.selectOrInsertInitTime() + (3_600 * 24 * 7)) < time())
     }
     
     func rebuildAppsUi() {
