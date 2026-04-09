@@ -360,12 +360,16 @@ struct OptionTabView: View {
                             WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                         },
                         content: { isHover in
-                            Text("Donations")
-                                .textAlign(.leading)
-                                .foregroundColor(isHover ? .white : .red)
-                                .font(.system(size: fontSize, weight: .regular))
-                                .frame(height: Self.itemHeight)
-                                .padding(.leading, Self.menuIconWidth)
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(isHover ? .white : .red)
+                                Text("Donations")
+                                    .textAlign(.leading)
+                                    .foregroundColor(isHover ? .white : .red)
+                                    .font(.system(size: fontSize, weight: .regular))
+                            }
+                            .padding(.leading, Self.menuIconWidth)
+                            .frame(height: Self.itemHeight)
                         },
                     )
                 }
