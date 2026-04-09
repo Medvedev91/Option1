@@ -21,10 +21,10 @@ struct NavigationScreen: View {
                     
                     List(selection: $tab) {
                         
-                        Label("How to Use", systemImage: "info.circle")
-                            .tag(Tab.main)
-                        
                         if !isScreenshotsMode {
+                            
+                            Label("How to Use", systemImage: "info.circle")
+                                .tag(Tab.main)
                             
                             Label("Option-Tab", systemImage: "macwindow.stack")
                                 .tag(Tab.optionTab)
