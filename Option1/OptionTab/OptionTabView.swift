@@ -164,7 +164,7 @@ struct OptionTabView: View {
                         "",
                         isPresented: $data.isKeepShortcutsGlobalInfoPresented,
                         actions: {},
-                        message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nThis feature keeps shortcuts for windows active even if Option-Tab is closed.") }
+                        message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nKeep shortcuts for windows active even if Option-Tab is closed.") }
                     )
                 }
                 .frame(height: Self.itemHeight)
