@@ -92,7 +92,7 @@ class OptionTabData: ObservableObject {
                 safeAreaTop: safeAreaTop,
             )
         }
-
+        
         // Если можно расположить между top safe area и dock
         let screenVisibleHeight: CGFloat = nsScreen.visibleFrame.height
         if screenVisibleHeight >= contentHeight {
