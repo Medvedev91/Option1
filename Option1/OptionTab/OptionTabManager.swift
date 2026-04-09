@@ -187,26 +187,33 @@ class OptionTabManager {
         
         HotKeysUtils.enableOptionTabJkHotKeys()
         HotKeysUtils.enableOptionTabArrowsHotKeys()
+        
+        BadgesManager.startLiveUpdates()
     }
     
     func closeWindow() {
         isOpen = false
         optionTabView.window.close()
+        
         HotKeysUtils.disableOptionTabArrowsHotKeys()
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
+        
         optionTabView.data.isJkInfoPresented = false
         optionTabView.data.isKeepShortcutsGlobalInfoPresented = false
         if !optionTabView.data.isKeepJumpsGlobal {
             optionTabView.data.removeHotKeyHandlers()
         }
+        
         Task {
             // Просто удобное место для вызова.
             // Человек может увидеть что-то не
             // существущее, и переоткрыть Option-Tab.
-            CachedWindow.cleanClosed__slow()
+            CachedWindow.cleanClosed__slow(reportIfSlow: false)
         }
+        
+        BadgesManager.stopLiveUpdates()
     }
     
     func setIsEnabled(_ isEnabled: Bool) {
