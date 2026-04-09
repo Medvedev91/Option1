@@ -44,6 +44,25 @@ class FavoriteDb {
         DB.save()
     }
     
+    //
+    // For Transaction
+    
+    static func deleteAll_ForTransaction() {
+        selectAllSorted().forEach {
+            DB.modelContainer.mainContext.delete($0)
+        }
+    }
+    
+    static func insert_ForTransaction(id: UUID, sort: Int, bundle: String, title: String, substring: String) {
+        DB.modelContainer.mainContext.insert(FavoriteDb(
+            id: id,
+            sort: sort,
+            bundle: bundle,
+            title: title,
+            substring: substring,
+        ))
+    }
+    
     ///
     
     static func selectAllSorted() -> [FavoriteDb] {

@@ -44,6 +44,15 @@ class Backup {
                     "sort": optionTabPinDb.sort,
                 ]
             },
+            "favorites": FavoriteDb.selectAllSorted().map { favoriteDb in
+                [
+                    "id": favoriteDb.id.uuidString,
+                    "sort": favoriteDb.sort,
+                    "bundle": favoriteDb.bundle,
+                    "title": favoriteDb.title,
+                    "substring": favoriteDb.substring,
+                ]
+            },
         ])
         return j.rawString(options: .withoutEscapingSlashes)!
     }
@@ -59,6 +68,7 @@ class Backup {
         guard let jWorkspaces = j["workspaces"].array else { throw AppError.simple("Json Error") }
         guard let jBinds = j["binds"].array else { throw AppError.simple("Json Error") }
         guard let jOptionTabPins = j["option-tab-pins"].array else { throw AppError.simple("Json Error") }
+        guard let jFavorites = j["favorites"].array else { throw AppError.simple("Json Error") }
         
         for jApp in jApps {
             guard let bundle: String = jApp["bundle"].string else { throw AppError.simple("Json Error") }
@@ -114,6 +124,18 @@ class Backup {
                 guard let sort: Int = jOptionTabPin["sort"].int else { throw AppError.simple("Json Error") }
                 OptionTabPinDb.insert_ForTransaction(bundle: bundle, sort: sort)
             }
+            // Favorites
+            FavoriteDb.deleteAll_ForTransaction()
+            for jFavorite in jFavorites {
+                guard let uuidString: String = jFavorite["id"].string else { throw AppError.simple("Json Error") }
+                guard let id = UUID(uuidString: uuidString) else { throw AppError.simple("Json UUID Error") }
+                guard let sort: Int = jFavorite["sort"].int else { throw AppError.simple("Json Error") }
+                guard let bundle: String = jFavorite["bundle"].string else { throw AppError.simple("Json Error") }
+                guard let title: String = jFavorite["title"].string else { throw AppError.simple("Json Error") }
+                guard let substring: String = jFavorite["substring"].string else { throw AppError.simple("Json Error") }
+                FavoriteDb.insert_ForTransaction(id: id, sort: sort, bundle: bundle, title: title, substring: substring)
+            }
+            ///
             DB.save()
         } catch AppError.simple(let message) {
             DB.rollback()
