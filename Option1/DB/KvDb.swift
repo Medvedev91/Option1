@@ -67,6 +67,17 @@ class KvDb {
     }
     
     //
+    // Is Data Inited
+    
+    static func selectIsDataInited() -> Bool {
+        selectByKeyOrNil(IS_DATA_INITED_KEY).map { $0.value == "1" } ?? false
+    }
+    
+    static func upsertIsDataInited() {
+        upsert(key: IS_DATA_INITED_KEY, value: "1")
+    }
+    
+    //
     // Is Keep Jumps Global
     
     static func selectIsKeepJumpsGlobal() -> Bool {
@@ -140,6 +151,7 @@ class KvDb {
 
 private let TOKEN_KEY = "token"
 private let INIT_TIME_KEY = "init-time"
+private let IS_DATA_INITED_KEY = "is-data-inited"
 private let ACTIVATION_EMAIL_KEY = "activation-email"
 private let DONATIONS_LAST_ALERT_TIME_KEY = "donations-last-alert-time"
 private let IS_KEEP_JUMPS_GLOBAL_KEY = "is-keep-jumps-global"
