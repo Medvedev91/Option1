@@ -1,6 +1,7 @@
 import SwiftData
 
 @Model
+@MainActor
 class KvDb {
     
     @Attribute(.unique) var key: String
@@ -11,17 +12,14 @@ class KvDb {
         self.value = value
     }
     
-    @MainActor
     static func selectAll() -> [KvDb] {
         try! DB.modelContainer.mainContext.fetch(FetchDescriptor<KvDb>())
     }
     
-    @MainActor
     static func selectByKeyOrNil(_ key: String) -> KvDb? {
         selectAll().first { $0.key == key }
     }
     
-    @MainActor
     static func upsert(key: String, value: String) {
         guard let kvDb = selectByKeyOrNil(key) else {
             DB.modelContainer.mainContext.insert(KvDb(key: key, value: value))
@@ -35,21 +33,18 @@ class KvDb {
     //
     // For Transaction
     
-    @MainActor
     static func deleteAll_ForTransaction() {
         selectAll().forEach {
             DB.modelContainer.mainContext.delete($0)
         }
     }
     
-    @MainActor
     static func insert_ForTransaction(key: String, value: String) {
         DB.modelContainer.mainContext.insert(KvDb(key: key, value: value))
     }
     
     ///
     
-    @MainActor
     static func selectOrInsertInitTime() -> Int {
         if let initTime = KvDb.selectByKeyOrNil(INIT_TIME_KEY)?.value {
             return Int(initTime)!
@@ -63,12 +58,10 @@ class KvDb {
     //
     // Is Option-Tab Enabled
     
-    @MainActor
     static func selectIsOptionTabEnabled() -> Bool {
         selectByKeyOrNil(IS_OPTION_TAB_ENABLED_KEY).map { $0.value == "1" } ?? true
     }
     
-    @MainActor
     static func upsertIsOptionTabEnabled(_ isEnabled: Bool) {
         upsert(key: IS_OPTION_TAB_ENABLED_KEY, value: isEnabled ? "1" : "0")
     }
@@ -76,12 +69,10 @@ class KvDb {
     //
     // Is Keep Jumps Global
     
-    @MainActor
     static func selectIsKeepJumpsGlobal() -> Bool {
         selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? true
     }
     
-    @MainActor
     static func upsertIsKeepJumpsGlobal(_ isKeep: Bool) -> Bool {
         upsert(key: IS_KEEP_JUMPS_GLOBAL_KEY, value: isKeep ? "1" : "0")
         return isKeep
@@ -90,7 +81,6 @@ class KvDb {
     //
     // Option-Tab Mode
     
-    @MainActor
     static func selectOptionTabDbMode() -> OptionTabDbMode {
         let defaultMode: OptionTabDbMode = .jk
         guard let rawValue: String = selectByKeyOrNil(OPTION_TAB_DB_MODE_KEY)?.value else {
@@ -99,7 +89,6 @@ class KvDb {
         return OptionTabDbMode.allCases.first { String($0.rawValue) == rawValue } ?? defaultMode
     }
     
-    @MainActor
     static func upsertOptionTabDbMode(_ mode: OptionTabDbMode) {
         upsert(key: OPTION_TAB_DB_MODE_KEY, value: String(mode.rawValue))
     }
@@ -107,12 +96,10 @@ class KvDb {
     //
     // Is Display in Menu Bar
     
-    @MainActor
     static func selectIsDisplayInMenuBar() -> Bool {
         selectByKeyOrNil(IS_DISPLAY_IN_MENU_BAR_KEY).map { $0.value == "1" } ?? true
     }
     
-    @MainActor
     static func upsertIsDisplayInMenuBar(_ isEnabled: Bool) {
         upsert(key: IS_DISPLAY_IN_MENU_BAR_KEY, value: isEnabled ? "1" : "0")
     }
@@ -120,12 +107,10 @@ class KvDb {
     //
     // Donations Last Reponse Time
     
-    @MainActor
     static func selectDonationsLastAlertTimeOrNil() -> Int? {
         selectByKeyOrNil(DONATIONS_LAST_ALERT_TIME_KEY).map { Int($0.value)! }
     }
     
-    @MainActor
     static func upsertDonationsLastAlertTime() {
         upsert(key: DONATIONS_LAST_ALERT_TIME_KEY, value: String(time()))
     }
@@ -133,12 +118,10 @@ class KvDb {
     //
     // Activation Email
     
-    @MainActor
     static func selectActivationEmailOrNil() -> String? {
         selectByKeyOrNil(ACTIVATION_EMAIL_KEY)?.value
     }
     
-    @MainActor
     static func upsertActivationEmail(_ activationEmail: String) {
         upsert(key: ACTIVATION_EMAIL_KEY, value: activationEmail)
     }
@@ -146,12 +129,10 @@ class KvDb {
     //
     // Token
     
-    @MainActor
     static func selectTokenOrNil() -> String? {
         selectByKeyOrNil(TOKEN_KEY)?.value
     }
     
-    @MainActor
     static func upsertToken(_ token: String) {
         upsert(key: TOKEN_KEY, value: token)
     }
