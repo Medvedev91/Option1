@@ -8,6 +8,8 @@ class BadgesManager: ObservableObject {
     
     @Published var dictionary: [String: String] = [:]
     
+    private static var liveUpdatesTask: Task<Void, Never>? = nil
+    
     // Based on https://stackoverflow.com/a/75167602
     static func updateAsync() {
         Task {
@@ -46,5 +48,27 @@ class BadgesManager: ObservableObject {
                 reportApi("BadgesManager.updateAsync() too slow: \(elapsedMls) mls")
             }
         }
+    }
+    
+    //
+    // Live Updates
+    
+    static func startLiveUpdates() {
+        stopLiveUpdates()
+        liveUpdatesTask = Task {
+            while true {
+                do {
+                    // Сначала задержка, чтобы не блокировать место вызова
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
+                    updateAsync()
+                } catch {
+                    break
+                }
+            }
+        }
+    }
+    
+    static func stopLiveUpdates() {
+        liveUpdatesTask?.cancel()
     }
 }
