@@ -200,7 +200,7 @@ class OptionTabManager {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
         
-        optionTabView.data.isJkInfoPresented = false
+        optionTabView.data.isInfoPresented = false
         optionTabView.data.isKeepShortcutsGlobalInfoPresented = false
         if !optionTabView.data.isKeepJumpsGlobal {
             optionTabView.data.removeHotKeyHandlers()

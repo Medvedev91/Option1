@@ -22,8 +22,6 @@ struct OptionTabView: View {
     
     @ObservedObject private var badgesManager = BadgesManager.instance
     
-    @State private var isModeHovered = false
-    
     let window: NSWindow
     @ObservedObject var data: OptionTabData
     
@@ -119,33 +117,21 @@ struct OptionTabView: View {
             
             VStack(spacing: 0) {
                 
-                HStack {
+                HStack(spacing: 0) {
                     
                     DbModeButton(optionTabData: data, dbMode: .jk, stateDbMode: $dbMode)
                     DbModeButton(optionTabData: data, dbMode: .apps, stateDbMode: $dbMode)
+                        .padding(.leading, 8)
                     DbModeButton(optionTabData: data, dbMode: .history, stateDbMode: $dbMode)
+                        .padding(.leading, 8)
                         .alert(
                             "",
-                            isPresented: $data.isJkInfoPresented,
+                            isPresented: $data.isInfoPresented,
                             actions: {},
                             message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                         )
                     
-                    if isModeHovered {
-                        Button(
-                            action: {
-                                data.isJkInfoPresented = true
-                            },
-                            label: {
-                                Image(systemName: "info.circle")
-                                    .font(.system(size: 13, weight: .regular))
-                                    .foregroundColor(.secondary)
-                            },
-                        )
-                        .buttonStyle(.borderless)
-                    }
-                    
-                    Spacer()
+                    Spacer(minLength: 0)
                     
                     Button(
                         action: {
@@ -153,7 +139,7 @@ struct OptionTabView: View {
                             data.isKeepShortcutsGlobalInfoPresented = true
                         },
                         label: {
-                            Image(systemName: "keyboard")
+                            Image(systemName: "keyboard.macwindow")
                                 .font(.system(size: fontSize, weight: .regular))
                                 .foregroundColor(data.isKeepJumpsGlobal ? .primary : .secondary)
                         },
@@ -166,14 +152,38 @@ struct OptionTabView: View {
                         actions: {},
                         message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nKeep shortcuts for windows active even if Option-Tab is closed.") }
                     )
+                    
+                    Button(
+                        action: {
+                            data.isInfoPresented = true
+                        },
+                        label: {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .padding(.leading, 6)
+                    .buttonStyle(.borderless)
+
+                    Button(
+                        action: {
+                            data.closeWindow()
+                            WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                        },
+                        label: {
+                            Image(systemName: "gear")
+                                .font(.system(size: fontSize, weight: .regular))
+                                .foregroundColor(.secondary)
+                        },
+                    )
+                    .padding(.leading, 6)
+                    .buttonStyle(.borderless)
                 }
                 .frame(height: Self.itemHeight)
                 .padding(.leading, Self.menuIconWidth)
                 .padding(.trailing, 21)
                 .padding(.top, data.windowSize.safeAreaTop)
-                .onHover { isHovered in
-                    self.isModeHovered = isHovered
-                }
                 
                 MenuDivider()
                 
@@ -339,24 +349,10 @@ struct OptionTabView: View {
                     )
                 }
                 
-                MenuDivider()
-                
-                MenuItemView(
-                    onClick: {
-                        data.closeWindow()
-                        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
-                    },
-                    content: { isHover in
-                        Text("Settings")
-                            .textAlign(.leading)
-                            .foregroundColor(isHover ? .white : .primary)
-                            .font(.system(size: fontSize, weight: .regular))
-                            .frame(height: Self.itemHeight)
-                            .padding(.leading, Self.menuIconWidth)
-                    },
-                )
-                
                 if data.showDonations {
+                    
+                    MenuDivider()
+                    
                     MenuItemView(
                         onClick: {
                             data.closeWindow()
@@ -364,12 +360,16 @@ struct OptionTabView: View {
                             WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                         },
                         content: { isHover in
-                            Text("Donations")
-                                .textAlign(.leading)
-                                .foregroundColor(isHover ? .white : .red)
-                                .font(.system(size: fontSize, weight: .regular))
-                                .frame(height: Self.itemHeight)
-                                .padding(.leading, Self.menuIconWidth)
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(isHover ? .white : .red)
+                                Text("Donations")
+                                    .textAlign(.leading)
+                                    .foregroundColor(isHover ? .white : .red)
+                                    .font(.system(size: fontSize, weight: .regular))
+                            }
+                            .padding(.leading, Self.menuIconWidth)
+                            .frame(height: Self.itemHeight)
                         },
                     )
                 }
