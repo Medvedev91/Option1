@@ -130,7 +130,7 @@ struct OptionTabView: View {
                             actions: {},
                             message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
                         )
-
+                    
                     if isModeHovered {
                         Button(
                             action: {
@@ -146,7 +146,7 @@ struct OptionTabView: View {
                     }
                     
                     Spacer()
-
+                    
                     Button(
                         action: {
                             data.isKeepJumpsGlobal = KvDb.upsertIsKeepJumpsGlobal(!data.isKeepJumpsGlobal)
@@ -249,7 +249,7 @@ struct OptionTabView: View {
                                 }
                                 
                                 Spacer(minLength: 0)
-
+                                
                                 Text(bindUi.badge)
                                     .foregroundColor(isHover ? .white : .primary)
                                     .font(.system(size: 11, weight: .semibold))
@@ -353,6 +353,24 @@ struct OptionTabView: View {
                             .padding(.leading, Self.menuIconWidth)
                     },
                 )
+                
+                if data.showDonations {
+                    MenuItemView(
+                        onClick: {
+                            data.closeWindow()
+                            DonationsAlertUtils.instance.needToShow = true
+                            WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                        },
+                        content: { isHover in
+                            Text("Donations")
+                                .textAlign(.leading)
+                                .foregroundColor(isHover ? .white : .red)
+                                .font(.system(size: fontSize, weight: .regular))
+                                .frame(height: Self.itemHeight)
+                                .padding(.leading, Self.menuIconWidth)
+                        },
+                    )
+                }
             }
             .padding(.top, Self.itemHeaderPadding)
             .frame(width: Self.menuWidth)
