@@ -29,12 +29,16 @@ private func initData() {
         }
         
         if !KvDb.selectIsDataInited() {
-            let safariBundle = "com.apple.Safari"
-            let calendarBundle = "com.apple.iCal"
+            let safariBundle = BundleIds.Safari
+            let calendarBundle = BundleIds.Calendar
             AppDb.upsertRaw(bundle: safariBundle, name: "Safari")
             AppDb.upsertRaw(bundle: calendarBundle, name: "Calendar")
             BindDb.insert(key: "1", workspaceDb: nil, bundle: safariBundle, substring: "")
             BindDb.insert(key: "2", workspaceDb: nil, bundle: calendarBundle, substring: "")
+            
+            // Option-Tab Pin
+            OptionTabPinDb.upsertToTop(bundle: BundleIds.Safari)
+            OptionTabPinDb.upsertToTop(bundle: BundleIds.Finder)
             
             // Favorite Downloads
             let downloadsUri = "/Users/\(NSUserName())/Downloads"
