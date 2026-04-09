@@ -23,13 +23,27 @@ private func initData() {
     Task { @MainActor in
         _ = KvDb.selectOrInsertInitTime()
         
-        if BindDb.selectAll().isEmpty {
+        // todo remove
+        if (KvDb.selectOrInsertInitTime() + 30) < time() {
+            KvDb.upsertIsDataInited()
+        }
+        
+        if !KvDb.selectIsDataInited() {
             let safariBundle = "com.apple.Safari"
             let calendarBundle = "com.apple.iCal"
             AppDb.upsertRaw(bundle: safariBundle, name: "Safari")
             AppDb.upsertRaw(bundle: calendarBundle, name: "Calendar")
             BindDb.insert(key: "1", workspaceDb: nil, bundle: safariBundle, substring: "")
             BindDb.insert(key: "2", workspaceDb: nil, bundle: calendarBundle, substring: "")
+            
+            // Favorite Downloads
+            let downloadsUri = "/Users/\(NSUserName())/Downloads"
+            if isFileExists(downloadsUri) {
+                _ = FavoriteDb.insert(bundle: BundleIds.Finder, title: "Downloads", substring: downloadsUri)
+            } else {
+                reportApi("initData() no downloadsUri \(downloadsUri)")
+            }
+            KvDb.upsertIsDataInited()
         }
     }
 }
