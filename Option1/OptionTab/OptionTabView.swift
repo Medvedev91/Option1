@@ -200,8 +200,10 @@ struct OptionTabView: View {
                                     .font(.system(size: fontSize, weight: .regular))
                                     .lineLimit(1)
                                 
-                                JumpButton(jumpKey: workspaceUi.jumpKey, color: isHover ? .white : .secondary)
-                                    .padding(.leading, 8)
+                                if data.workspacesUi.count > 1 {
+                                    JumpButton(jumpKey: workspaceUi.jumpKey, color: isHover ? .white : .secondary)
+                                        .padding(.leading, 8)
+                                }
                                 
                                 Spacer(minLength: 0)
                             }
