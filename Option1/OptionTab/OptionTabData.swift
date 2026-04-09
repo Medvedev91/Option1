@@ -57,16 +57,16 @@ class OptionTabData: ObservableObject {
         }()
         
         let menuHeight: CGFloat = {
-            let separators: CGFloat = OptionTabView.menuDividerHeight * 4.0
-            let favorites: CGFloat = (OptionTabView.itemHeight * Double(favoritesUi.count)) + OptionTabView.itemHeight
-            let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
-            let systemButtonsHeight: CGFloat = OptionTabView.itemHeight * 2.0 // Settings, Modes.
-            let workspacesHeight: CGFloat = Double(workspacesUi.count) * OptionTabView.itemHeight
-            let bindsHeight: CGFloat = bindsUi.map { bindUi in
+            let separators: CGFloat = OptionTabView.menuDividerHeight * 3.0
+            let settings: CGFloat = OptionTabView.itemHeight
+            let workspaces: CGFloat = Double(workspacesUi.count) * OptionTabView.itemHeight
+            let binds: CGFloat = bindsUi.map { bindUi in
                 bindUi.subtitle == nil ? OptionTabView.itemHeight : OptionTabView.itemTwoLinesHeight
             }.reduce(0, +)
-            let donations: CGFloat = showDonations ? OptionTabView.itemHeight : 0
-            return separators + vPaddings + systemButtonsHeight + workspacesHeight + bindsHeight + favorites + donations
+            let favorites: CGFloat = (OptionTabView.itemHeight * Double(favoritesUi.count)) + OptionTabView.itemHeight
+            let vPaddings: CGFloat = OptionTabView.itemHeaderPadding * 2.0
+            let donations: CGFloat = showDonations ? (OptionTabView.itemHeight + OptionTabView.menuDividerHeight) : 0
+            return separators + settings + workspaces + binds + favorites + vPaddings + donations
         }()
         
         let contentWidth: CGFloat = OptionTabView.fullWidth
