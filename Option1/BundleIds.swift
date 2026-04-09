@@ -5,6 +5,8 @@ class BundleIds {
     
     // Apple
     static let Finder = "com.apple.finder"
+    static let Safari = "com.apple.Safari"
+    static let Calendar = "com.apple.iCal"
     static let TextEdit = "com.apple.TextEdit"
     static let Pages = "com.apple.Pages"
     static let Numbers = "com.apple.Numbers"
