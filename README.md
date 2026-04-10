@@ -8,19 +8,19 @@ Bind shortcuts like `⌥-1`, `⌥-2` to apps you need.
 
 Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
-<img width="512" src="/Misc/Readme_02/basics.png">
+<img width="600" src="/Misc/Readme_02/basics.png">
 
 ## Open files, projects, folders.
 
-<img width="512" src="/Misc/Readme_02/examples.png">
+<img width="600" src="/Misc/Readme_02/examples.png">
 
 ## Set up workspaces.
 
-<img width="700" src="/Misc/Readme_02/workspaces.png">
+<img width="800" src="/Misc/Readme_02/workspaces.png">
 
 Switch workspace with menu bar:
 
-<img width="512" src="/Misc/Readme_02/menu.png">
+<img width="552" src="/Misc/Readme_02/menu.png">
 
 ## Option-Tab.
 
