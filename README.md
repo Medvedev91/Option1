@@ -1,14 +1,18 @@
 <div align="center">
   <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
-</div>
+
 
 # Option1 - Pragmatic Window Manager for macOS
+
+</div>
+
+&nbsp;
+
+<div align="center">
   
 Bind shortcuts like `⌥-1`, `⌥-2` to apps you need.
 
 Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
-
-<div align="center">
 
 <img width="600" src="/Misc/Readme_02/basics.png">
   
