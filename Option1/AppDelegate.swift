@@ -47,6 +47,14 @@ private func initData() {
             } else {
                 reportApi("initData() no downloadsUri \(downloadsUri)")
             }
+            // Favorite Documents
+            let documentsUri = "/Users/\(NSUserName())/Documents"
+            if isFileExists(documentsUri) {
+                _ = FavoriteDb.insert(bundle: BundleIds.Finder, title: "Documents", substring: documentsUri)
+            } else {
+                reportApi("initData() no documentsUri \(documentsUri)")
+            }
+            
             KvDb.upsertIsDataInited()
         }
     }
