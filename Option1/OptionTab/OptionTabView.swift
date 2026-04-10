@@ -115,267 +115,272 @@ struct OptionTabView: View {
                 }
             }
             
-            VStack(spacing: 0) {
-                
-                HStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
                     
-                    DbModeButton(optionTabData: data, dbMode: .jk, stateDbMode: $dbMode)
-                    DbModeButton(optionTabData: data, dbMode: .apps, stateDbMode: $dbMode)
-                        .padding(.leading, 8)
-                    DbModeButton(optionTabData: data, dbMode: .history, stateDbMode: $dbMode)
-                        .padding(.leading, 8)
+                    HStack(spacing: 0) {
+                        
+                        DbModeButton(optionTabData: data, dbMode: .jk, stateDbMode: $dbMode)
+                        DbModeButton(optionTabData: data, dbMode: .apps, stateDbMode: $dbMode)
+                            .padding(.leading, 8)
+                        DbModeButton(optionTabData: data, dbMode: .history, stateDbMode: $dbMode)
+                            .padding(.leading, 8)
+                            .alert(
+                                "",
+                                isPresented: $data.isInfoPresented,
+                                actions: {},
+                                message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
+                            )
+                        
+                        Spacer(minLength: 0)
+                        
+                        Button(
+                            action: {
+                                data.isKeepJumpsGlobal = KvDb.upsertIsKeepJumpsGlobal(!data.isKeepJumpsGlobal)
+                                data.isKeepShortcutsGlobalInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "keyboard.macwindow")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(data.isKeepJumpsGlobal ? .primary : .secondary)
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                        .help("Keep Shortcuts Global")
                         .alert(
                             "",
-                            isPresented: $data.isInfoPresented,
+                            isPresented: $data.isKeepShortcutsGlobalInfoPresented,
                             actions: {},
-                            message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
+                            message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nKeep shortcuts for windows active even if Option-Tab is closed.") }
                         )
+                        
+                        Button(
+                            action: {
+                                data.isInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "info.circle")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .padding(.leading, 6)
+                        .buttonStyle(.borderless)
+                        
+                        Button(
+                            action: {
+                                data.closeWindow()
+                                WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                            },
+                            label: {
+                                Image(systemName: "gear")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .padding(.leading, 6)
+                        .buttonStyle(.borderless)
+                    }
+                    .frame(height: Self.itemHeight)
+                    .padding(.leading, Self.menuIconWidth)
+                    .padding(.trailing, 21)
+                    .padding(.top, data.windowSize.safeAreaTop)
                     
-                    Spacer(minLength: 0)
+                    MenuDivider()
                     
-                    Button(
-                        action: {
-                            data.isKeepJumpsGlobal = KvDb.upsertIsKeepJumpsGlobal(!data.isKeepJumpsGlobal)
-                            data.isKeepShortcutsGlobalInfoPresented = true
-                        },
-                        label: {
-                            Image(systemName: "keyboard.macwindow")
-                                .font(.system(size: fontSize, weight: .regular))
-                                .foregroundColor(data.isKeepJumpsGlobal ? .primary : .secondary)
-                        },
-                    )
-                    .buttonStyle(.borderless)
-                    .help("Keep Shortcuts Global")
-                    .alert(
-                        "",
-                        isPresented: $data.isKeepShortcutsGlobalInfoPresented,
-                        actions: {},
-                        message: { Text("\(data.isKeepJumpsGlobal ? "Enabled" : "Disabled")!\n\nKeep shortcuts for windows active even if Option-Tab is closed.") }
-                    )
-                    
-                    Button(
-                        action: {
-                            data.isInfoPresented = true
-                        },
-                        label: {
-                            Image(systemName: "info.circle")
-                                .font(.system(size: fontSize, weight: .regular))
-                                .foregroundColor(.secondary)
-                        },
-                    )
-                    .padding(.leading, 6)
-                    .buttonStyle(.borderless)
-
-                    Button(
-                        action: {
-                            data.closeWindow()
-                            WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
-                        },
-                        label: {
-                            Image(systemName: "gear")
-                                .font(.system(size: fontSize, weight: .regular))
-                                .foregroundColor(.secondary)
-                        },
-                    )
-                    .padding(.leading, 6)
-                    .buttonStyle(.borderless)
-                }
-                .frame(height: Self.itemHeight)
-                .padding(.leading, Self.menuIconWidth)
-                .padding(.trailing, 21)
-                .padding(.top, data.windowSize.safeAreaTop)
-                
-                MenuDivider()
-                
-                ForEach(data.workspacesUi, id: \.menuBarWorkspaceUi.workspaceDb?.id) { workspaceUi in
-                    MenuItemView(
-                        onClick: {
-                            workspaceUi.onClick()
-                        },
-                        content: { isHover in
-                            HStack(spacing: 0) {
+                    ForEach(data.workspacesUi, id: \.menuBarWorkspaceUi.workspaceDb?.id) { workspaceUi in
+                        MenuItemView(
+                            onClick: {
+                                workspaceUi.onClick()
+                            },
+                            content: { isHover in
                                 HStack(spacing: 0) {
-                                    if workspaceUi.menuBarWorkspaceUi.isSelected {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(isHover ? .white : .primary)
-                                            .font(.system(size: 11, weight: .semibold))
-                                            .padding(.leading, 4)
+                                    HStack(spacing: 0) {
+                                        if workspaceUi.menuBarWorkspaceUi.isSelected {
+                                            Image(systemName: "checkmark")
+                                                .foregroundColor(isHover ? .white : .primary)
+                                                .font(.system(size: 11, weight: .semibold))
+                                                .padding(.leading, 4)
+                                        }
+                                        Spacer(minLength: 0)
                                     }
+                                    .frame(width: Self.menuIconWidth)
+                                    
+                                    Text(workspaceUi.menuBarWorkspaceUi.workspaceDb?.name ?? "Shared")
+                                        .foregroundColor(isHover ? .white : .primary)
+                                        .font(.system(size: fontSize, weight: .regular))
+                                        .lineLimit(1)
+                                    
+                                    if data.workspacesUi.count > 1 {
+                                        JumpButton(jumpKey: workspaceUi.jumpKey, color: isHover ? .white : .secondary)
+                                            .padding(.leading, 8)
+                                    }
+                                    
                                     Spacer(minLength: 0)
                                 }
-                                .frame(width: Self.menuIconWidth)
-                                
-                                Text(workspaceUi.menuBarWorkspaceUi.workspaceDb?.name ?? "Shared")
-                                    .foregroundColor(isHover ? .white : .primary)
-                                    .font(.system(size: fontSize, weight: .regular))
-                                    .lineLimit(1)
-                                
-                                if data.workspacesUi.count > 1 {
-                                    JumpButton(jumpKey: workspaceUi.jumpKey, color: isHover ? .white : .secondary)
-                                        .padding(.leading, 8)
-                                }
-                                
-                                Spacer(minLength: 0)
-                            }
-                            .frame(height: Self.itemHeight)
-                        },
-                    )
-                }
-                
-                MenuDivider()
-                
-                ForEach(data.bindsUi, id: \.bindDb.id) { bindUi in
-                    MenuItemView(
-                        onClick: {
-                            data.closeWindow()
-                            HotKeysUtils.handleKey(key: bindUi.key)
-                        },
-                        content: { isHover in
-                            HStack(spacing: 0) {
-                                
-                                VStack(alignment: .leading, spacing: 0) {
-                                    Text(bindUi.title)
-                                        .font(.system(size: fontSize, weight: .regular))
-                                        .foregroundColor(isHover ? .white : .primary)
-                                        .lineLimit(1)
-                                    if let subtitle = bindUi.subtitle {
-                                        Text(subtitle)
-                                            .foregroundColor(isHover ? .white : .secondary)
-                                            .font(.system(size: 11, weight: .regular))
+                                .frame(height: Self.itemHeight)
+                            },
+                        )
+                    }
+                    
+                    MenuDivider()
+                    
+                    ForEach(data.bindsUi, id: \.bindDb.id) { bindUi in
+                        MenuItemView(
+                            onClick: {
+                                data.closeWindow()
+                                HotKeysUtils.handleKey(key: bindUi.key)
+                            },
+                            content: { isHover in
+                                HStack(spacing: 0) {
+                                    
+                                    VStack(alignment: .leading, spacing: 0) {
+                                        Text(bindUi.title)
+                                            .font(.system(size: fontSize, weight: .regular))
+                                            .foregroundColor(isHover ? .white : .primary)
                                             .lineLimit(1)
-                                            .padding(.top, 1)
-                                            .padding(.bottom, 2)
+                                        if let subtitle = bindUi.subtitle {
+                                            Text(subtitle)
+                                                .foregroundColor(isHover ? .white : .secondary)
+                                                .font(.system(size: 11, weight: .regular))
+                                                .lineLimit(1)
+                                                .padding(.top, 1)
+                                                .padding(.bottom, 2)
+                                        }
                                     }
-                                }
-                                
-                                if let badge = badgesManager.dictionary[bindUi.bindDb.bundle] {
-                                    ZStack {
-                                        Text(badge)
-                                            .font(.system(size: 10, weight: .semibold))
-                                            .foregroundColor(.white)
+                                    
+                                    if let badge = badgesManager.dictionary[bindUi.bindDb.bundle] {
+                                        ZStack {
+                                            Text(badge)
+                                                .font(.system(size: 10, weight: .semibold))
+                                                .foregroundColor(.white)
+                                        }
+                                        .frame(width: 18, height: 18)
+                                        .background(Circle().fill(.red))
+                                        .padding(.leading, 6)
+                                        .padding(.trailing, 6)
                                     }
-                                    .frame(width: 18, height: 18)
-                                    .background(Circle().fill(.red))
-                                    .padding(.leading, 6)
-                                    .padding(.trailing, 6)
+                                    
+                                    Spacer(minLength: 0)
+                                    
+                                    Text(bindUi.badge)
+                                        .foregroundColor(isHover ? .white : .primary)
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .padding(.trailing, 6)
                                 }
-                                
-                                Spacer(minLength: 0)
-                                
-                                Text(bindUi.badge)
-                                    .foregroundColor(isHover ? .white : .primary)
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .padding(.trailing, 6)
-                            }
-                            .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
-                            .padding(.leading, Self.menuIconWidth)
-                            .padding(.trailing, 6)
-                        },
-                    )
-                }
-                
-                MenuDivider()
-                
-                MenuItemView(
-                    onClick: {
-                        data.closeWindow()
-                        FavoriteTabUtils.instance.needToShow = true
-                        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
-                    },
-                    content: { isHover in
-                        HStack(spacing: 0) {
-                            
-                            Text("Favourites")
-                                .foregroundColor(isHover ? .white : .secondary)
-                                .font(.system(size: 11, weight: .semibold))
-                            
-                            Spacer(minLength: 0)
-                            
-                            if isHover {
-                                Image(systemName: "plus")
-                                    .foregroundColor(isHover ? .white : .secondary)
-                                    .font(.system(size: 11, weight: .semibold))
-                            }
-                        }
-                        .frame(height: Self.itemHeight)
-                        .padding(.leading, Self.menuIconWidth)
-                        .padding(.trailing, 10)
-                    },
-                )
-                
-                ForEach(data.favoritesUi, id: \.favoriteDb.id) { favoriteUi in
-                    MenuItemView(
-                        onClick: {
-                            favoriteUi.onClick()
-                        },
-                        content: { isHover in
-                            HStack(spacing: 0) {
-                                
-                                Spacer(minLength: 0)
-                                    .frame(width: Self.menuIconWidth - 2)
-                                
-                                let icon = favoriteUi.icon
-                                if let icon = icon {
-                                    Image(nsImage: icon)
-                                        .resizable()
-                                        .frame(width: 24, height: 24)
-                                }
-                                
-                                Text(favoriteUi.title)
-                                    .foregroundColor(isHover ? .white : .primary)
-                                    .padding(.leading, icon == nil ? 2 : 6)
-                                
-                                let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle]
-                                
-                                JumpButton(jumpKey: favoriteUi.jumpKey, color: isHover ? .white : .secondary)
-                                    .padding(.leading, badge == nil ? 8 : 4)
-                                
-                                if let badge = badge {
-                                    ZStack {
-                                        Text(badge)
-                                            .font(.system(size: 10, weight: .semibold))
-                                            .foregroundColor(.white)
-                                    }
-                                    .frame(width: 18, height: 18)
-                                    .background(Circle().fill(.red))
-                                    .padding(.leading, 6)
-                                    .padding(.trailing, 6)
-                                }
-                                
-                                Spacer(minLength: 0)
-                            }
-                            .frame(height: Self.itemHeight)
-                        },
-                    )
-                }
-                
-                if data.showDonations {
+                                .frame(height: bindUi.subtitle == nil ? Self.itemHeight : Self.itemTwoLinesHeight)
+                                .padding(.leading, Self.menuIconWidth)
+                                .padding(.trailing, 6)
+                            },
+                        )
+                    }
                     
                     MenuDivider()
                     
                     MenuItemView(
                         onClick: {
                             data.closeWindow()
-                            DonationsAlertUtils.instance.needToShow = true
+                            FavoriteTabUtils.instance.needToShow = true
                             WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
                         },
                         content: { isHover in
-                            HStack {
-                                Image(systemName: "heart.fill")
-                                    .foregroundColor(isHover ? .white : .red)
-                                Text("Donations")
-                                    .textAlign(.leading)
-                                    .foregroundColor(isHover ? .white : .red)
-                                    .font(.system(size: fontSize, weight: .regular))
+                            HStack(spacing: 0) {
+                                
+                                Text("Favourites")
+                                    .foregroundColor(isHover ? .white : .secondary)
+                                    .font(.system(size: 11, weight: .semibold))
+                                
+                                Spacer(minLength: 0)
+                                
+                                if isHover {
+                                    Image(systemName: "plus")
+                                        .foregroundColor(isHover ? .white : .secondary)
+                                        .font(.system(size: 11, weight: .semibold))
+                                }
                             }
-                            .padding(.leading, Self.menuIconWidth)
                             .frame(height: Self.itemHeight)
+                            .padding(.leading, Self.menuIconWidth)
+                            .padding(.trailing, 10)
                         },
                     )
+                    
+                    ForEach(data.favoritesUi, id: \.favoriteDb.id) { favoriteUi in
+                        MenuItemView(
+                            onClick: {
+                                favoriteUi.onClick()
+                            },
+                            content: { isHover in
+                                HStack(spacing: 0) {
+                                    
+                                    Spacer(minLength: 0)
+                                        .frame(width: Self.menuIconWidth - 2)
+                                    
+                                    let icon = favoriteUi.icon
+                                    if let icon = icon {
+                                        Image(nsImage: icon)
+                                            .resizable()
+                                            .frame(width: 24, height: 24)
+                                    }
+                                    
+                                    Text(favoriteUi.title)
+                                        .foregroundColor(isHover ? .white : .primary)
+                                        .padding(.leading, icon == nil ? 2 : 6)
+                                    
+                                    let badge = badgesManager.dictionary[favoriteUi.favoriteDb.bundle]
+                                    
+                                    JumpButton(jumpKey: favoriteUi.jumpKey, color: isHover ? .white : .secondary)
+                                        .padding(.leading, badge == nil ? 8 : 4)
+                                    
+                                    if let badge = badge {
+                                        ZStack {
+                                            Text(badge)
+                                                .font(.system(size: 10, weight: .semibold))
+                                                .foregroundColor(.white)
+                                        }
+                                        .frame(width: 18, height: 18)
+                                        .background(Circle().fill(.red))
+                                        .padding(.leading, 6)
+                                        .padding(.trailing, 6)
+                                    }
+                                    
+                                    Spacer(minLength: 0)
+                                }
+                                .frame(height: Self.itemHeight)
+                            },
+                        )
+                    }
+                    
+                    if data.showDonations {
+                        
+                        MenuDivider()
+                        
+                        MenuItemView(
+                            onClick: {
+                                data.closeWindow()
+                                DonationsAlertUtils.instance.needToShow = true
+                                WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+                            },
+                            content: { isHover in
+                                HStack {
+                                    Image(systemName: "heart.fill")
+                                        .foregroundColor(isHover ? .white : .red)
+                                    Text("Donations")
+                                        .textAlign(.leading)
+                                        .foregroundColor(isHover ? .white : .red)
+                                        .font(.system(size: fontSize, weight: .regular))
+                                }
+                                .padding(.leading, Self.menuIconWidth)
+                                .frame(height: Self.itemHeight)
+                            },
+                        )
+                    }
+                    
+                    VStack {}
+                        .frame(height: Self.itemHeaderPadding)
                 }
+                .padding(.top, Self.itemHeaderPadding)
+                .frame(width: Self.menuWidth)
             }
-            .padding(.top, Self.itemHeaderPadding)
-            .frame(width: Self.menuWidth)
         }
         .fillMaxSize()
         .background(
