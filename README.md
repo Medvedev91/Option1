@@ -3,18 +3,26 @@
 </div>
 
 # Option1 - Pragmatic Window Manager for macOS
-
+  
 Bind shortcuts like `⌥-1`, `⌥-2` to apps you need.
 
 Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
-<img width="600" src="/Misc/Readme_02/basics.png">
+<div align="center">
 
-## Open files, projects, folders.
+<img width="600" src="/Misc/Readme_02/basics.png">
+  
+# Open files, projects, folders.
 
 <img width="600" src="/Misc/Readme_02/examples.png">
 
-## Set up workspaces.
+</div>
+
+<div align="center">
+  
+# Set up workspaces.
+
+</div>
 
 <img width="100%" src="/Misc/Readme_02/workspaces.png">
 
@@ -28,13 +36,21 @@ Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
   <img width="552" src="/Misc/Readme_02/menu.png">
 </div>
 
-## Option-Tab.
+&nbsp;
+
+<div align="center">
+
+# Option-Tab.
 
 An addition to built-in ⌘-Tab, because macOS opens apps, not windows.
 
+</div>
+
 <img width="100%" src="/Misc/Readme_02/option_tab.png">
 
-## P.S.
+&nbsp;
+
+# P.S.
 
 I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management:
 
@@ -42,19 +58,19 @@ I call it pragmatic because I focus on the features I miss in macOS. It is not a
 - supports built-in macOS desktops ✅
 - supports full-screen windows ✅
 
-## Download
+# Download
 
 https://option1.io/Option1.dmg
 
 https://github.com/Medvedev91/Option1/releases
 
-## Contacts
+# Contacts
 
 ivan@option1.io
 
 https://option1.io
 
-## Thanks
+# Thanks
 
 https://github.com/lwouis/alt-tab-macos
 
