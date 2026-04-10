@@ -16,11 +16,17 @@ Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
 ## Set up workspaces.
 
-<img width="800" src="/Misc/Readme_02/workspaces.png">
+<img width="100%" src="/Misc/Readme_02/workspaces.png">
 
-Switch workspace with menu bar:
+<div align="center">
+  Switch workspace with menu bar:
+</div>
 
-<img width="552" src="/Misc/Readme_02/menu.png">
+&nbsp;
+
+<div align="center">
+  <img width="552" src="/Misc/Readme_02/menu.png">
+</div>
 
 ## Option-Tab.
 
