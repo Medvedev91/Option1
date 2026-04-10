@@ -1,7 +1,6 @@
 <div align="center">
-
   <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
-
+</div>
 
 # Option1 - Pragmatic Window Manager for macOS
 
@@ -28,8 +27,6 @@ Switch workspace with menu bar:
 An addition to built-in ⌘-Tab, because macOS opens apps, not windows.
 
 <img width="100%" src="/Misc/Readme_02/option_tab.png">
-
-</div>
 
 ## P.S.
 
