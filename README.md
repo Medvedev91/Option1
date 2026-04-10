@@ -46,7 +46,7 @@ Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
 # Option-Tab.
 
-An addition to built-in ⌘-Tab, because macOS opens apps, not windows.
+An addition to built-in `⌘-Tab`, because macOS opens apps, not windows.
 
 </div>
 
