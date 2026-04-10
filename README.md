@@ -4,30 +4,38 @@
 
 # Option1 - Pragmatic Window Manager for macOS
 
-Bind shortcuts like `⌥-1`, `⌥-2` to windows you need.
+Bind shortcuts like `⌥-1`, `⌥-2` to apps you need.
 
-Press `⌥-1` to open Safari, `⌥-2` to open Calendar. Customize it.
+Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
 <p align="left">
   <img width="512" src="/Misc/Readme_02/basics.png">
 </p>
 
-Open files, projects, folders.
+## Open files, projects, folders.
 
 <p align="left">
   <img width="512" src="/Misc/Readme_02/examples.png">
 </p>
 
-Set up workspaces.
+## Set up workspaces.
 
 <p align="left">
   <img width="700" src="/Misc/Readme_02/workspaces.png">
 </p>
 
-To switch between workspaces, use menu bar:
+Switch workspace with menu bar:
 
 <p align="left">
   <img width="512" src="/Misc/Readme_02/menu.png">
+</p>
+
+## Option-Tab.
+
+An addition to built-in ⌘-Tab, because macOS opens apps, not windows.
+
+<p align="left">
+  <img width="100%" src="/Misc/Readme_02/option_tab.png">
 </p>
 
 ## P.S.
