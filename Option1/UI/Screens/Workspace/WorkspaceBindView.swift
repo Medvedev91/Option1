@@ -89,6 +89,20 @@ struct WorkspaceBindView: View {
                         .frame(width: 180)
                     
                     if !isScreenshotsMode {
+                        
+                        Button(
+                            action: {
+                                isTitleInfoPresented = true
+                            },
+                            label: {
+                                Image(systemName: "info.circle")
+                                    .font(.system(size: fontSize, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            },
+                        )
+                        .buttonStyle(.borderless)
+                        .padding(.leading, 8)
+                        
                         Button(
                             action: {
                                 isAnyFilePickerInfoPresented = true
@@ -100,7 +114,7 @@ struct WorkspaceBindView: View {
                             },
                         )
                         .buttonStyle(.borderless)
-                        .padding(.leading, 12)
+                        .padding(.leading, 10)
                         .confirmationDialog(
                             "",
                             isPresented: $isAnyFilePickerInfoPresented,
@@ -127,19 +141,6 @@ struct WorkspaceBindView: View {
                                 }
                             }
                         )
-                        
-                        Button(
-                            action: {
-                                isTitleInfoPresented = true
-                            },
-                            label: {
-                                Image(systemName: "info.circle")
-                                    .font(.system(size: fontSize, weight: .regular))
-                                    .foregroundColor(.secondary)
-                            },
-                        )
-                        .buttonStyle(.borderless)
-                        .padding(.leading, 8)
                     }
                 }
             } else if let sharedOverride = sharedOverride {
