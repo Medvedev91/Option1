@@ -2,7 +2,9 @@
   <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
 
 
-# Option1 - Pragmatic Window Manager for macOS
+# Option1
+
+### Pragmatic Window Manager for macOS
 
 </div>
 
