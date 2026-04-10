@@ -1,6 +1,7 @@
-<p align="center">
+<div align="center">
+
   <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
-</p>
+
 
 # Option1 - Pragmatic Window Manager for macOS
 
@@ -8,35 +9,27 @@ Bind shortcuts like `⌥-1`, `⌥-2` to apps you need.
 
 Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
-<p align="left">
-  <img width="512" src="/Misc/Readme_02/basics.png">
-</p>
+<img width="512" src="/Misc/Readme_02/basics.png">
 
 ## Open files, projects, folders.
 
-<p align="left">
-  <img width="512" src="/Misc/Readme_02/examples.png">
-</p>
+<img width="512" src="/Misc/Readme_02/examples.png">
 
 ## Set up workspaces.
 
-<p align="left">
-  <img width="700" src="/Misc/Readme_02/workspaces.png">
-</p>
+<img width="700" src="/Misc/Readme_02/workspaces.png">
 
 Switch workspace with menu bar:
 
-<p align="left">
-  <img width="512" src="/Misc/Readme_02/menu.png">
-</p>
+<img width="512" src="/Misc/Readme_02/menu.png">
 
 ## Option-Tab.
 
 An addition to built-in ⌘-Tab, because macOS opens apps, not windows.
 
-<p align="left">
-  <img width="100%" src="/Misc/Readme_02/option_tab.png">
-</p>
+<img width="100%" src="/Misc/Readme_02/option_tab.png">
+
+</div>
 
 ## P.S.
 
