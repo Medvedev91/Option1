@@ -1,10 +1,8 @@
 <div align="center">
-  <img width="200" src="/Misc/Readme_02/AppIcon1024.png">
+  <img width="180" src="/Misc/Readme_02/AppIcon1024.png">
 
 
-# Option1
-
-### Pragmatic Window Manager for macOS
+# Option1 - Pragmatic Window Manager for macOS
 
 </div>
 
