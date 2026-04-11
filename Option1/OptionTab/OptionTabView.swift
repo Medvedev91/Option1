@@ -129,7 +129,7 @@ struct OptionTabView: View {
                                 "",
                                 isPresented: $data.isInfoPresented,
                                 actions: {},
-                                message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.") }
+                                message: { Text("Vim-inspired JK mode is a combination of Apps and History. Press Option-Tab to Apps mode, Option-J to History.\n\nOption-`(backtick) only jumps to windows with badges.\n\nDouble Option displays a list of windows. Useful to check window badges.") }
                             )
                         
                         Spacer(minLength: 0)
