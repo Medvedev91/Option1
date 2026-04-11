@@ -179,10 +179,13 @@ class OptionTabManager {
         )
         
         optionTabView.window.makeKeyAndOrderFront(nil)
+        
+        //
         // Устанавливает фокус на окно, но после закрытия фокус не
         // не возвращается на прежнюю программу что не удобно.
         // Можно сохранять окно что было в фокусе и потом возвращать,
         // но это много запутанной логики.
+        //
         // NSApplication.shared.activate(ignoringOtherApps: false)
         
         HotKeysUtils.enableOptionTabJkHotKeys()
