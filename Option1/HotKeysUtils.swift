@@ -70,7 +70,7 @@ class HotKeysUtils {
                 key: .tab,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionTabKeyDownPressed(fromJk: false)
+                    onOptionTabKeyDownPressed(trigger: .tab)
                 },
                 keyUpHandler: {
                     onOptionTabKeyUpPressed()
@@ -87,6 +87,19 @@ class HotKeysUtils {
                 },
                 keyUpHandler: {
                     onOptionShiftTabKeyUpPressed()
+                },
+            )
+        )
+        
+        optionTabHotKeyHandlers.append(
+            HotKey(
+                key: .grave,
+                modifiers: [.option],
+                keyDownHandler: {
+                    onOptionTabKeyDownPressed(trigger: .grave)
+                },
+                keyUpHandler: {
+                    onOptionTabKeyUpPressed()
                 },
             )
         )
@@ -158,7 +171,7 @@ class HotKeysUtils {
                 key: .j,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionTabKeyDownPressed(fromJk: true)
+                    onOptionTabKeyDownPressed(trigger: .jk)
                 },
                 keyUpHandler: {
                     onOptionTabKeyUpPressed()
@@ -198,7 +211,7 @@ class HotKeysUtils {
                 key: .downArrow,
                 modifiers: [.option],
                 keyDownHandler: {
-                    onOptionTabKeyDownPressed(fromJk: false)
+                    onOptionTabKeyDownPressed(trigger: .tab)
                 },
                 keyUpHandler: {
                     onOptionTabKeyUpPressed()
@@ -292,13 +305,13 @@ class HotKeysUtils {
 // Option-Tab Handlers
 
 @MainActor
-private func onOptionTabKeyDownPressed(fromJk: Bool) {
-    OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+private func onOptionTabKeyDownPressed(trigger: OptionTabTrigger) {
+    OptionTabManager.instance.onOptionTabPressed(trigger: trigger)
     onOptionTabPressedTask = Task { @MainActor in
         try await Task.sleep(nanoseconds: onOptionTabLongPressFirstDelay)
         while onOptionTabPressedTask != nil {
             try await Task.sleep(nanoseconds: onOptionTabLongPressRepeatDelay)
-            OptionTabManager.instance.onOptionTabPressed(fromJk: fromJk)
+            OptionTabManager.instance.onOptionTabPressed(trigger: trigger)
         }
     }
 }

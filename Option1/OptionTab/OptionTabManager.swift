@@ -46,53 +46,53 @@ class OptionTabManager {
         self.optionTabView = optionTabView
     }
     
-    func onOptionTabPressed(fromJk: Bool) {
+    func onOptionTabPressed(trigger: OptionTabTrigger) {
         if isOpen {
             let data = optionTabView.data
+            
+            let withBadges: Bool = trigger == .grave
+            let sortedWindows: [CachedWindow]
             switch data.uiMode {
             case.apps:
-                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                    let nextIndex = curIndex + 1
-                    if nextIndex >= allCachedWindows.count {
-                        data.selectedCachedWindow = allCachedWindows.first
-                    } else {
-                        data.selectedCachedWindow = allCachedWindows[nextIndex]
-                    }
-                } else {
-                    data.selectedCachedWindow = allCachedWindows.first
-                }
+                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }.filterWithBadges(enabled: withBadges)
             case.history:
-                let history = data.history
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
-                    let nextIndex = curIndex + 1
-                    if nextIndex >= history.count {
-                        data.selectedCachedWindow = history.first
-                    } else {
-                        data.selectedCachedWindow = history[nextIndex]
-                    }
+                sortedWindows = data.history.filterWithBadges(enabled: withBadges)
+            }
+            
+            if let selectedCachedWindow = data.selectedCachedWindow,
+               let curIndex = sortedWindows.firstIndex(of: selectedCachedWindow) {
+                let nextIndex = curIndex + 1
+                if nextIndex >= sortedWindows.count {
+                    data.selectedCachedWindow = sortedWindows.first
                 } else {
-                    data.selectedCachedWindow = history.first
+                    data.selectedCachedWindow = sortedWindows[nextIndex]
                 }
+            } else {
+                data.selectedCachedWindow = sortedWindows.first
             }
         } else if let delayedOpening = delayedOpening {
             delayedOpening()
             // Т.к. это происходит если я нажимаю повторно пока
             // ожидается открытие, нужно эмитировать повторное нажатие.
-            onOptionTabPressed(fromJk: fromJk)
-        } else if fromJk {
-            openWindow(uiMode: .history, withPreselectedCachedWindow: true)
+            onOptionTabPressed(trigger: trigger)
+        } else if trigger == .jk {
+            openWindow(uiMode: .history, trigger: .jk)
+        } else if trigger == .grave {
+            let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
+            case .apps: .apps
+            case .history: .history
+            case .jk: .apps // Не может случиться т.к. выше условие с trigger = .jk
+            }
+            openWindow(uiMode: uiMode, trigger: .grave)
         } else {
             let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
             case .apps: .apps
             case .history: .history
-            case .jk: .apps // Не может случиться т.к. выше условие с fromJk
+            case .jk: .apps // Не может случиться т.к. выше условие с trigger = .jk
             }
             self.delayedOpening = {
                 self.delayedOpening = nil
-                self.openWindow(uiMode: uiMode, withPreselectedCachedWindow: true)
+                self.openWindow(uiMode: uiMode, trigger: trigger)
             }
             Task {
                 try await Task.sleep(nanoseconds: 80_000_000)
@@ -106,31 +106,24 @@ class OptionTabManager {
     func onOptionShiftTabPressed() {
         if isOpen {
             let data = optionTabView.data
+            
+            let sortedWindows: [CachedWindow]
             switch data.uiMode {
-            case .apps:
-                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                    if curIndex > 0 {
-                        data.selectedCachedWindow = allCachedWindows[curIndex - 1]
-                    } else {
-                        data.selectedCachedWindow = allCachedWindows.last
-                    }
+            case.apps:
+                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }
+            case.history:
+                sortedWindows = data.history
+            }
+            
+            if let selectedCachedWindow = data.selectedCachedWindow,
+               let curIndex = sortedWindows.firstIndex(of: selectedCachedWindow) {
+                if curIndex > 0 {
+                    data.selectedCachedWindow = sortedWindows[curIndex - 1]
                 } else {
-                    data.selectedCachedWindow = allCachedWindows.last
+                    data.selectedCachedWindow = sortedWindows.last
                 }
-            case .history:
-                let history = data.history
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
-                    if curIndex > 0 {
-                        data.selectedCachedWindow = history[curIndex - 1]
-                    } else {
-                        data.selectedCachedWindow = history.last
-                    }
-                } else {
-                    optionTabView.data.selectedCachedWindow = history.last
-                }
+            } else {
+                data.selectedCachedWindow = sortedWindows.last
             }
             return
         }
@@ -165,7 +158,7 @@ class OptionTabManager {
     
     func openWindow(
         uiMode: OptionTabUiMode,
-        withPreselectedCachedWindow: Bool,
+        trigger: OptionTabTrigger,
     ) {
         // Если открыто окно приложение Option1 (не Option-Tab),
         // то при нажатии на Option-Tab происходит фокус на Option1.
@@ -175,14 +168,17 @@ class OptionTabManager {
         
         optionTabView.data.rebuild(
             uiMode: uiMode,
-            withPreselectedCachedWindow: withPreselectedCachedWindow,
+            trigger: trigger,
         )
         
         optionTabView.window.makeKeyAndOrderFront(nil)
+        
+        //
         // Устанавливает фокус на окно, но после закрытия фокус не
         // не возвращается на прежнюю программу что не удобно.
         // Можно сохранять окно что было в фокусе и потом возвращать,
         // но это много запутанной логики.
+        //
         // NSApplication.shared.activate(ignoringOtherApps: false)
         
         HotKeysUtils.enableOptionTabJkHotKeys()

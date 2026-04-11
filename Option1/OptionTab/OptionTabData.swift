@@ -156,22 +156,33 @@ class OptionTabData: ObservableObject {
     // на момент разработки это ~10млс.
     func rebuild(
         uiMode: OptionTabUiMode,
-        withPreselectedCachedWindow: Bool,
+        trigger: OptionTabTrigger,
     ) {
         self.uiMode = uiMode
         self.appsUi = buildAppsUi()
         let history = buildHistory()
         self.history = history
         
-        self.selectedCachedWindow = !withPreselectedCachedWindow ? nil : {
-            if history.count >= 2 {
-                return history[1]
+        switch trigger {
+        case .double:
+            self.selectedCachedWindow = nil
+        case .grave:
+            let sortedWindows: [CachedWindow]
+            switch uiMode {
+            case.apps:
+                sortedWindows = appsUi.flatMap { $0.cachedWindows }.filterWithBadges(enabled: true)
+            case.history:
+                sortedWindows = history.filterWithBadges(enabled: true)
             }
-            if history.count == 1 {
-                return history[0]
-            }
-            return nil
-        }()
+            self.selectedCachedWindow = sortedWindows.first
+            break
+        case .tab, .jk:
+            self.selectedCachedWindow = {
+                if history.count >= 2 { history[1] }
+                else if history.count == 1 { history[0] }
+                else { nil }
+            }()
+        }
         
         let favoriteExtraIdx = workspacesUi.count
         self.favoritesUi = FavoriteDb.selectAllSorted().enumerated().map { (idx, favoriteDb) in
