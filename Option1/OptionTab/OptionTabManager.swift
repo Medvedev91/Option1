@@ -46,16 +46,17 @@ class OptionTabManager {
         self.optionTabView = optionTabView
     }
     
-    func onOptionTabPressed(fromJk: Bool) {
+    func onOptionTabPressed(trigger: OptionTabTrigger) {
         if isOpen {
             let data = optionTabView.data
             
+            let withBadges: Bool = trigger == .grave
             let sortedWindows: [CachedWindow]
             switch data.uiMode {
             case.apps:
-                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }
+                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }.filterWithBadges(enabled: withBadges)
             case.history:
-                sortedWindows = data.history
+                sortedWindows = data.history.filterWithBadges(enabled: withBadges)
             }
             
             if let selectedCachedWindow = data.selectedCachedWindow,
@@ -73,18 +74,25 @@ class OptionTabManager {
             delayedOpening()
             // Т.к. это происходит если я нажимаю повторно пока
             // ожидается открытие, нужно эмитировать повторное нажатие.
-            onOptionTabPressed(fromJk: fromJk)
-        } else if fromJk {
-            openWindow(uiMode: .history, withPreselectedCachedWindow: true)
+            onOptionTabPressed(trigger: trigger)
+        } else if trigger == .jk {
+            openWindow(uiMode: .history, trigger: .jk)
+        } else if trigger == .grave {
+            let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
+            case .apps: .apps
+            case .history: .history
+            case .jk: .apps // Не может случиться т.к. выше условие с trigger = .jk
+            }
+            openWindow(uiMode: uiMode, trigger: .grave)
         } else {
             let uiMode: OptionTabUiMode = switch KvDb.selectOptionTabDbMode() {
             case .apps: .apps
             case .history: .history
-            case .jk: .apps // Не может случиться т.к. выше условие с fromJk
+            case .jk: .apps // Не может случиться т.к. выше условие с trigger = .jk
             }
             self.delayedOpening = {
                 self.delayedOpening = nil
-                self.openWindow(uiMode: uiMode, withPreselectedCachedWindow: true)
+                self.openWindow(uiMode: uiMode, trigger: trigger)
             }
             Task {
                 try await Task.sleep(nanoseconds: 80_000_000)
@@ -150,7 +158,7 @@ class OptionTabManager {
     
     func openWindow(
         uiMode: OptionTabUiMode,
-        withPreselectedCachedWindow: Bool,
+        trigger: OptionTabTrigger,
     ) {
         // Если открыто окно приложение Option1 (не Option-Tab),
         // то при нажатии на Option-Tab происходит фокус на Option1.
@@ -160,7 +168,7 @@ class OptionTabManager {
         
         optionTabView.data.rebuild(
             uiMode: uiMode,
-            withPreselectedCachedWindow: withPreselectedCachedWindow,
+            trigger: trigger,
         )
         
         optionTabView.window.makeKeyAndOrderFront(nil)
