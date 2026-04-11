@@ -49,33 +49,25 @@ class OptionTabManager {
     func onOptionTabPressed(fromJk: Bool) {
         if isOpen {
             let data = optionTabView.data
+            
+            let sortedWindows: [CachedWindow]
             switch data.uiMode {
             case.apps:
-                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                    let nextIndex = curIndex + 1
-                    if nextIndex >= allCachedWindows.count {
-                        data.selectedCachedWindow = allCachedWindows.first
-                    } else {
-                        data.selectedCachedWindow = allCachedWindows[nextIndex]
-                    }
-                } else {
-                    data.selectedCachedWindow = allCachedWindows.first
-                }
+                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }
             case.history:
-                let history = data.history
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
-                    let nextIndex = curIndex + 1
-                    if nextIndex >= history.count {
-                        data.selectedCachedWindow = history.first
-                    } else {
-                        data.selectedCachedWindow = history[nextIndex]
-                    }
+                sortedWindows = data.history
+            }
+            
+            if let selectedCachedWindow = data.selectedCachedWindow,
+               let curIndex = sortedWindows.firstIndex(of: selectedCachedWindow) {
+                let nextIndex = curIndex + 1
+                if nextIndex >= sortedWindows.count {
+                    data.selectedCachedWindow = sortedWindows.first
                 } else {
-                    data.selectedCachedWindow = history.first
+                    data.selectedCachedWindow = sortedWindows[nextIndex]
                 }
+            } else {
+                data.selectedCachedWindow = sortedWindows.first
             }
         } else if let delayedOpening = delayedOpening {
             delayedOpening()
@@ -106,31 +98,24 @@ class OptionTabManager {
     func onOptionShiftTabPressed() {
         if isOpen {
             let data = optionTabView.data
+            
+            let sortedWindows: [CachedWindow]
             switch data.uiMode {
-            case .apps:
-                let allCachedWindows: [CachedWindow] = data.appsUi.flatMap { $0.cachedWindows }
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = allCachedWindows.firstIndex(of: selectedCachedWindow) {
-                    if curIndex > 0 {
-                        data.selectedCachedWindow = allCachedWindows[curIndex - 1]
-                    } else {
-                        data.selectedCachedWindow = allCachedWindows.last
-                    }
+            case.apps:
+                sortedWindows = data.appsUi.flatMap { $0.cachedWindows }
+            case.history:
+                sortedWindows = data.history
+            }
+            
+            if let selectedCachedWindow = data.selectedCachedWindow,
+               let curIndex = sortedWindows.firstIndex(of: selectedCachedWindow) {
+                if curIndex > 0 {
+                    data.selectedCachedWindow = sortedWindows[curIndex - 1]
                 } else {
-                    data.selectedCachedWindow = allCachedWindows.last
+                    data.selectedCachedWindow = sortedWindows.last
                 }
-            case .history:
-                let history = data.history
-                if let selectedCachedWindow = data.selectedCachedWindow,
-                   let curIndex = history.firstIndex(of: selectedCachedWindow) {
-                    if curIndex > 0 {
-                        data.selectedCachedWindow = history[curIndex - 1]
-                    } else {
-                        data.selectedCachedWindow = history.last
-                    }
-                } else {
-                    optionTabView.data.selectedCachedWindow = history.last
-                }
+            } else {
+                data.selectedCachedWindow = sortedWindows.last
             }
             return
         }
