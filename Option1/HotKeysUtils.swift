@@ -14,6 +14,7 @@ private var onOptionShiftTabPressedTask: Task<(), Error>? = nil
 private var optionTabHotKeyHandlers: [HotKey] = []
 private var optionTabJkHotKeyHandlers: [HotKey] = []
 private var optionTabArrowsHotKeyHandlers: [HotKey] = []
+private var optionTabEscapeHotKeyHandlers: [HotKey] = []
 
 private var optionTabFlagsLocalMonitorForEvents: Any?
 private var optionTabFlagsGlobalMonitorForEvents: Any?
@@ -55,15 +56,6 @@ class HotKeysUtils {
     
     @MainActor
     static func enableOptionTab() {
-        optionTabHotKeyHandlers.append(
-            HotKey(
-                key: .escape,
-                modifiers: [.option],
-                keyDownHandler: {
-                    OptionTabManager.instance.closeWindow()
-                },
-            )
-        )
         
         optionTabHotKeyHandlers.append(
             HotKey(
@@ -91,6 +83,9 @@ class HotKeysUtils {
             )
         )
         
+        //
+        // Grave
+        
         optionTabHotKeyHandlers.append(
             HotKey(
                 key: .grave,
@@ -103,6 +98,21 @@ class HotKeysUtils {
                 },
             )
         )
+        
+        optionTabHotKeyHandlers.append(
+            HotKey(
+                key: .grave,
+                modifiers: [.command],
+                keyDownHandler: {
+                    onOptionTabKeyDownPressed(trigger: .grave)
+                },
+                keyUpHandler: {
+                    onOptionTabKeyUpPressed()
+                },
+            )
+        )
+        
+        ///
         
         optionTabFlagsLocalMonitorForEvents = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> NSEvent? in
             handleOptionTabFlagsMonitorForEvents(event: event)
@@ -239,6 +249,46 @@ class HotKeysUtils {
         optionTabArrowsHotKeyHandlers.removeAll()
     }
     
+    //
+    // Option-Tab Escape
+    
+    @MainActor
+    static func enableOptionTabEscapeHotKeys() {
+        // Eliminate duplications
+        if !optionTabEscapeHotKeyHandlers.isEmpty {
+            return
+        }
+        
+        optionTabEscapeHotKeyHandlers.append(
+            HotKey(
+                key: .escape,
+                modifiers: [.option],
+                keyDownHandler: {
+                    OptionTabManager.instance.closeWindow()
+                },
+            )
+        )
+        
+        optionTabEscapeHotKeyHandlers.append(
+            HotKey(
+                key: .escape,
+                modifiers: [.command],
+                keyDownHandler: {
+                    OptionTabManager.instance.closeWindow()
+                },
+            )
+        )
+    }
+    
+    static func disableOptionTabEscapeHotKeys() {
+        optionTabEscapeHotKeyHandlers.forEach { hotKey in
+            hotKey.isPaused = true
+        }
+        optionTabEscapeHotKeyHandlers.removeAll()
+    }
+    
+    ///
+    
     @MainActor
     static func handleKey(key: Key) {
         ping()
@@ -347,7 +397,8 @@ private func onOptionTabKeyUp() {
 
 @MainActor
 private func handleOptionTabFlagsMonitorForEvents(event: NSEvent) {
-    if event.modifierFlags.contains(.option) {
+    // .command for Command-Grave
+    if event.modifierFlags.contains(.option) || event.modifierFlags.contains(.command) {
         BadgesManager.updateAsync()
     } else {
         onOptionTabKeyUp()
