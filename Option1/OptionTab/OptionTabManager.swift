@@ -101,6 +101,7 @@ class OptionTabManager {
                 }
             }
         }
+        ping()
     }
    
     func onOptionShiftTabPressed() {
