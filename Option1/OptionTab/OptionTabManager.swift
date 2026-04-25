@@ -183,6 +183,7 @@ class OptionTabManager {
         
         HotKeysUtils.enableOptionTabJkHotKeys()
         HotKeysUtils.enableOptionTabArrowsHotKeys()
+        HotKeysUtils.enableOptionTabEscapeHotKeys()
         
         BadgesManager.startLiveUpdates()
     }
@@ -192,6 +193,7 @@ class OptionTabManager {
         optionTabView.window.close()
         
         HotKeysUtils.disableOptionTabArrowsHotKeys()
+        HotKeysUtils.disableOptionTabEscapeHotKeys()
         if KvDb.selectOptionTabDbMode() != .jk {
             HotKeysUtils.disableOptionTabJkHotKeys()
         }
