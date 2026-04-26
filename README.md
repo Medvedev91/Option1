@@ -16,7 +16,7 @@ Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
 <img width="600" src="/Misc/Readme_02/basics.png">
   
-# Open files, projects, folders.
+# Open files, projects, folders, websites.
 
 <img width="600" src="/Misc/Readme_02/examples.png">
 
@@ -44,7 +44,7 @@ Press `⌥-1` to open Safari, `⌥-2` to Calendar. Customize it.
 
 <div align="center">
 
-# Option-Tab.
+# ⌥-Tab.
 
 An addition to built-in `⌘-Tab`, because macOS opens apps, not windows.
 
