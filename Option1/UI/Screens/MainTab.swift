@@ -6,30 +6,30 @@ struct MainTab: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 
-                AppText("Bind shortcuts like **`⌥-1`**, **`⌥-2`** to windows you need.")
+                AppText("Bind shortcuts like **`⌥-1`**, **`⌥-2`** to apps you need.")
                 
-                AppText("Press **`⌥-1`** to open Safari, **`⌥-2`** to open Calendar. Customize it.")
+                AppText("Press **`⌥-1`** to open Safari, **`⌥-2`** to Calendar. Customize it.")
                 
                 Image("readme_basics")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 500)
                 
-                AppText("Open files, projects, folders.")
+                MyTitle("Open files, projects, folders, websites.")
                 
                 Image("readme_examples")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 500)
                 
-                AppText("Set up workspaces.")
+                MyTitle("Set up workspaces.")
 
                 Image("readme_workspaces")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 640)
                 
-                AppText("To switch between workspaces, use menu bar:")
+                AppText("Switch workspace with menu bar:")
                 
                 Image("readme_menu")
                     .resizable()
@@ -37,9 +37,20 @@ struct MainTab: View {
                     .frame(width: 500)
                     .padding(.top, 8)
                 
+                MyTitle("⌥-Tab.")
+                    .padding(.top, 32)
+                
+                AppText("An addition to built-in **`⌘-Tab`**, because macOS opens apps, not windows.")
+                
+                Image("readme_option_tab")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: AppText.MAX_WIDTH)
+                    .padding(.top, 8)
+                
                 MyTitle("P.S.")
                     .font(.largeTitle)
-                    .padding(.top, 30)
+                    .padding(.top, 32)
                 
                 AppText("I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management:\n• supports multiple displays ✅\n• supports built-in macOS desktops ✅\n• supports full-screen windows ✅")
                 
