@@ -82,11 +82,15 @@ struct WorkspaceBindView: View {
                             formUi.substring = path
                         },
                     )
+                } else if BundleIds.isBrowser(bundle: bundle) {
+                    TextField("https://google.com (optional)", text: $formUi.substring)
+                        .autocorrectionDisabled()
+                        .frame(width: 190)
                 } else {
                     
                     TextField("Window title (optional)", text: $formUi.substring)
                         .autocorrectionDisabled()
-                        .frame(width: 180)
+                        .frame(width: 190)
                     
                     if !isScreenshotsMode {
                         

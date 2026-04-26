@@ -424,6 +424,13 @@ private func handleSpecial(
     bundle: String,
     substring: String,
 ) -> Bool {
+    
+    if BundleIds.isBrowser(bundle: bundle) {
+        let result = shell("open", "-b", bundle, substring)
+        // No sense to update cachedWindows
+        return result == 0
+    }
+    
     if bundle == BundleIds.Xcode {
         let project = substring
         if isFileExists(project) {

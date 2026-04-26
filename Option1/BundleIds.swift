@@ -35,7 +35,14 @@ class BundleIds {
     static let MicrosoftExcel = "com.microsoft.Excel"
     static let MicrosoftPowerPoint = "com.microsoft.Powerpoint"
     static let VSCode = "com.microsoft.VSCode"
+    // Other
+    static let GoogleChrome = "com.google.Chrome"
+    static let Firefox = "org.mozilla.firefox"
     
+    static func isBrowser(bundle: String) -> Bool {
+        [Safari, GoogleChrome, Firefox].contains(bundle)
+    }
+
     static func isOpenByShellWithNewWindow(_ bundle: String) -> Bool {
         [
             // JetBrains
