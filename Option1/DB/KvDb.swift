@@ -81,7 +81,7 @@ class KvDb {
     // Is Keep Jumps Global
     
     static func selectIsKeepJumpsGlobal() -> Bool {
-        selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? true
+        selectByKeyOrNil(IS_KEEP_JUMPS_GLOBAL_KEY).map { $0.value == "1" } ?? false
     }
     
     static func upsertIsKeepJumpsGlobal(_ isKeep: Bool) -> Bool {
