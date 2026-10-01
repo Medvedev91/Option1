@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2C1EE4482E1AEB21007FD28F /* SkyLight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1EE4472E1AEB21007FD28F /* SkyLight.framework */; };
+		2C33199E306EA0250017B5BB /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 2C33199D306EA0250017B5BB /* LaunchAtLogin */; };
 		2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 2C338CFC2E351B4500A692E3 /* HotKey */; };
 		2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 2C409ED92E38D762009E96D6 /* Sparkle */; };
 		2C4592A52F384D3800593B54 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 2C4592A42F384D3800593B54 /* SwiftyJSON */; };
@@ -45,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C33199E306EA0250017B5BB /* LaunchAtLogin in Frameworks */,
 				2C409EDA2E38D762009E96D6 /* Sparkle in Frameworks */,
 				2CBE56A72EC602B700CBAF18 /* Alamofire in Frameworks */,
 				2C338CFD2E351B4500A692E3 /* HotKey in Frameworks */,
@@ -105,6 +107,7 @@
 				2C409ED92E38D762009E96D6 /* Sparkle */,
 				2CBE56A62EC602B700CBAF18 /* Alamofire */,
 				2C4592A42F384D3800593B54 /* SwiftyJSON */,
+				2C33199D306EA0250017B5BB /* LaunchAtLogin */,
 			);
 			productName = Option1;
 			productReference = 2C1EE2A62E1ABB30007FD28F /* Option1 DEBUG.app */;
@@ -139,6 +142,7 @@
 				2C409ED82E38D762009E96D6 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				2CBE56A52EC602B700CBAF18 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				2C4592A32F384D3800593B54 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				2C33199C306EA0250017B5BB /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C1EE2A72E1ABB30007FD28F /* Products */;
@@ -387,6 +391,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2C33199C306EA0250017B5BB /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin-Modern";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.0;
+			};
+		};
 		2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/soffes/HotKey";
@@ -422,6 +434,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C33199D306EA0250017B5BB /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C33199C306EA0250017B5BB /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
+			productName = LaunchAtLogin;
+		};
 		2C338CFC2E351B4500A692E3 /* HotKey */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C338CFB2E351B4500A692E3 /* XCRemoteSwiftPackageReference "HotKey" */;
