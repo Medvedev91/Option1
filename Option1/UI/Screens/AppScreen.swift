@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import Cocoa
+import LaunchAtLogin
 
 struct AppScreen: View {
     
@@ -48,6 +49,9 @@ struct AppScreen: View {
         .onAppear {
             // Fix после первого открытия окно Option1 уходит за другие окна
             WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
+        }
+        .onAppear {
+            LaunchAtLogin.isEnabled = true
         }
     }
 }
