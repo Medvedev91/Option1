@@ -16,6 +16,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         HotKeysUtils.setup()
         MenuBarManager.instance.setup()
         ping()
+        // Необходимо при автостарте (перегрузки macOS) для запуска слушателей и т.п.
+        WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
     }
 }
 
