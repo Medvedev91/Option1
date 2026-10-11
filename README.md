@@ -1,5 +1,5 @@
 <div align="center">
-  
+
   <img width="140" src="/Misc/Readme_02/AppIcon1024.png">
 
   # Two new features for macOS.
