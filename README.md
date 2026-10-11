@@ -50,7 +50,7 @@ Works with any app. **More examples:**
 
 <img width="600" src="/Misc/Readme_02/examples.png">
 
-Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **`google.com`**.
+Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **google.com**.
 
 # 4. Full-screen mode.
 
