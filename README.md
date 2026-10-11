@@ -58,7 +58,6 @@ This makes the main desktop clean and let us take advantage of every inch of the
 
 To stay fully focused, I prefer to hide the **Menu Bar** for full-screen windows in **System Settings:**
 
-
 <img width="700" src="/Misc/Readme_02/in_full_screen_only.png">
 
 # 5. Built-in desktops + "Assign To This Desktop".
@@ -71,54 +70,49 @@ There are a set of built-in macOS features that not many people know about.
 
 Since I bind **`⌥-2`** for Slack, I want Slack to always open on **Desktop 2**. For this, I switch to **Desktop 2** and assign **Slack** to **This Desktop:**
 
-<img width="900" src="/Misc/Readme_02/assign_to.png">
+<img width="100%" src="/Misc/Readme_02/assign_to.png">
 
 Now, **I don't care** if **Slack** is open or closed. **I just press** **`⌥-2`**. I will always move to **Desktop 2** where **Slack** will be open and focused.
 
 Since I have shortcuts for the apps I use most often, I prefer to hide the **Dock:**
 
-<img width="900" src="/Misc/Readme_02/hide_dock.png">
+<img width="700" src="/Misc/Readme_02/hide_dock.png">
 
+# 6. Workspaces.
 
+I'm working on two projects: **Option1** and **timeto.me**. **I don't want** to bind different shortcuts for each project, **I want** **`⌥-8`** to always open Xcode project I'm currently working on.
 
-
-
-
-<div align="center">
-  
-# Set up workspaces.
-
-</div>
+To make this possible, I'm creating two workspaces: **Option1** and **timeto.me:**
 
 <img width="100%" src="/Misc/Readme_02/workspaces.png">
 
-<div align="center">
-  Switch workspace with menu bar:
-</div>
+Note that **`⌥-1`** and **`⌥-2`** still work from **Shared**.
 
-&nbsp;
+To switch the workspace use menu bar:
 
-<div align="center">
-  <img width="552" src="/Misc/Readme_02/menu.png">
-</div>
+<img width="600" src="/Misc/Readme_02/menu.png">
 
-&nbsp;
+# One more thing. ⌥-Tab.
 
-<div align="center">
-
-# ⌥-Tab.
-
-An addition to built-in `⌘-Tab`, because macOS opens apps, not windows.
-
-</div>
+An addition to built-in `⌘-Tab`. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.
 
 <img width="100%" src="/Misc/Readme_02/option_tab.png">
 
-&nbsp;
+**`⌥-Tab`** provides a few additional options:
 
-# P.S.
+- **Pinned apps** to the top of the list;
+- **Double Option** displays a list of windows. Useful to check window badges;
+- **⌥-\`** and **⌘-\`** only jumps to windows with badges;
+- **Sorting windows** by apps, history, or special **JK mode**;
+- **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;
+- **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;
+- **Favourites.**
+  
+To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.
 
-I call it pragmatic because I focus on the features I miss in macOS. It is not a replacement but an addition to the built-in macOS window management:
+# Post Scriptum
+
+Crafting this app I focused on the features I missed in macOS. It is not a replacement but an addition to the built-in macOS window management:  
 
 - supports multiple displays ✅
 - supports built-in macOS desktops ✅
