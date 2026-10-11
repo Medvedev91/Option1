@@ -2,7 +2,7 @@
 
   <img width="140" src="/Misc/Readme_02/AppIcon1024.png">
 
-  # Two new features for macOS.
+  # Two new features for macOS:
 
 </div>
 
@@ -49,6 +49,8 @@ It's especially useful when we have many Xcode projects open. Because built-in *
 Works with any app. **More examples:**
 
 <img width="600" src="/Misc/Readme_02/examples.png">
+
+Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **`google.com`**.
 
 # 4. Full-screen mode.
 
