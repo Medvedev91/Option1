@@ -34,7 +34,7 @@ For apps I use most often, like web browser or messaging app - I bind shortcuts 
 
 <img width="600" src="/Misc/Readme_02/basics.png">
 
-# 3. Shortcuts for the most used apps.
+# 3. Shortcuts for projects, files, websites...
 
 This is what completely changed the way I use macOS.
 
