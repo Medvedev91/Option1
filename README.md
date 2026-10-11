@@ -1,6 +1,6 @@
 <div align="center">
   
-  <img width="160" src="/Misc/Readme_02/AppIcon1024.png">
+  <img width="140" src="/Misc/Readme_02/AppIcon1024.png">
 
   # Two new features for macOS.
 
