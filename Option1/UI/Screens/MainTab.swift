@@ -6,13 +6,13 @@ struct MainTab: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 
-                MyTitle("Two new features for macOS.")
+                MyTitle("Two new features for macOS:")
                 
                 AppText("**1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;")
                 
                 AppText("**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> ~/Option1/Option1.xcodeproj`**. Any app.")
                 
-                MyTitle("Option1 - Window Manager for macOS")
+                MyTitle("Option1")
                     .padding(.top, 32)
                 
                 AppText("I built this app to add features **I miss** in macOS. Now, I will share how **I manage** windows in macOS.")
@@ -55,6 +55,8 @@ struct MainTab: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 500)
                 
+                AppText("Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **google.com**.")
+
                 MyTitle("4. Full-screen mode.")
                     .padding(.top, 32)
                 
@@ -90,6 +92,18 @@ struct MainTab: View {
                     .frame(width: AppText.MAX_WIDTH)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 
+                AppText("Now, **I don't care** if **Slack** is open or closed. **I just press** **`⌥-2`**. I will always move to **Desktop 2** where **Slack** will be open and focused.")
+                
+                AppText("Since I have shortcuts for the apps I use most often, I prefer to hide the **Dock:**")
+                
+                Image("readme_hide_dock")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 600)
+                
+                MyTitle("6. Workspaces.")
+                    .padding(.top, 32)
+                
                 AppText("I'm working on two projects: **Option1** and **timeto.me**. **I don't want** to bind different shortcuts for each project, **I want** **`⌥-8`** to always open Xcode project I'm currently working on.")
                 
                 AppText("To make this possible, I'm creating two workspaces: **Option1** and **timeto.me:**")
@@ -97,10 +111,7 @@ struct MainTab: View {
                 Image("readme_workspaces")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 500)
-                
-                MyTitle("6. Workspaces.")
-                    .padding(.top, 32)
+                    .frame(width: AppText.MAX_WIDTH)
                 
                 AppText("Note that **`⌥-1`** and **`⌥-2`** still work from **Shared**.")
                 
@@ -122,7 +133,7 @@ struct MainTab: View {
                     .frame(width: AppText.MAX_WIDTH)
                     .padding(.top, 8)
                 
-                AppText("**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-`** and **⌘-`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**")
+                AppText("**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-\\`** and **⌘-\\`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**")
                 
                 AppText("To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.")
                 
@@ -142,7 +153,7 @@ struct MainTab: View {
             }
             .padding()
         }
-        .navigationTitle("Option1 - Pragmatic Window Manager")
+        .navigationTitle("Option1 - Window Manager for macOS")
     }
 }
 
