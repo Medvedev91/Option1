@@ -92,6 +92,8 @@ To switch the workspace use menu bar:
 
 <img width="600" src="/Misc/Readme_02/menu.png">
 
+&nbsp;
+
 # One more thing. ⌥-Tab.
 
 An addition to built-in `⌘-Tab`. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.
@@ -117,6 +119,9 @@ Crafting this app I focused on the features I missed in macOS. It is not a repla
 - supports multiple displays ✅
 - supports built-in macOS desktops ✅
 - supports full-screen windows ✅
+
+Wish you all the best,<br>
+**[Ivan](https://github.com/Medvedev91)**
 
 # Download
 
