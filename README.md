@@ -84,7 +84,7 @@ Since I have shortcuts for the apps I use most often, I prefer to hide the **Doc
 
 I'm working on two projects: **Option1** and **timeto.me**. **I don't want** to bind different shortcuts for each project, **I want** **`⌥-8`** to always open Xcode project I'm currently working on.
 
-To make this possible, I'm creating two workspaces: **Option1** and **timeto.me:**
+To make this possible, I created two workspaces: **Option1** and **timeto.me:**
 
 <img width="100%" src="/Misc/Readme_02/workspaces.png">
 
