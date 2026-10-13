@@ -25,7 +25,7 @@ struct MainTab: View {
                 MyTitle("2. Shortcuts for the most used apps.")
                     .padding(.top, 32)
                 
-                AppText("For apps I use most often, like web browser or messaging app - I bind shortcuts like this:")
+                AppText("For apps that I use most often, like web browser or messaging app - I bind shortcuts like this:")
                 
                 Image("readme_basics")
                     .resizable()

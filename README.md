@@ -30,7 +30,7 @@ To switch windows, I usually use the built-in **`⌘-Tab`**. Like always, nothin
   
 # 2. Shortcuts for the most used apps.
 
-For apps I use most often, like web browser or messaging app - I bind shortcuts like this:
+For apps that I use most often, like web browser or messaging app - I bind shortcuts like this:
 
 <img width="600" src="/Misc/Readme_02/basics.png">
 
