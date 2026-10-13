@@ -12,7 +12,7 @@ struct MainTab: View {
                 
                 AppText("**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> Option1.xcodeproj`**. Any app.")
                 
-                MyTitle("Option1")
+                MyTitle("Option1 - Window Manager for macOS")
                     .padding(.top, 32)
                 
                 AppText("I built this app to add features **I miss** in macOS. Now, I will share how **I manage** windows in macOS.")
