@@ -10,7 +10,7 @@ struct MainTab: View {
                 
                 AppText("**1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;")
                 
-                AppText("**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> ~/Option1/Option1.xcodeproj`**. Any app.")
+                AppText("**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> Option1.xcodeproj`**. Any app.")
                 
                 MyTitle("Option1")
                     .padding(.top, 32)
