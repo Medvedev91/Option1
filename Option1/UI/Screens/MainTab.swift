@@ -8,11 +8,17 @@ struct MainTab: View {
                 
                 MyTitle("Two new features for macOS:")
                 
-                AppText("**1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;")
+                AppText(
+                    "**1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;",
+                    highlighted: ["⌥-1", "⌥-2"],
+                )
                 
-                AppText("**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> ~/Option1/Option1.xcodeproj`**. Any app.")
+                AppText(
+                    "**2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> Option1.xcodeproj`**. Any app.",
+                    highlighted: ["⌥-3", "Xcode -> Option1.xcodeproj"],
+                )
                 
-                MyTitle("Option1")
+                MyTitle("Option1 - Window Manager for macOS")
                     .padding(.top, 32)
                 
                 AppText("I built this app to add features **I miss** in macOS. Now, I will share how **I manage** windows in macOS.")
@@ -20,12 +26,15 @@ struct MainTab: View {
                 MyTitle("1. Built-in ⌘-Tab.")
                     .padding(.top, 32)
                 
-                AppText("To switch windows, I usually use the built-in **`⌘-Tab`**. Like always, nothing new.")
+                AppText(
+                    "To switch windows, I usually use the built-in **`⌘-Tab`**. Like always, nothing new.",
+                    highlighted: ["⌘-Tab"],
+                )
                 
                 MyTitle("2. Shortcuts for the most used apps.")
                     .padding(.top, 32)
                 
-                AppText("For apps I use most often, like web browser or messaging app - I bind shortcuts like this:")
+                AppText("For apps that I use most often, like web browser or messaging app - I bind shortcuts like this:")
                 
                 Image("readme_basics")
                     .resizable()
@@ -37,16 +46,25 @@ struct MainTab: View {
                 
                 AppText("This is what completely changed the way I use macOS.")
                 
-                AppText("**Example:** As a **Option1** developer, I often open **`~/dev/Option1/Option1.xcodeproj`** project in Xcode. What I did:")
+                AppText(
+                    "**Example:** As a **Option1** developer, I often open **`~/dev/Option1/Option1.xcodeproj`** project in Xcode. What I did:",
+                    highlighted: ["~/dev/Option1/Option1.xcodeproj"],
+                )
                 
                 Image("readme_example_xcode")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 500)
                 
-                AppText("Now, **I don't care** if the project is open or closed. **I just press** **`⌥-8`**. I will always switch to the project I need. If the app or project is closed - it opens, otherwise - gets focus.")
+                AppText(
+                    "Now, **I don't care** if the project is open or closed. **I just press** **`⌥-8`**. I will always switch to the project I need. If the app or project is closed - it opens, otherwise - gets focus.",
+                    highlighted: ["⌥-8"],
+                )
                 
-                AppText("It's especially useful when we have many Xcode projects open. Because built-in **`⌘-Tab`** switch apps, not projects or windows.")
+                AppText(
+                    "It's especially useful when we have many Xcode projects open. Because built-in **`⌘-Tab`** switch apps, not projects or windows.",
+                    highlighted: ["⌘-Tab"],
+                )
                 
                 AppText("Works with any app. **More examples:**")
                 
@@ -55,7 +73,10 @@ struct MainTab: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 500)
                 
-                AppText("Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **google.com**.")
+                AppText(
+                    "Note that **`⌥-0`** not just opens Google Chrome like **`⌥-1`**, but also opens a new tab with **google.com**.",
+                    highlighted: ["⌥-0", "⌥-1"],
+                )
 
                 MyTitle("4. Full-screen mode.")
                     .padding(.top, 32)
@@ -84,7 +105,10 @@ struct MainTab: View {
                     .frame(width: 500)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 
-                AppText("Since I bind **`⌥-2`** for Slack, I want Slack to always open on **Desktop 2**. For this, I switch to **Desktop 2** and assign **Slack** to **This Desktop:**")
+                AppText(
+                    "Since I bind **`⌥-2`** for Slack, I want Slack to always open on **Desktop 2**. For this, I switch to **Desktop 2** and assign **Slack** to **This Desktop:**",
+                    highlighted: ["⌥-2"],
+                )
                 
                 Image("readme_assign_to")
                     .resizable()
@@ -92,7 +116,10 @@ struct MainTab: View {
                     .frame(width: AppText.MAX_WIDTH)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 
-                AppText("Now, **I don't care** if **Slack** is open or closed. **I just press** **`⌥-2`**. I will always move to **Desktop 2** where **Slack** will be open and focused.")
+                AppText(
+                    "Now, **I don't care** if **Slack** is open or closed. **I just press** **`⌥-2`**. I will always move to **Desktop 2** where **Slack** will be open and focused.",
+                    highlighted: ["⌥-2"],
+                )
                 
                 AppText("Since I have shortcuts for the apps I use most often, I prefer to hide the **Dock:**")
                 
@@ -104,16 +131,22 @@ struct MainTab: View {
                 MyTitle("6. Workspaces.")
                     .padding(.top, 32)
                 
-                AppText("I'm working on two projects: **Option1** and **timeto.me**. **I don't want** to bind different shortcuts for each project, **I want** **`⌥-8`** to always open Xcode project I'm currently working on.")
+                AppText(
+                    "I'm working on two projects: **Option1** and **timeto.me**. **I don't want** to bind different shortcuts for each project, **I want** **`⌥-8`** to always open Xcode project I'm currently working on.",
+                    highlighted: ["⌥-8"],
+                )
                 
-                AppText("To make this possible, I'm creating two workspaces: **Option1** and **timeto.me:**")
+                AppText("To make this possible, I created two workspaces: **Option1** and **timeto.me:**")
                 
                 Image("readme_workspaces")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: AppText.MAX_WIDTH)
                 
-                AppText("Note that **`⌥-1`** and **`⌥-2`** still work from **Shared**.")
+                AppText(
+                    "Note that **`⌥-1`** and **`⌥-2`** still work from **Shared**.",
+                    highlighted: ["⌥-1", "⌥-2"],
+                )
                 
                 AppText("To switch the workspace use menu bar:")
                 
@@ -125,7 +158,10 @@ struct MainTab: View {
                 MyTitle("One more thing. ⌥-Tab.")
                     .padding(.top, 50)
                 
-                AppText("An addition to built-in **`⌘-Tab`**. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.")
+                AppText(
+                    "An addition to built-in **`⌘-Tab`**. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.",
+                    highlighted: ["⌘-Tab"],
+                )
                 
                 Image("readme_option_tab")
                     .resizable()
@@ -133,9 +169,15 @@ struct MainTab: View {
                     .frame(width: AppText.MAX_WIDTH)
                     .padding(.top, 8)
                 
-                AppText("**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-\\`** and **⌘-\\`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**")
+                AppText(
+                    "**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-\\`** and **⌘-\\`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**",
+                    highlighted: ["⌥-Tab", "⌥-`", "⌘-`", "⌥-J", "⌥-(A-Z)"],
+                )
                 
-                AppText("To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.")
+                AppText(
+                    "To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.",
+                    highlighted: ["⌥-Tab"],
+                )
                 
                 MyTitle("Post Scriptum")
                     .font(.largeTitle)
