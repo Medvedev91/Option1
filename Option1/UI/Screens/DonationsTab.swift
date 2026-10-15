@@ -40,6 +40,9 @@ struct DonationsTab: View {
                     
                     Spacer()
                 }
+                
+                IvanView(imageSize: 48, fontWeight: .medium)
+                    .padding(.top, 8)
             }
             .padding()
             .frame(minWidth: AppText.MAX_WIDTH)
