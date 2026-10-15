@@ -21,7 +21,7 @@ struct IvanView : View {
             .font(.system(size: AppText.FONT_SIZE, weight: fontWeight))
             .lineSpacing(2)
             .textAlign(.leading)
-            .padding(.leading, 8)
+            .padding(.leading, 6)
         }
     }
 }
