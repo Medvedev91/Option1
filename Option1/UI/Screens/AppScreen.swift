@@ -51,7 +51,9 @@ struct AppScreen: View {
             WindowsManager.openApplicationByBundle(Bundle.main.bundleIdentifier!)
         }
         .onAppear {
-            LaunchAtLogin.isEnabled = true
+            #if !DEBUG
+                LaunchAtLogin.isEnabled = true
+            #endif
         }
     }
 }
