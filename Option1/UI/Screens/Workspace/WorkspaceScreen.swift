@@ -23,6 +23,13 @@ struct WorkspaceScreen: View {
                 .padding(.top, key == .one ? 8 : 0)
             }
             
+            Text("If the app is not in the list, please launch that app.")
+                .fontWeight(.semibold)
+                .foregroundColor(.red)
+                .textAlign(.leading)
+                .padding(.top)
+                .padding(.leading)
+            
             if !isScreenshotsMode {
                 Divider()
                     .padding()
