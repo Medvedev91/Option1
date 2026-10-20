@@ -70,7 +70,7 @@ struct NavigationScreen: View {
                                 } icon: {
                                     Image(systemName: "plus.circle")
                                         .foregroundColor(.blue)
-                                        .fontWeight(.semibold)
+                                        .fontWeight(.medium)
                                 }
                             },
                         )
