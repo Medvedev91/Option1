@@ -57,32 +57,29 @@ struct NavigationScreen: View {
                             }
                         }
                         .collapsible(false)
-                    }
-                    .listStyle(.sidebar)
-                    .frame(minWidth: 200)
-                    
-                    Spacer()
-                    
-                    Divider()
-                    
-                    HStack {
+                        
                         Button(
                             action: {
                                 newWorkspaceName = ""
                                 isNewWorkspacePresented = true
                             },
                             label: {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 13))
-                            }
+                                Label {
+                                    Text("New")
+                                        .foregroundColor(.blue)
+                                } icon: {
+                                    Image(systemName: "plus.circle")
+                                        .foregroundColor(.blue)
+                                        .fontWeight(.semibold)
+                                }
+                            },
                         )
                         .buttonStyle(.plain)
-                        .padding(.leading, 8)
-                        .opacity(0.8)
-                        Spacer()
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 10)
+                    .listStyle(.sidebar)
+                    .frame(minWidth: 200)
+                    
+                    Spacer()
                 }
             },
             detail: {
