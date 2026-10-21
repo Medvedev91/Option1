@@ -98,7 +98,7 @@ To switch the workspace use menu bar:
 
 # One more thing. ⌥-Tab.
 
-An addition to built-in **`⌘-Tab`**. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.
+Useful to switch between windows **within one app**, like several **Finder** windows, because built-in **`⌘-Tab`** switch apps, not windows.
 
 <img width="100%" src="/Misc/Readme_02/option_tab.png">
 
