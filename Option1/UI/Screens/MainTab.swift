@@ -44,10 +44,10 @@ struct MainTab: View {
                 MyTitle("3. Shortcuts for projects, files, websites...")
                     .padding(.top, 32)
                 
-                AppText("This is what completely changed the way I use macOS.")
+                AppText("This is my favorite feature.")
                 
                 AppText(
-                    "**Example:** As a **Option1** developer, I often open **`~/dev/Option1/Option1.xcodeproj`** project in Xcode. What I did:",
+                    "**Example:** As a **Option1** developer, I often open **`Option1.xcodeproj`** project in Xcode. What I did:",
                     highlighted: ["~/dev/Option1/Option1.xcodeproj"],
                 )
                 

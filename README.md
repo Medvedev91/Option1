@@ -36,9 +36,9 @@ For apps that I use most often, like web browser or messaging app - I bind short
 
 # 3. Shortcuts for projects, files, websites...
 
-This is what completely changed the way I use macOS.
+This is my favorite feature.
 
-**Example:** As a **Option1** developer, I often open **`~/dev/Option1/Option1.xcodeproj`** project in Xcode. What I did:
+**Example:** As a **Option1** developer, I often open **`Option1.xcodeproj`** project in Xcode. What I did:
 
 <img width="600" src="/Misc/Readme_02/example_xcode.png">
 
