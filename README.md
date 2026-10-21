@@ -10,9 +10,9 @@
 
 <div align="center">
 
-  **1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;
+  **1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack;
   
-  **2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> Option1.xcodeproj`**. Any app.
+  **2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Option1.xcodeproj`** in Xcode. Any app.
 
 </div>
 
