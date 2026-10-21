@@ -109,7 +109,7 @@ Useful to switch between windows **within one app**, like several **Finder** win
 - **⌥-\`** and **⌘-\`** only jumps to windows with badges;
 - **Sorting windows** by apps, history, or special **JK mode**;
 - **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;
-- **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;
+- **`⌥-(A-Z)`** for windows. Each window is automatically assigned a shortcut. For example, in the screenshot above, **`⌥-R`** is assigned to **Recent**. **WARNING** If you need these shortcuts in other apps, turn this off in settings;
 - **Favourites.**
   
 To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.

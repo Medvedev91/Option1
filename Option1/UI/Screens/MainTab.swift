@@ -170,8 +170,8 @@ struct MainTab: View {
                     .padding(.top, 8)
                 
                 AppText(
-                    "**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-\\`** and **⌘-\\`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**",
-                    highlighted: ["⌥-Tab", "⌥-`", "⌘-`", "⌥-J", "⌥-(A-Z)"],
+                    "**`⌥-Tab`** provides a few additional options:\n• **Pinned apps** to the top of the list;\n• **Double Option** displays a list of windows. Useful to check window badges;\n• **⌥-\\`** and **⌘-\\`** only jumps to windows with badges;\n• **Sorting windows** by apps, history, or special **JK mode**;\n• **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;\n• **`⌥-(A-Z)`** for windows. Each window is automatically assigned a shortcut. For example, in the screenshot above, **`⌥-R`** is assigned to **Recent**. **WARNING** If you need these shortcuts in other apps, turn this off in settings;\n• **Favourites.**",
+                    highlighted: ["⌥-Tab", "⌥-`", "⌘-`", "⌥-J", "⌥-R", "⌥-(A-Z)"],
                 )
                 
                 AppText(
