@@ -95,7 +95,7 @@ struct MainTab: View {
                 MyTitle("5. Built-in desktops + \"Assign To This Desktop\".")
                     .padding(.top, 32)
                 
-                AppText("There are a set of built-in macOS features that not many people know about.")
+                AppText("There is a built-in feature that not many people know about.")
                 
                 AppText("**Example:** I use a separate desktop with windows for my work: **Slack** and **Firefox** - **Desktop 2:**")
                 

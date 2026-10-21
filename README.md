@@ -64,7 +64,7 @@ To stay fully focused, I prefer to hide the **Menu Bar** for full-screen windows
 
 # 5. Built-in desktops + "Assign To This Desktop".
 
-There are a set of built-in macOS features that not many people know about.
+There is a built-in feature that not many people know about.
 
 **Example:** I use a separate desktop with windows for my work: **Slack** and **Firefox** - **Desktop 2:**
 
