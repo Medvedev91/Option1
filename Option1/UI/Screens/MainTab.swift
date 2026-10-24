@@ -48,7 +48,7 @@ struct MainTab: View {
                 
                 AppText(
                     "**Example:** As a **Option1** developer, I often open **`Option1.xcodeproj`** project in Xcode. What I did:",
-                    highlighted: ["~/dev/Option1/Option1.xcodeproj"],
+                    highlighted: ["Option1.xcodeproj"],
                 )
                 
                 Image("readme_example_xcode")
