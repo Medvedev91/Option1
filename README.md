@@ -10,9 +10,9 @@
 
 <div align="center">
 
-  **1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack, etc;
+  **1.** Open **apps** with shortcuts, like **`⌥-1`** for Chrome, **`⌥-2`** for Slack;
   
-  **2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Xcode -> Option1.xcodeproj`**. Any app.
+  **2.** Open **projects** with shortcuts, like **`⌥-3`** for **`Option1.xcodeproj`** in Xcode. Any app.
 
 </div>
 
@@ -36,9 +36,9 @@ For apps that I use most often, like web browser or messaging app - I bind short
 
 # 3. Shortcuts for projects, files, websites...
 
-This is what completely changed the way I use macOS.
+This is my favorite feature.
 
-**Example:** As a **Option1** developer, I often open **`~/dev/Option1/Option1.xcodeproj`** project in Xcode. What I did:
+**Example:** As a **Option1** developer, I often open **`Option1.xcodeproj`** project in Xcode. What I did:
 
 <img width="600" src="/Misc/Readme_02/example_xcode.png">
 
@@ -64,7 +64,7 @@ To stay fully focused, I prefer to hide the **Menu Bar** for full-screen windows
 
 # 5. Built-in desktops + "Assign To This Desktop".
 
-There are a set of built-in macOS features that not many people know about.
+There is a built-in feature that not many people know about.
 
 **Example:** I use a separate desktop with windows for my work: **Slack** and **Firefox** - **Desktop 2:**
 
@@ -98,7 +98,7 @@ To switch the workspace use menu bar:
 
 # One more thing. ⌥-Tab.
 
-An addition to built-in **`⌘-Tab`**. Especially useful when you need to switch a window for the app, because built-in ⌘-Tab switch apps, not windows.
+Useful to switch between windows **within one app**, like several **Finder** windows, because built-in **`⌘-Tab`** switch apps, not windows.
 
 <img width="100%" src="/Misc/Readme_02/option_tab.png">
 
@@ -109,7 +109,7 @@ An addition to built-in **`⌘-Tab`**. Especially useful when you need to switch
 - **⌥-\`** and **⌘-\`** only jumps to windows with badges;
 - **Sorting windows** by apps, history, or special **JK mode**;
 - **Vim-inspired JK mode** is a combination of Apps and History. Press **`⌥-Tab`** to Apps mode, **`⌥-J`** to History;
-- **`⌥-(A-Z)`** for windows. **WARNING** If you need these shortcuts in other apps, turn this off in settings;
+- **`⌥-(A-Z)`** for windows. Each window is automatically assigned a shortcut. For example, in the screenshot above, **`⌥-R`** is assigned to **Recent**. **WARNING** If you need these shortcuts in other apps, turn this off in settings;
 - **Favourites.**
   
 To be honest, I don't use **`⌥-Tab`** very often. But sometimes it's just indispensable.
