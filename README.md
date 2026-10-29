@@ -131,6 +131,8 @@ https://option1.io/Option1.dmg
 
 https://github.com/Medvedev91/Option1/releases
 
+`brew install --cask Medvedev91/Option1/Option1`
+
 # Contacts
 
 ivan@option1.io
