@@ -1,6 +1,6 @@
 `brew edit --cask option1`
 
-Update version and sha256 from GitHub.
+Update `version` and `sha256` from GitHub.
 
 Example:
 
