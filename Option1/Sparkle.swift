@@ -14,6 +14,7 @@
 // - Go to parent folder: Go -> Enclosing Folder -> Artifacts -> sparkle -> Sparkle -> bin;
 // - Open Terminal app, move generate_appcast file to terminal, add ~/Downloads/Option1, run;
 // - Upload appcast.xml and Option1.dmg to option1.io root.
+// - Don't forget Brew Casks/BREW_README.md
 //
 
 import Sparkle
